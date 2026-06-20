@@ -1,158 +1,248 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+const unitType = v.union(
+  v.literal("room"),
+  v.literal("suite"),
+  v.literal("villa"),
+  v.literal("studio")
+);
+
+const availabilityStatus = v.union(
+  v.literal("available"),
+  v.literal("occupied"),
+  v.literal("maintenance"),
+  v.literal("reserved")
+);
+
+const idType = v.union(
+  v.literal("passport"),
+  v.literal("drivers_license"),
+  v.literal("national_id"),
+  v.literal("other")
+);
+
+const bookingType = v.union(
+  v.literal("nightly"),
+  v.literal("weekly"),
+  v.literal("monthly"),
+  v.literal("lease")
+);
+
+const bookingStatus = v.union(
+  v.literal("inquiry"),
+  v.literal("pending_confirmation"),
+  v.literal("confirmed"),
+  v.literal("checked_in"),
+  v.literal("checked_out"),
+  v.literal("completed"),
+  v.literal("cancelled")
+);
+
+const sourceChannel = v.union(
+  v.literal("whatsapp"),
+  v.literal("telegram"),
+  v.literal("instagram"),
+  v.literal("direct"),
+  v.literal("phone"),
+  v.literal("walk_in")
+);
+
+const messageChannel = v.union(
+  v.literal("whatsapp"),
+  v.literal("telegram"),
+  v.literal("instagram")
+);
+
+const messageStatus = v.union(
+  v.literal("new"),
+  v.literal("reviewed"),
+  v.literal("converted"),
+  v.literal("archived")
+);
+
+const managerRole = v.union(
+  v.literal("owner"),
+  v.literal("manager"),
+  v.literal("staff")
+);
+
+const taskType = v.union(
+  v.literal("guest_checkin"),
+  v.literal("guest_checkout"),
+  v.literal("cleaning"),
+  v.literal("maintenance"),
+  v.literal("follow_up")
+);
+
+const checklistStatus = v.union(
+  v.literal("pending"),
+  v.literal("in_progress"),
+  v.literal("completed"),
+  v.literal("cancelled")
+);
+
+const auditAction = v.union(
+  v.literal("create"),
+  v.literal("update"),
+  v.literal("delete"),
+  v.literal("status_change"),
+  v.literal("booking_convert"),
+  v.literal("payment_received")
+);
+
+const auditEntityType = v.union(
+  v.literal("guest"),
+  v.literal("booking"),
+  v.literal("unit"),
+  v.literal("manager"),
+  v.literal("checklist")
+);
+
 export default defineSchema({
-  vendors: defineTable({
+  property: defineTable({
     name: v.string(),
-    category: v.string(),
-    normalizedName: v.string(),
-    /** Tenant scope; omit for legacy rows (visible to admin/owner when not filtering). */
-    orgId: v.optional(v.string())
-  })
-    .index("by_normalized_name", ["normalizedName"])
-    .index("by_org", ["orgId"]),
-
-  auditLogs: defineTable({
-    action: v.string(),
-    actorUserId: v.string(),
-    targetUserId: v.optional(v.string()),
-    metadata: v.optional(v.any()),
+    address: v.string(),
+    phone: v.string(),
+    whatsapp: v.string(),
+    currencyCode: v.literal("NGN"),
+    timezone: v.string(),
     createdAt: v.number(),
-    /** When set, row can be purged with org data deletion. */
-    orgId: v.optional(v.string())
-  })
-    .index("by_created", ["createdAt"])
-    .index("by_org", ["orgId"])
-    .index("by_actor", ["actorUserId"])
-    .index("by_target", ["targetUserId"]),
+    updatedAt: v.number()
+  }),
 
-  /** Recorded policy / upload consent (server-written via secret). */
-  consents: defineTable({
-    userId: v.string(),
-    orgId: v.string(),
-    version: v.string(),
-    scope: v.union(v.literal("terms"), v.literal("upload")),
-    acceptedAt: v.number()
+  unit: defineTable({
+    propertyId: v.id("property"),
+    unitNumber: v.string(),
+    unitType,
+    capacityGuests: v.number(),
+    pricePerNightNgn: v.number(),
+    amenities: v.array(v.string()),
+    availabilityStatus,
+    createdAt: v.number(),
+    updatedAt: v.number()
   })
-    .index("by_org", ["orgId"])
-    .index("by_user_org_scope", ["userId", "orgId", "scope"]),
+    .index("by_property", ["propertyId"])
+    .index("by_property_availability", ["propertyId", "availabilityStatus"]),
 
-  licenses: defineTable({
-    vendorId: v.id("vendors"),
-    licenseType: v.string(),
-    issueDate: v.string(),
-    expiryDate: v.string(),
-    status: v.string(),
-    riskScore: v.number()
+  guest: defineTable({
+    propertyId: v.id("property"),
+    firstName: v.string(),
+    lastName: v.string(),
+    email: v.optional(v.string()),
+    phone: v.string(),
+    whatsapp: v.optional(v.string()),
+    telegramId: v.optional(v.string()),
+    instagramHandle: v.optional(v.string()),
+    idType,
+    idNumber: v.string(),
+    isDeleted: v.boolean(),
+    deletedAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number()
   })
-    .index("by_vendor", ["vendorId"])
-    .index("by_expiry", ["expiryDate"])
-    .index("by_vendor_type_expiry", ["vendorId", "licenseType", "expiryDate"]),
+    .index("by_property", ["propertyId"])
+    .index("by_property_phone", ["propertyId", "phone"]),
 
-  /** Excel/source files stored in blob storage; ingestion scoped by orgId. */
-  uploads: defineTable({
-    orgId: v.string(),
-    fileUrl: v.string(),
-    fileName: v.optional(v.string()),
-    uploadedBy: v.string(),
-    uploadedAt: v.number(),
-    lastProcessedAt: v.optional(v.number()),
-    fileHash: v.string()
+  booking: defineTable({
+    propertyId: v.id("property"),
+    guestId: v.id("guest"),
+    unitId: v.id("unit"),
+    bookingType,
+    checkInDate: v.string(),
+    checkOutDate: v.optional(v.string()),
+    adultsCount: v.number(),
+    childrenCount: v.number(),
+    status: bookingStatus,
+    sourceChannel,
+    notes: v.optional(v.string()),
+    totalPriceNgn: v.number(),
+    paidNgn: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number()
   })
-    .index("by_org", ["orgId"])
-    .index("by_uploaded_by", ["uploadedBy"]),
+    .index("by_property", ["propertyId"])
+    .index("by_property_status_check_in", ["propertyId", "status", "checkInDate"])
+    .index("by_property_source_created", ["propertyId", "sourceChannel", "createdAt"])
+    .index("by_unit", ["unitId"]),
 
-  /** Scheduled compliance report emails per org (cron sends via Resend). */
-  reportSubscriptions: defineTable({
-    orgId: v.string(),
+  bookingChannelMessage: defineTable({
+    propertyId: v.id("property"),
+    bookingId: v.optional(v.id("booking")),
+    channel: messageChannel,
+    senderPhone: v.optional(v.string()),
+    telegramUserId: v.optional(v.string()),
+    instagramUserId: v.optional(v.string()),
+    senderName: v.string(),
+    messageText: v.string(),
+    extractedCheckIn: v.optional(v.string()),
+    extractedCheckOut: v.optional(v.string()),
+    extractedGuestNames: v.optional(v.array(v.string())),
+    extractedUnitType: v.optional(v.string()),
+    status: messageStatus,
+    managerId: v.optional(v.id("manager")),
+    createdAt: v.number(),
+    updatedAt: v.number()
+  })
+    .index("by_property", ["propertyId"])
+    .index("by_property_status_created", ["propertyId", "status", "createdAt"]),
+
+  manager: defineTable({
+    propertyId: v.id("property"),
+    clerkUserId: v.string(),
     email: v.string(),
-    frequency: v.union(
-      v.literal("daily"),
-      v.literal("weekly"),
-      v.literal("monthly")
-    ),
+    fullName: v.string(),
+    phone: v.string(),
+    role: managerRole,
+    isDeleted: v.boolean(),
+    deletedAt: v.optional(v.number()),
     createdAt: v.number(),
-    lastSentAt: v.optional(v.number())
+    updatedAt: v.number()
   })
-    .index("by_org", ["orgId"])
-    .index("by_email", ["email"]),
+    .index("by_property", ["propertyId"])
+    .index("by_clerk_user", ["clerkUserId"]),
 
-  /**
-   * Per-user UX preferences (dashboard layout, onboarding, saved views, digest).
-   * Written only from Next.js API with INTERNAL_JOB_SECRET + session userId.
-   */
-  userPreferences: defineTable({
-    userId: v.string(),
-    orgId: v.optional(v.string()),
-    /** Prefs schema version for migrations (default 1). */
-    version: v.optional(v.number()),
-    /** Marketing / UX consent mirror; legal terms rows remain in `consents` table. */
-    consents: v.optional(v.any()),
-    /** Digest + quiet hours (legacy and normalized shapes supported). */
-    digest: v.optional(v.any()),
-    /** Two-step deletion: request → execute via DELETE /api/user/data. */
-    deletion: v.optional(v.any()),
-    dashboardLayout: v.optional(v.any()),
-    onboardingSteps: v.optional(v.any()),
-    savedViews: v.optional(v.any()),
-    milestones: v.optional(v.any()),
-    weeklySummarySnippet: v.optional(v.string()),
-    weeklySummaryAt: v.optional(v.number()),
-    /** Throttle notification dispatch (cron). */
-    lastNotifiedAt: v.optional(v.number()),
-    updatedAt: v.number()
-  }).index("by_user", ["userId"]),
-
-  /** In-app notifications (job or authenticated writers). */
-  notifications: defineTable({
-    userId: v.string(),
-    title: v.string(),
-    body: v.string(),
-    read: v.boolean(),
-    createdAt: v.number(),
-    kind: v.optional(v.string())
-  }).index("by_user", ["userId"]),
-
-  /** Proof of completed erasure; blocks repeat until new prefs row clears it (see upsertPatch). */
-  userErasureLedger: defineTable({
-    userId: v.string(),
-    completedAt: v.number(),
-    counts: v.optional(v.any())
-  }).index("by_user", ["userId"]),
-
-  /** Async data export jobs (Phase 2 scaffold). */
-  dataExports: defineTable({
-    userId: v.string(),
-    status: v.union(
-      v.literal("pending"),
-      v.literal("ready"),
-      v.literal("expired")
-    ),
-    url: v.optional(v.string()),
-    error: v.optional(v.string()),
-    createdAt: v.number(),
-    expiresAt: v.optional(v.number())
-  }).index("by_user", ["userId"]),
-
-  /** Serverless-friendly rate limits (key = e.g. userId:delete-request). */
-  rateLimitBuckets: defineTable({
-    key: v.string(),
-    windowEnds: v.number(),
-    count: v.number()
-  }).index("by_key", ["key"]),
-
-  /** Async work started from Next (e.g. upload ingest); polled via GET /api/jobs/[jobId]. */
-  backgroundJobs: defineTable({
-    userId: v.string(),
-    status: v.union(
-      v.literal("processing"),
-      v.literal("complete"),
-      v.literal("failed")
-    ),
-    kind: v.optional(v.string()),
-    result: v.optional(v.any()),
-    error: v.optional(v.string()),
+  checklist: defineTable({
+    propertyId: v.id("property"),
+    bookingId: v.id("booking"),
+    unitId: v.id("unit"),
+    taskType,
+    taskDescription: v.string(),
+    dueDate: v.string(),
+    assignedTo: v.optional(v.id("manager")),
+    status: checklistStatus,
     createdAt: v.number(),
     updatedAt: v.number()
-  }).index("by_user", ["userId"])
+  })
+    .index("by_property", ["propertyId"])
+    .index("by_booking", ["bookingId"]),
+
+  occupancySnapshot: defineTable({
+    propertyId: v.id("property"),
+    snapshotDate: v.string(),
+    totalUnits: v.number(),
+    occupiedUnits: v.number(),
+    occupancyRate: v.number(),
+    revenueNgn: v.number(),
+    bookingSources: v.object({
+      whatsapp: v.number(),
+      telegram: v.number(),
+      instagram: v.number(),
+      direct: v.number()
+    }),
+    createdAt: v.number()
+  }).index("by_property_date", ["propertyId", "snapshotDate"]),
+
+  auditLog: defineTable({
+    propertyId: v.id("property"),
+    action: auditAction,
+    entityType: auditEntityType,
+    entityId: v.string(),
+    oldValues: v.optional(v.any()),
+    newValues: v.optional(v.any()),
+    actorId: v.optional(v.id("manager")),
+    createdAt: v.number()
+  })
+    .index("by_property", ["propertyId"])
+    .index("by_property_created", ["propertyId", "createdAt"])
 });

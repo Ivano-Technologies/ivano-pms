@@ -1,0 +1,8 @@
+export default function BookingsPage() {
+  return (
+    <div>
+      <h1 className="text-2xl font-semibold">Bookings</h1>
+      {/* TODO: Build UI — Week 2 */}
+    </div>
+  );
+}

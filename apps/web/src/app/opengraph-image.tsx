@@ -7,7 +7,7 @@ import { BRAND_TAGLINE, PRODUCT_NAME } from "@/lib/brand";
 
 export const runtime = "nodejs";
 
-export const alt = `${PRODUCT_NAME} — Operational intelligence for enterprise infrastructure`;
+export const alt = `${PRODUCT_NAME} — ${BRAND_TAGLINE}`;
 
 export const size = {
   width: 1200,

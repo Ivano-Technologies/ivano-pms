@@ -5,6 +5,7 @@ import { Geist_Mono, Inter, Playfair_Display, Space_Grotesk } from "next/font/go
 import { Toaster } from "sonner";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BRAND_DESCRIPTION, BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
@@ -36,7 +37,9 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+    (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000")
+      .trim()
+      .replace(/^["']|["']$/g, "")
   ),
   title: {
     default: BRAND_NAME,
@@ -79,10 +82,12 @@ export default function RootLayout({
       <body className="font-sans flex min-h-full flex-col">
         <ThemeProvider>
           <ClerkProvider>
-            <TooltipProvider delayDuration={200}>
-              {children}
-              <Toaster richColors position="top-right" closeButton />
-            </TooltipProvider>
+            <ConvexClientProvider>
+              <TooltipProvider delayDuration={200}>
+                {children}
+                <Toaster richColors position="top-right" closeButton />
+              </TooltipProvider>
+            </ConvexClientProvider>
           </ClerkProvider>
         </ThemeProvider>
       </body>
