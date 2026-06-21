@@ -20,6 +20,7 @@ import type * as functions_property from "../functions/property.js";
 import type * as functions_units from "../functions/units.js";
 import type * as functions_webhooks from "../functions/webhooks.js";
 import type * as lib_auth from "../lib/auth.js";
+import type * as lib_bookingStates from "../lib/bookingStates.js";
 import type * as lib_bookingStats from "../lib/bookingStats.js";
 import type * as lib_customFunctions from "../lib/customFunctions.js";
 import type * as lib_nlp from "../lib/nlp.js";
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   "functions/units": typeof functions_units;
   "functions/webhooks": typeof functions_webhooks;
   "lib/auth": typeof lib_auth;
+  "lib/bookingStates": typeof lib_bookingStates;
   "lib/bookingStats": typeof lib_bookingStats;
   "lib/customFunctions": typeof lib_customFunctions;
   "lib/nlp": typeof lib_nlp;
