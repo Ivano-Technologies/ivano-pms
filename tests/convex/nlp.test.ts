@@ -1,12 +1,8 @@
 import { beforeAll, describe, expect, it } from "vitest";
 
-import { internal } from "../_generated/api";
-import {
-  api,
-  createTestConvex,
-  seedAuthedManager
-} from "../test/helpers";
-import { extractMessageKeywords } from "../lib/nlp";
+import { internal } from "../../convex/_generated/api";
+import { extractMessageKeywords } from "../../convex/lib/nlp";
+import { api, createTestConvex, seedAuthedManager } from "./helpers";
 
 const REFERENCE_DATE = "2026-06-15";
 
@@ -181,5 +177,37 @@ describe("processWebhookEvent NLP", () => {
 
     expect(message?.extractedCheckIn).toBe("2026-07-20");
     expect(message?.extractedUnitType).toBe("suite");
+  });
+});
+
+describe("listChannelMessagesForVerification", () => {
+  it("returns messages for a property when secret is valid", async () => {
+    const t = createTestConvex();
+    const seed = await seedAuthedManager(t);
+    const now = Date.now();
+
+    await t.run(async (ctx) => {
+      await ctx.db.insert("bookingChannelMessage", {
+        propertyId: seed.propertyId,
+        channel: "whatsapp",
+        senderName: "Verify Guest",
+        messageText: "Verification listing test message",
+        status: "new",
+        createdAt: now,
+        updatedAt: now
+      });
+    });
+
+    const messages = await t.mutation(
+      api.functions.webhooks.listChannelMessagesForVerification,
+      {
+        secret: "test-internal-secret",
+        propertyId: seed.propertyId,
+        messageText: "Verification listing test message"
+      }
+    );
+
+    expect(messages).toHaveLength(1);
+    expect(messages[0]?.senderName).toBe("Verify Guest");
   });
 });

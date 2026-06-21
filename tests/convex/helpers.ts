@@ -1,9 +1,11 @@
+/// <reference types="vite/client" />
+
 import { convexTest } from "convex-test";
 
-import { api } from "../_generated/api";
-import schema from "../schema";
+import { api } from "../../convex/_generated/api";
+import schema from "../../convex/schema";
 
-export const modules = import.meta.glob("../**/*.ts");
+export const modules = import.meta.glob("../../convex/**/*.ts");
 
 export function createTestConvex() {
   return convexTest(schema, modules);

@@ -43,7 +43,9 @@ Copy [`.env.example`](.env.example) to `apps/web/.env.local`.
 4. In Convex dashboard, confirm a `manager` row exists with `clerkUserId` matching the signed-in Clerk user ID.
 5. For Vercel preview: add Clerk keys to the preview env and add the preview URL to Clerk **Allowed origins**.
 
-For Playwright (optional, Week 2 stretch): store `CLERK_TEST_USER_EMAIL` / `CLERK_TEST_USER_PASSWORD` in `apps/web/.env.local` only — never commit.
+For Playwright webhook E2E: set `WEBHOOK_SECRET` in `apps/web/.env.local` (defaults to `test-webhook-secret-12345` in tests if unset). Optional `WEBHOOK_TEST_URL` overrides `http://localhost:3000`.
+
+For Playwright dashboard stretch (optional): store `CLERK_TEST_USER_EMAIL` / `CLERK_TEST_USER_PASSWORD` in `apps/web/.env.local` only — never commit.
 
 ## Start development (2 terminals)
 
@@ -89,6 +91,8 @@ Optional `propertyId` scopes the backfill to one property.
 | Next.js landing | http://localhost:3000 |
 | Dashboard (Clerk required) | http://localhost:3000/dashboard |
 | Webhook intake | See [`docs/webhooks.md`](docs/webhooks.md) |
+| Webhook E2E smoke | `node scripts/verify-webhook-convex.mjs` |
+| Playwright webhooks | `pnpm test:e2e` (see [`docs/week2-verification.md`](docs/week2-verification.md)) |
 | Convex lint | `pnpm lint:convex` |
 | Web build | `pnpm build:web` |
 

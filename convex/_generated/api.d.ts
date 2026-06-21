@@ -14,6 +14,7 @@ import type * as functions_channelMessages from "../functions/channelMessages.js
 import type * as functions_dashboard from "../functions/dashboard.js";
 import type * as functions_guests from "../functions/guests.js";
 import type * as functions_managers from "../functions/managers.js";
+import type * as functions_nlp from "../functions/nlp.js";
 import type * as functions_occupancy from "../functions/occupancy.js";
 import type * as functions_property from "../functions/property.js";
 import type * as functions_units from "../functions/units.js";
@@ -21,6 +22,7 @@ import type * as functions_webhooks from "../functions/webhooks.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_bookingStats from "../lib/bookingStats.js";
 import type * as lib_customFunctions from "../lib/customFunctions.js";
+import type * as lib_nlp from "../lib/nlp.js";
 import type * as lib_secrets from "../lib/secrets.js";
 import type * as lib_seedData from "../lib/seedData.js";
 import type * as seed from "../seed.js";
@@ -38,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   "functions/dashboard": typeof functions_dashboard;
   "functions/guests": typeof functions_guests;
   "functions/managers": typeof functions_managers;
+  "functions/nlp": typeof functions_nlp;
   "functions/occupancy": typeof functions_occupancy;
   "functions/property": typeof functions_property;
   "functions/units": typeof functions_units;
@@ -45,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   "lib/auth": typeof lib_auth;
   "lib/bookingStats": typeof lib_bookingStats;
   "lib/customFunctions": typeof lib_customFunctions;
+  "lib/nlp": typeof lib_nlp;
   "lib/secrets": typeof lib_secrets;
   "lib/seedData": typeof lib_seedData;
   seed: typeof seed;

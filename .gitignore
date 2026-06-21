@@ -33,5 +33,6 @@ apps/web/blob-report/
 playwright/.cache/
 apps/web/playwright/.auth/
 apps/web/e2e/progress/*.png
+apps/web/e2e/.e2e-context.json
 apps/web/playwright-run.log
 .playwright-mcp/

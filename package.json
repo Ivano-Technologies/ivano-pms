@@ -7,6 +7,8 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:web": "pnpm --filter @ivano/web test",
+    "test:e2e": "pnpm --filter @ivano/web test:e2e",
+    "verify:webhook": "node scripts/verify-webhook-convex.mjs",
     "lint": "eslint convex",
     "lint:convex": "eslint convex",
     "dev": "pnpm web:dev",

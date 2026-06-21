@@ -5,7 +5,7 @@ import {
   authedClient,
   createTestConvex,
   seedAuthedManager
-} from "../test/helpers";
+} from "./helpers";
 
 describe("getBookingsByDateRange", () => {
   it("returns bookings overlapping the date range", async () => {

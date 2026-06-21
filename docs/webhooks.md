@@ -58,6 +58,17 @@ curl -X POST http://localhost:3000/api/webhooks \
 
 100 requests per minute per `WEBHOOK_SECRET` (in-memory per server instance). Returns **429** with `Retry-After` when exceeded.
 
+## Smoke verification (Week 2)
+
+After `npx convex dev` and `pnpm web:dev` are running, with `DEFAULT_PROPERTY_ID` set:
+
+```bash
+pnpm verify:webhook
+# or: node scripts/verify-webhook-convex.mjs
+```
+
+Playwright E2E: `pnpm test:e2e` (see [`docs/week2-verification.md`](week2-verification.md)).
+
 ## Phase 2 migration
 
 If volume exceeds ~1,000 bookings/month, extract this handler to Express on Railway. Convex mutation calls stay identical.
