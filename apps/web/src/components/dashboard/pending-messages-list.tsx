@@ -8,7 +8,7 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatMessageTimestamp, truncateText } from "@/lib/format";
+import { formatMessageExtractionBadge, formatMessageTimestamp, truncateText } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export type PendingMessageView = {
@@ -18,6 +18,7 @@ export type PendingMessageView = {
   text: string;
   timestamp: number;
   status: string;
+  extractionBadge?: string;
 };
 
 type PendingMessagesListProps = {
@@ -122,6 +123,11 @@ export default function PendingMessagesList({
                       </time>
                     </div>
                     <p className="text-muted-foreground mt-0.5 text-xs">{meta.label}</p>
+                    {message.extractionBadge ? (
+                      <span className="bg-primary/10 text-primary mt-1 inline-flex rounded-full px-2 py-0.5 text-xs font-medium">
+                        {message.extractionBadge}
+                      </span>
+                    ) : null}
                     <p className="text-muted-foreground mt-1 text-sm">
                       {truncateText(message.text, 60)}
                     </p>

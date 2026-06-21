@@ -73,6 +73,14 @@ npx convex run seed:seedReset '{"secret":"YOUR_INTERNAL_JOB_SECRET"}'
 
 Update `DEFAULT_PROPERTY_ID` if the returned `propertyId` changed.
 
+`seedReset` / `seedDemoDataV2` automatically backfill NLP fields on channel messages after insert (Task 2.4). To re-run extraction on existing messages without resetting seed data:
+
+```bash
+npx convex run functions/nlp:backfillMessageNlp '{"secret":"YOUR_INTERNAL_JOB_SECRET"}'
+```
+
+Optional `propertyId` scopes the backfill to one property.
+
 ## Verify
 
 | Check | Command / URL |

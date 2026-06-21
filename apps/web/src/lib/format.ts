@@ -29,7 +29,44 @@ export function truncateText(text: string, maxLength: number): string {
   return `${text.slice(0, maxLength - 1).trim()}…`;
 }
 
-/** Bookings in non-terminal pipeline statuses. */
+export function formatMessageExtractionBadge(message: {
+  extractedCheckIn?: string;
+  extractedCheckOut?: string;
+  extractedGuestNames?: string[];
+  extractedUnitType?: string;
+}): string | undefined {
+  const parts: string[] = [];
+
+  if (message.extractedCheckIn && message.extractedCheckOut) {
+    const checkIn = formatShortIsoDate(message.extractedCheckIn);
+    const checkOut = formatShortIsoDate(message.extractedCheckOut);
+    parts.push(`${checkIn}–${checkOut}`);
+  } else if (message.extractedCheckIn) {
+    parts.push(formatShortIsoDate(message.extractedCheckIn));
+  }
+
+  if (message.extractedUnitType) {
+    parts.push(message.extractedUnitType);
+  }
+
+  if (message.extractedGuestNames?.[0]) {
+    parts.push(message.extractedGuestNames[0]);
+  }
+
+  return parts.length > 0 ? parts.join(" · ") : undefined;
+}
+
+function formatShortIsoDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  if (!year || !month || !day) {
+    return isoDate;
+  }
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric"
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+}
+
 export function countActiveBookings(
   bookingCountByStatus: Record<string, number>
 ): number {

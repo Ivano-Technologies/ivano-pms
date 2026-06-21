@@ -1,6 +1,8 @@
 import type { GenericMutationCtx } from "convex/server";
 import type { DataModel, Id } from "../_generated/dataModel";
 
+import { backfillMessagesForProperty } from "../functions/nlp";
+
 type SeedCtx = GenericMutationCtx<DataModel>;
 
 export type SeedResult = {
@@ -434,6 +436,8 @@ export async function insertDemoData(ctx: SeedCtx): Promise<SeedResult> {
       updatedAt: now
     });
   }
+
+  await backfillMessagesForProperty(ctx, propertyId);
 
   await ctx.db.insert("occupancySnapshot", {
     propertyId,

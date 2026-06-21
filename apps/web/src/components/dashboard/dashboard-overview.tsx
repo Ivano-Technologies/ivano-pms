@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import StatsCards from "@/components/dashboard/stats-cards";
 import PendingMessagesList from "@/components/dashboard/pending-messages-list";
 import { Skeleton } from "@/components/ui/skeleton";
-import { countActiveBookings } from "@/lib/format";
+import { countActiveBookings, formatMessageExtractionBadge } from "@/lib/format";
 
 import { api } from "../../../../../convex/_generated/api";
 
@@ -61,7 +61,8 @@ export function DashboardOverview() {
       sender: message.senderName,
       text: message.messageText,
       timestamp: message.createdAt,
-      status: message.status
+      status: message.status,
+      extractionBadge: formatMessageExtractionBadge(message)
     })) ?? [];
 
   const managerMissing = isUserLoaded && manager === null;

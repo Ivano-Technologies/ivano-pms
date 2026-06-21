@@ -1,5 +1,6 @@
 import { mutation } from "../_generated/server";
 import { v } from "convex/values";
+import { extractMessageKeywords, referenceDateFromTimestamp } from "../lib/nlp";
 import { assertInternalJobSecret } from "../lib/secrets";
 
 const messageChannel = v.union(
@@ -30,6 +31,12 @@ export const processWebhookEvent = mutation({
     const now = Date.now();
 
     if (args.event.type === "channel.message") {
+      const referenceDate = referenceDateFromTimestamp(now);
+      const extracted = extractMessageKeywords(
+        args.event.messageText,
+        referenceDate
+      );
+
       return await ctx.db.insert("bookingChannelMessage", {
         propertyId: args.propertyId,
         channel: args.event.channel,
@@ -38,6 +45,7 @@ export const processWebhookEvent = mutation({
         senderPhone: args.event.senderPhone,
         telegramUserId: args.event.telegramUserId,
         instagramUserId: args.event.instagramUserId,
+        ...extracted,
         status: "new",
         createdAt: now,
         updatedAt: now
