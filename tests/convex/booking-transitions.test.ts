@@ -240,3 +240,98 @@ describe("getBookingById", () => {
     expect(booking.status).toBe("confirmed");
   });
 });
+
+describe("state machine edge cases", () => {
+  it("records three audit entries for rapid sequential transitions", async () => {
+    const t = createTestConvex();
+    const seed = await seedAuthedManager(t);
+    const asManager = authedClient(t, seed.clerkUserId);
+    const bookingId = await insertBooking(t, seed, "inquiry");
+
+    await asManager.mutation(api.functions.bookings.updateBookingStatus, {
+      bookingId,
+      newStatus: "pending_confirmation"
+    });
+    await asManager.mutation(api.functions.bookings.updateBookingStatus, {
+      bookingId,
+      newStatus: "confirmed"
+    });
+    await asManager.mutation(api.functions.bookings.updateBookingStatus, {
+      bookingId,
+      newStatus: "checked_in"
+    });
+
+    const booking = await t.run(async (ctx) => ctx.db.get("booking", bookingId));
+    expect(booking?.status).toBe("checked_in");
+
+    const logs = await t.run(async (ctx) =>
+      ctx.db
+        .query("auditLog")
+        .withIndex("by_property", (q) => q.eq("propertyId", seed.propertyId))
+        .collect()
+    );
+    const statusLogs = logs
+      .filter((l) => l.entityId === bookingId && l.action === "status_change")
+      .sort((a, b) => a.createdAt - b.createdAt);
+
+    expect(statusLogs).toHaveLength(3);
+    expect(statusLogs.map((l) => l.newValues?.status)).toEqual([
+      "pending_confirmation",
+      "confirmed",
+      "checked_in"
+    ]);
+  });
+
+  it("cancels from confirmed state", async () => {
+    const t = createTestConvex();
+    const seed = await seedAuthedManager(t);
+    const asManager = authedClient(t, seed.clerkUserId);
+    const bookingId = await insertBooking(t, seed, "confirmed");
+
+    await asManager.mutation(api.functions.bookings.updateBookingStatus, {
+      bookingId,
+      newStatus: "cancelled"
+    });
+
+    const booking = await t.run(async (ctx) => ctx.db.get("booking", bookingId));
+    expect(booking?.status).toBe("cancelled");
+  });
+
+  it("cancels from checked_in state (emergency override path)", async () => {
+    const t = createTestConvex();
+    const seed = await seedAuthedManager(t);
+    const asManager = authedClient(t, seed.clerkUserId);
+    const bookingId = await insertBooking(t, seed, "checked_in");
+
+    await asManager.mutation(api.functions.bookings.updateBookingStatus, {
+      bookingId,
+      newStatus: "cancelled"
+    });
+
+    const booking = await t.run(async (ctx) => ctx.db.get("booking", bookingId));
+    expect(booking?.status).toBe("cancelled");
+  });
+
+  it("stores long transition reasons without truncation (no max-length validation yet)", async () => {
+    const t = createTestConvex();
+    const seed = await seedAuthedManager(t);
+    const asManager = authedClient(t, seed.clerkUserId);
+    const bookingId = await insertBooking(t, seed, "inquiry");
+    const longReason = "x".repeat(501);
+
+    await asManager.mutation(api.functions.bookings.updateBookingStatus, {
+      bookingId,
+      newStatus: "confirmed",
+      reason: longReason
+    });
+
+    const logs = await t.run(async (ctx) =>
+      ctx.db
+        .query("auditLog")
+        .withIndex("by_property", (q) => q.eq("propertyId", seed.propertyId))
+        .collect()
+    );
+    const entry = logs.find((l) => l.entityId === bookingId);
+    expect(entry?.newValues?.reason).toBe(longReason);
+  });
+});

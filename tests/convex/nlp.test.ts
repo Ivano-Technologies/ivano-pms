@@ -121,6 +121,98 @@ describe("extractMessageKeywords", () => {
   });
 });
 
+describe("extractMessageKeywords edge cases", () => {
+  it("ignores invalid day in month name dates (July 99)", () => {
+    const result = extractMessageKeywords("July 99 booking", REFERENCE_DATE);
+    expect(result.extractedCheckIn).toBeUndefined();
+    expect(result.extractedCheckOut).toBeUndefined();
+  });
+
+  it("ignores ISO-like invalid month/day strings", () => {
+    const result = extractMessageKeywords(
+      "2025-13-40 booking",
+      REFERENCE_DATE
+    );
+    expect(result.extractedCheckIn).toBeUndefined();
+    expect(result.extractedCheckOut).toBeUndefined();
+  });
+
+  it("extracts dates without guest name (names field omitted when empty)", () => {
+    const result = extractMessageKeywords(
+      "Booking for 2 nights starting July 10",
+      REFERENCE_DATE
+    );
+    expect(result.extractedCheckIn).toBe("2026-07-10");
+    expect(result.extractedCheckOut).toBe("2026-07-12");
+    expect(result.extractedGuestNames).toBeUndefined();
+  });
+
+  it("picks first unit type from fixed priority list when multiple match", () => {
+    const result = extractMessageKeywords(
+      "Need room or suite for July 15-17?",
+      REFERENCE_DATE
+    );
+    // UNIT_TYPES scan order: villa → suite → studio → room (first substring hit wins)
+    expect(result.extractedUnitType).toBe("suite");
+    expect(result.extractedCheckIn).toBe("2026-07-15");
+    expect(result.extractedCheckOut).toBe("2026-07-17");
+  });
+
+  it("partially parses accented names (ASCII regex stops at non-ASCII)", () => {
+    const result = extractMessageKeywords(
+      "Booking for José & Maria, July 1–3",
+      REFERENCE_DATE
+    );
+    // Regex captures "Jos" before é; "Maria" after comma is not matched; en-dash range ignored
+    expect(result.extractedGuestNames).toEqual(["Jos"]);
+    expect(result.extractedCheckIn).toBe("2026-07-01");
+    expect(result.extractedCheckOut).toBeUndefined();
+  });
+
+  it("backfills NLP on multiple messages without dropping fields", async () => {
+    const t = createTestConvex();
+    const seed = await seedAuthedManager(t);
+    const now = Date.now();
+
+    const texts = [
+      "Need suite July 20-22 for Tunde",
+      "Room for 2 nights starting July 18",
+      "Villa for Fatima Bello on July 25, 3 nights"
+    ];
+
+    const messageIds = await t.run(async (ctx) => {
+      const ids = [];
+      for (const messageText of texts) {
+        ids.push(
+          await ctx.db.insert("bookingChannelMessage", {
+            propertyId: seed.propertyId,
+            channel: "whatsapp",
+            senderName: "Guest",
+            messageText,
+            status: "new",
+            createdAt: now,
+            updatedAt: now
+          })
+        );
+      }
+      return ids;
+    });
+
+    await t.mutation(internal.functions.nlp.backfillMessageNlp, {
+      secret: "test-internal-secret",
+      propertyId: seed.propertyId
+    });
+
+    for (const messageId of messageIds) {
+      const message = await t.run(async (ctx) =>
+        ctx.db.get("bookingChannelMessage", messageId)
+      );
+      expect(message?.extractedCheckIn).toBeTruthy();
+      expect(message?.extractedCheckOut).toBeTruthy();
+    }
+  });
+});
+
 describe("backfillMessageNlp", () => {
   it("backfills extracted fields on seeded messages", async () => {
     const t = createTestConvex();
