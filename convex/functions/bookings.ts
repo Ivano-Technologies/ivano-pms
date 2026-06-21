@@ -49,6 +49,31 @@ const bookingDoc = v.object({
   updatedAt: v.number()
 });
 
+export const getBookingsByDateRange = authedQuery({
+  args: {
+    startDate: v.string(),
+    endDate: v.string()
+  },
+  returns: v.array(bookingDoc),
+  handler: async (ctx, args) => {
+    const propertyId = ctx.manager.propertyId;
+
+    const bookings = await ctx.db
+      .query("booking")
+      .withIndex("by_property", (q) => q.eq("propertyId", propertyId))
+      .take(100);
+
+    const overlapping = bookings.filter((booking) => {
+      const checkout = booking.checkOutDate ?? args.endDate;
+      return booking.checkInDate <= args.endDate && checkout > args.startDate;
+    });
+
+    return overlapping.sort((a, b) =>
+      a.checkInDate.localeCompare(b.checkInDate)
+    );
+  }
+});
+
 export const getBookings = authedQuery({
   args: {
     status: v.optional(bookingStatus),
@@ -85,7 +110,14 @@ export const createBooking = authedMutation({
     adultsCount: v.optional(v.number()),
     childrenCount: v.optional(v.number()),
     totalPriceNgn: v.number(),
-    notes: v.optional(v.string())
+    notes: v.optional(v.string()),
+    status: v.optional(
+      v.union(
+        v.literal("inquiry"),
+        v.literal("pending_confirmation"),
+        v.literal("confirmed")
+      )
+    )
   },
   returns: v.id("booking"),
   handler: async (ctx, args) => {
@@ -111,7 +143,7 @@ export const createBooking = authedMutation({
       checkOutDate: args.checkOutDate,
       adultsCount: args.adultsCount ?? 1,
       childrenCount: args.childrenCount ?? 0,
-      status: "inquiry",
+      status: args.status ?? "inquiry",
       sourceChannel: args.sourceChannel,
       notes: args.notes,
       totalPriceNgn: args.totalPriceNgn,
