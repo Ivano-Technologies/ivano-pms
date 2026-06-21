@@ -15,7 +15,7 @@
     "semantic_hash": ""
   },
   "apps/web/next-env.d.ts": {
-    "mtime": 1781934732.1856668,
+    "mtime": 1782031094.700858,
     "ast_hash": "2a74d3909800ca5467fa83b0ab4a4890",
     "semantic_hash": ""
   },
@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "apps/web/package.json": {
-    "mtime": 1781928849.9088943,
-    "ast_hash": "82fcdb147a758df07f0939ca5b07b2ac",
+    "mtime": 1782030380.3566456,
+    "ast_hash": "3674f7eed1fb60818c5a337fe0c8b118",
     "semantic_hash": ""
   },
   "apps/web/postcss.config.mjs": {
@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/dashboard/bookings/page.tsx": {
-    "mtime": 1781928604.7157907,
-    "ast_hash": "cf7edb859b3f46db6f7b5548870fe3bb",
+    "mtime": 1782027669.6641047,
+    "ast_hash": "bbabada81ee740f56971280d75e2675f",
     "semantic_hash": ""
   },
   "apps/web/src/app/dashboard/channels/page.tsx": {
@@ -90,8 +90,8 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/dashboard/guests/page.tsx": {
-    "mtime": 1781928605.134358,
-    "ast_hash": "84e5f07cd53cceb90366daa0ca24829d",
+    "mtime": 1782054111.3981607,
+    "ast_hash": "b83aa600a90645441eefbd78ef3fc526",
     "semantic_hash": ""
   },
   "apps/web/src/app/dashboard/layout.tsx": {
@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/dashboard/page.tsx": {
-    "mtime": 1781928604.7044284,
-    "ast_hash": "e4934da3fbb3016ad005848387afd997",
+    "mtime": 1782026338.4077647,
+    "ast_hash": "0ecb3d08bc3ae15c39959913aa49b8b8",
     "semantic_hash": ""
   },
   "apps/web/src/app/dashboard/reports/page.tsx": {
@@ -270,8 +270,8 @@
     "semantic_hash": ""
   },
   "apps/web/vitest.config.ts": {
-    "mtime": 1775091541.4108536,
-    "ast_hash": "f2585c8b047cd6aa7528451b693927f6",
+    "mtime": 1782028569.8259275,
+    "ast_hash": "5231601183a7e8016862ec4ca62d0c84",
     "semantic_hash": ""
   },
   "convex.json": {
@@ -285,8 +285,8 @@
     "semantic_hash": ""
   },
   "convex/functions/bookings.ts": {
-    "mtime": 1781934647.1599245,
-    "ast_hash": "14a1679c6998a32a54432873270609cc",
+    "mtime": 1782031685.9358587,
+    "ast_hash": "68323450c5eb3a2a818a5d22eaecaf86",
     "semantic_hash": ""
   },
   "convex/functions/channelMessages.ts": {
@@ -295,8 +295,8 @@
     "semantic_hash": ""
   },
   "convex/functions/guests.ts": {
-    "mtime": 1781934662.5795786,
-    "ast_hash": "6440e5e11c0d8238ffd0412ce66996bf",
+    "mtime": 1782054061.100506,
+    "ast_hash": "22e73ba4730b7cf5465315e4af0e84e8",
     "semantic_hash": ""
   },
   "convex/functions/occupancy.ts": {
@@ -330,8 +330,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1781934255.0131814,
-    "ast_hash": "cc7031c8c60c8c091a7e0b7c6b0618c3",
+    "mtime": 1782030039.3331947,
+    "ast_hash": "da8efaa004f3f2f39662cbc5975806e0",
     "semantic_hash": ""
   },
   "tsconfig.base.json": {
@@ -345,8 +345,8 @@
     "semantic_hash": ""
   },
   "DEVELOPMENT.md": {
-    "mtime": 1781934693.825249,
-    "ast_hash": "25a5c0675c1ad22b694e675fb5e60a9f",
+    "mtime": 1782030028.4827614,
+    "ast_hash": "3de5e6c6345d303dc2636b01758d0f95",
     "semantic_hash": ""
   },
   "IVANO_PMS_PHASE_0_WEEK_1_KICKOFF.md": {
@@ -450,7 +450,7 @@
     "semantic_hash": ""
   },
   "apps/web/public/apple-touch-icon.png": {
-    "mtime": 1781934767.572502,
+    "mtime": 1782054162.3164046,
     "ast_hash": "b5801710a6c8b325fc9036273362b76c",
     "semantic_hash": ""
   },
@@ -475,7 +475,7 @@
     "semantic_hash": ""
   },
   "apps/web/public/favicon-32x32.png": {
-    "mtime": 1781934767.5594947,
+    "mtime": 1782054162.3034146,
     "ast_hash": "4817494a049267d69ab347ebca0b9e2e",
     "semantic_hash": ""
   },
@@ -545,8 +545,8 @@
     "semantic_hash": ""
   },
   "convex/functions/webhooks.ts": {
-    "mtime": 1781930680.1644082,
-    "ast_hash": "acfa35d22aab667a29f324497086b64e",
+    "mtime": 1782029962.2763305,
+    "ast_hash": "cc3fe12d31bfb72f6ae66f09d1d1fcc3",
     "semantic_hash": ""
   },
   "MIGRATION.md": {
@@ -555,8 +555,8 @@
     "semantic_hash": ""
   },
   "docs/webhooks.md": {
-    "mtime": 1781930696.0875978,
-    "ast_hash": "e28e75a011308792e95161e8e6259e3e",
+    "mtime": 1782030342.1775563,
+    "ast_hash": "ec8a18000e5033103cb819b0887d2ca5",
     "semantic_hash": ""
   },
   "scripts/test-webhook.mjs": {
@@ -610,13 +610,208 @@
     "semantic_hash": ""
   },
   "convex/lib/seedData.ts": {
-    "mtime": 1781934638.4632132,
-    "ast_hash": "2ce1e70d223f4d12b7a7a638484b489f",
+    "mtime": 1782029515.2175283,
+    "ast_hash": "3e376508f789b8e16d17449167cce069",
     "semantic_hash": ""
   },
   "IVANO_PMS_PHASE_1_WEEK_2_KICKOFF.md": {
     "mtime": 1781934302.804644,
     "ast_hash": "0d2b08b655fddae636738172829f7a91",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/dashboard/dashboard-overview.tsx": {
+    "mtime": 1782029482.6064253,
+    "ast_hash": "eb188f3c55126ef12ac3d22034bb0a1b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/dashboard/pending-messages-list.tsx": {
+    "mtime": 1782029475.5154731,
+    "ast_hash": "8eff168a205a88d116388887e3f33230",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/dashboard/stats-cards.tsx": {
+    "mtime": 1782026327.4094205,
+    "ast_hash": "249259418ddece2ed5ca6afdf73570de",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/format.ts": {
+    "mtime": 1782029466.4283352,
+    "ast_hash": "184dcdf56286b12203fcc3241b1f1bc9",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/bookings/booking-calendar.tsx": {
+    "mtime": 1782027728.9457889,
+    "ast_hash": "73dd89bf86122179ffb769153d12b1af",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/bookings/booking-detail-popover.tsx": {
+    "mtime": 1782031600.3524985,
+    "ast_hash": "3d6f2bca9cb47b31f417477c077597ad",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/bookings/bookings-calendar-view.tsx": {
+    "mtime": 1782027720.843694,
+    "ast_hash": "a83ebabf1e8538785d49ee4c36206d10",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/bookings/quick-create-booking-modal.tsx": {
+    "mtime": 1782027658.2295442,
+    "ast_hash": "980325022dd7935c0a025dddff98b5d7",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/booking-status-colors.ts": {
+    "mtime": 1782027628.3290992,
+    "ast_hash": "2b2df04a22201ad764f4f0aadacffc93",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/calendar-utils.ts": {
+    "mtime": 1782027633.2335796,
+    "ast_hash": "adda6a0d2b5130fc070b6abb37432968",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/bookings/__tests__/booking-calendar.test.tsx": {
+    "mtime": 1782028572.567575,
+    "ast_hash": "b242cab3eb5280e37e00cdd73f329a16",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/__tests__/calendar-utils.test.ts": {
+    "mtime": 1782028458.0477793,
+    "ast_hash": "35382e1aa33367ab5fe88d01f1063a86",
+    "semantic_hash": ""
+  },
+  "apps/web/src/test.setup.ts": {
+    "mtime": 1782028549.540697,
+    "ast_hash": "25dd850b6a95ab4be4aac52ddd406387",
+    "semantic_hash": ""
+  },
+  "convex/functions/nlp.ts": {
+    "mtime": 1782029397.9324875,
+    "ast_hash": "1299c13cc12d140c9cd8c7a5a249c993",
+    "semantic_hash": ""
+  },
+  "convex/lib/nlp.ts": {
+    "mtime": 1782029457.7365837,
+    "ast_hash": "e363675ef070a3994ec99fe96681dd8f",
+    "semantic_hash": ""
+  },
+  "convex/vitest.config.ts": {
+    "mtime": 1782030301.683185,
+    "ast_hash": "40d390ac56d8768b4a8f62a446fe51d0",
+    "semantic_hash": ""
+  },
+  "vitest.config.ts": {
+    "mtime": 1782028645.6228158,
+    "ast_hash": "76c487ef9f70043374bf5ee269844823",
+    "semantic_hash": ""
+  },
+  "apps/web/e2e/convex-helpers.mjs": {
+    "mtime": 1782030551.961076,
+    "ast_hash": "47f57dd6147a6ac083d863493f9c5212",
+    "semantic_hash": ""
+  },
+  "apps/web/e2e/global-setup.mjs": {
+    "mtime": 1782030451.9481452,
+    "ast_hash": "c1e78b8d88cd11b17ff8eaf657558ccb",
+    "semantic_hash": ""
+  },
+  "apps/web/e2e/webhook-helpers.mjs": {
+    "mtime": 1782030716.598587,
+    "ast_hash": "85a18dd08a7d58947d04592349f41e82",
+    "semantic_hash": ""
+  },
+  "apps/web/e2e/webhooks.spec.mjs": {
+    "mtime": 1782030505.523863,
+    "ast_hash": "aff684299494ee07b1cfaf516be8cad6",
+    "semantic_hash": ""
+  },
+  "apps/web/playwright.config.mjs": {
+    "mtime": 1782030505.6753154,
+    "ast_hash": "ed2e89fe8506b3ba98564702488afc3b",
+    "semantic_hash": ""
+  },
+  "scripts/verify-webhook-convex.mjs": {
+    "mtime": 1782030053.4051454,
+    "ast_hash": "09525eacfe0317bd331f287c8afae08b",
+    "semantic_hash": ""
+  },
+  "tests/convex/bookings.test.ts": {
+    "mtime": 1782030283.3640747,
+    "ast_hash": "244412741f2be650ccfcc85bf3465cb7",
+    "semantic_hash": ""
+  },
+  "tests/convex/helpers.ts": {
+    "mtime": 1782030300.4789188,
+    "ast_hash": "26c654518e5ca9152432718bc21047b1",
+    "semantic_hash": ""
+  },
+  "tests/convex/nlp.test.ts": {
+    "mtime": 1782032319.0742178,
+    "ast_hash": "9e62f7cfac66f9e434bb73693d36bad3",
+    "semantic_hash": ""
+  },
+  "docs/week2-verification.md": {
+    "mtime": 1782030023.5379972,
+    "ast_hash": "14d588705d376489872169c1b65ce7d0",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/booking-states.ts": {
+    "mtime": 1782031687.5817666,
+    "ast_hash": "ac8975ec4cf7363f1005f650665964f2",
+    "semantic_hash": ""
+  },
+  "convex/lib/bookingStates.ts": {
+    "mtime": 1782031684.6076305,
+    "ast_hash": "7f4f28cd9f89003cccf7762c0881fabb",
+    "semantic_hash": ""
+  },
+  "tests/convex/booking-transitions.test.ts": {
+    "mtime": 1782032294.1021616,
+    "ast_hash": "4d0b8b13f08408b28aa8cef27f2cbb80",
+    "semantic_hash": ""
+  },
+  "DEPLOYMENT.md": {
+    "mtime": 1782031536.8628209,
+    "ast_hash": "3d6c3f374afb9199f8c7aa9bb3489745",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/guests/delete-guest-dialog.tsx": {
+    "mtime": 1782054094.6389399,
+    "ast_hash": "bab087dda8f13a89e1467a278d5f3270",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/guests/guest-form-modal.tsx": {
+    "mtime": 1782054091.8037171,
+    "ast_hash": "ead50f0e850975fc43972644e5cee028",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/guests/guests-page-client.tsx": {
+    "mtime": 1782054128.8085134,
+    "ast_hash": "3d8b750394f275378b4c9dad9ef4146b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/guests/guests-table.tsx": {
+    "mtime": 1782054097.629881,
+    "ast_hash": "17d3997d06e481ab9dea0c67a1d70c5e",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/guest-utils.ts": {
+    "mtime": 1782054071.5461464,
+    "ast_hash": "b77ec95425579445fc7ef33e6b7d0888",
+    "semantic_hash": ""
+  },
+  "tests/convex/booking-edge-cases.test.ts": {
+    "mtime": 1782032272.062014,
+    "ast_hash": "a0ab1d4d7c2a7e5bc4623aedaff24ff6",
+    "semantic_hash": ""
+  },
+  "tests/convex/guests.test.ts": {
+    "mtime": 1782054116.9393828,
+    "ast_hash": "154d686f022899f13600ac6c8873715f",
+    "semantic_hash": ""
+  },
+  "docs/performance-targets.md": {
+    "mtime": 1782032568.9852598,
+    "ast_hash": "a2447369cf66d713db933ede3e4e4d98",
     "semantic_hash": ""
   }
 }
