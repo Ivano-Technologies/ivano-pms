@@ -1,6 +1,11 @@
 import { v } from "convex/values";
 
 import { assertPropertyAccess } from "../lib/auth";
+import {
+  getAvailableTransitions,
+  isValidTransition,
+  type BookingStatusType
+} from "../lib/bookingStates";
 import { authedMutation, authedQuery } from "../lib/customFunctions";
 
 const bookingType = v.union(
@@ -10,7 +15,7 @@ const bookingType = v.union(
   v.literal("lease")
 );
 
-const bookingStatus = v.union(
+export const bookingStatus = v.union(
   v.literal("inquiry"),
   v.literal("pending_confirmation"),
   v.literal("confirmed"),
@@ -47,6 +52,56 @@ const bookingDoc = v.object({
   paidNgn: v.number(),
   createdAt: v.number(),
   updatedAt: v.number()
+});
+
+const bookingWithGuestUnit = v.object({
+  _id: v.id("booking"),
+  _creationTime: v.number(),
+  propertyId: v.id("property"),
+  guestId: v.id("guest"),
+  unitId: v.id("unit"),
+  bookingType,
+  checkInDate: v.string(),
+  checkOutDate: v.optional(v.string()),
+  adultsCount: v.number(),
+  childrenCount: v.number(),
+  status: bookingStatus,
+  sourceChannel,
+  notes: v.optional(v.string()),
+  totalPriceNgn: v.number(),
+  paidNgn: v.number(),
+  createdAt: v.number(),
+  updatedAt: v.number(),
+  guestName: v.string(),
+  guestPhone: v.string(),
+  guestEmail: v.optional(v.string()),
+  unitNumber: v.string(),
+  unitType: v.string()
+});
+
+const auditTrailEntry = v.object({
+  _id: v.id("auditLog"),
+  action: v.union(
+    v.literal("create"),
+    v.literal("update"),
+    v.literal("delete"),
+    v.literal("status_change"),
+    v.literal("booking_convert"),
+    v.literal("payment_received")
+  ),
+  entityType: v.union(
+    v.literal("guest"),
+    v.literal("booking"),
+    v.literal("unit"),
+    v.literal("manager"),
+    v.literal("checklist")
+  ),
+  entityId: v.string(),
+  oldValues: v.optional(v.any()),
+  newValues: v.optional(v.any()),
+  actorId: v.optional(v.id("manager")),
+  actorName: v.optional(v.string()),
+  createdAt: v.number()
 });
 
 export const getBookingsByDateRange = authedQuery({
@@ -96,6 +151,93 @@ export const getBookings = authedQuery({
     }
 
     return bookings.sort((a, b) => b.createdAt - a.createdAt);
+  }
+});
+
+export const getBookingById = authedQuery({
+  args: {
+    bookingId: v.id("booking")
+  },
+  returns: bookingWithGuestUnit,
+  handler: async (ctx, args) => {
+    const booking = await ctx.db.get("booking", args.bookingId);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    assertPropertyAccess(ctx.manager, booking.propertyId);
+
+    const guest = await ctx.db.get("guest", booking.guestId);
+    if (!guest || guest.propertyId !== booking.propertyId) {
+      throw new Error("Guest not found");
+    }
+
+    const unit = await ctx.db.get("unit", booking.unitId);
+    if (!unit || unit.propertyId !== booking.propertyId) {
+      throw new Error("Unit not found");
+    }
+
+    return {
+      ...booking,
+      guestName: `${guest.firstName} ${guest.lastName}`,
+      guestPhone: guest.phone,
+      guestEmail: guest.email,
+      unitNumber: unit.unitNumber,
+      unitType: unit.unitType
+    };
+  }
+});
+
+export const getBookingAuditTrail = authedQuery({
+  args: {
+    bookingId: v.id("booking")
+  },
+  returns: v.array(auditTrailEntry),
+  handler: async (ctx, args) => {
+    const booking = await ctx.db.get("booking", args.bookingId);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    assertPropertyAccess(ctx.manager, booking.propertyId);
+
+    const logs = await ctx.db
+      .query("auditLog")
+      .withIndex("by_property", (q) =>
+        q.eq("propertyId", booking.propertyId)
+      )
+      .take(200);
+
+    const filtered = logs
+      .filter(
+        (log) =>
+          log.entityType === "booking" && log.entityId === args.bookingId
+      )
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 10);
+
+    const enriched = await Promise.all(
+      filtered.map(async (log) => {
+        let actorName: string | undefined;
+        if (log.actorId) {
+          const actor = await ctx.db.get("manager", log.actorId);
+          actorName = actor?.fullName;
+        }
+        return {
+          _id: log._id,
+          action: log.action,
+          entityType: log.entityType,
+          entityId: log.entityId,
+          oldValues: log.oldValues,
+          newValues: log.newValues,
+          actorId: log.actorId,
+          actorName,
+          createdAt: log.createdAt
+        };
+      })
+    );
+
+    return enriched;
   }
 });
 
@@ -157,9 +299,17 @@ export const createBooking = authedMutation({
 export const updateBookingStatus = authedMutation({
   args: {
     bookingId: v.id("booking"),
-    newStatus: bookingStatus
+    newStatus: bookingStatus,
+    reason: v.optional(v.string())
   },
-  returns: v.null(),
+  returns: v.object({
+    success: v.literal(true),
+    booking: v.object({
+      id: v.id("booking"),
+      status: bookingStatus,
+      updatedAt: v.number()
+    })
+  }),
   handler: async (ctx, args) => {
     const booking = await ctx.db.get("booking", args.bookingId);
     if (!booking) {
@@ -168,10 +318,30 @@ export const updateBookingStatus = authedMutation({
 
     assertPropertyAccess(ctx.manager, booking.propertyId);
 
+    const oldStatus = booking.status as BookingStatusType;
+    const newStatus = args.newStatus as BookingStatusType;
+
+    if (!isValidTransition(oldStatus, newStatus)) {
+      throw new Error(
+        `Cannot transition booking from ${oldStatus} to ${newStatus}`
+      );
+    }
+
     const now = Date.now();
     await ctx.db.patch("booking", args.bookingId, {
       status: args.newStatus,
       updatedAt: now
+    });
+
+    await ctx.db.insert("auditLog", {
+      propertyId: booking.propertyId,
+      entityType: "booking",
+      entityId: args.bookingId,
+      action: "status_change",
+      oldValues: { status: oldStatus },
+      newValues: { status: newStatus, reason: args.reason ?? null },
+      actorId: ctx.manager._id,
+      createdAt: now
     });
 
     if (args.newStatus === "checked_in" || args.newStatus === "checked_out") {
@@ -193,6 +363,24 @@ export const updateBookingStatus = authedMutation({
       });
     }
 
-    return null;
+    return {
+      success: true as const,
+      booking: {
+        id: args.bookingId,
+        status: args.newStatus,
+        updatedAt: now
+      }
+    };
+  }
+});
+
+/** Exposed for UI action buttons (mirrors convex/lib/booking-states). */
+export const getBookingStatusTransitions = authedQuery({
+  args: {
+    status: bookingStatus
+  },
+  returns: v.array(bookingStatus),
+  handler: async (_ctx, args) => {
+    return [...getAvailableTransitions(args.status as BookingStatusType)];
   }
 });
