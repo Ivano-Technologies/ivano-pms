@@ -188,7 +188,8 @@ export default defineSchema({
     .index("by_property", ["propertyId"])
     .index("by_property_status_created", ["propertyId", "status", "createdAt"]),
 
-  // SECURITY TODO (Week 6): encrypt accessToken at rest before production.
+  // accessToken and refreshToken are AES-256-GCM ciphertext (v1: prefix).
+  // Raw values never leave the Convex action boundary. See ADR-007 and channelTokenActions.ts.
   channelToken: defineTable({
     propertyId: v.id("property"),
     channel: messageChannel,
