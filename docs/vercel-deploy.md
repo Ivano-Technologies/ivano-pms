@@ -56,9 +56,9 @@ If Root is **`apps/api`**, this repo includes [`apps/api/vercel.json`](../apps/a
 | Build | *(default `next build`)* |
 | Output | *(Next default)* |
 
-Set env vars per [`apps/web/.env.example`](../apps/web/.env.example). **`NEXT_PUBLIC_API_BASE_URL`** should point at your deployed API (e.g. `https://eam.techivano.com/api`).
+Set env vars per [`apps/web/.env.example`](../apps/web/.env.example). **`NEXT_PUBLIC_API_BASE_URL`** should point at your deployed API (e.g. `https://pms.techivano.com/api`).
 
-**Same domain (`eam.techivano.com` → Next, `/api/*` → Express):** assign the **apex** domain to the **web** project and set **`BACKEND_API_ORIGIN`** on the web project to your **API** deployment origin (no trailing slash), e.g. `https://<api-project>.vercel.app`. [`apps/web/next.config.ts`](../apps/web/next.config.ts) adds rewrites so `GET /api/health` on the web hostname proxies to the API. Keep **`NEXT_PUBLIC_API_BASE_URL=https://eam.techivano.com/api`** so the dashboard calls the same origin.
+**Same domain (`pms.techivano.com` → Next, `/api/*` → Express):** assign the **apex** domain to the **web** project and set **`BACKEND_API_ORIGIN`** on the web project to your **API** deployment origin (no trailing slash), e.g. `https://<api-project>.vercel.app`. [`apps/web/next.config.ts`](../apps/web/next.config.ts) adds rewrites so `GET /api/health` on the web hostname proxies to the API. Keep **`NEXT_PUBLIC_API_BASE_URL=https://pms.techivano.com/api`** so the dashboard calls the same origin.
 
 **Alternative:** point **`NEXT_PUBLIC_API_BASE_URL`** at the API’s own URL (or `api.` subdomain) and set **`CORS_ORIGIN`** on the API to the web origin (below).
 
@@ -129,7 +129,7 @@ Run through this list before a client or stakeholder demo.
 - **API project:** Root **`/`** or **`apps/api`** (see §3 above), not the web app.
 - **Web project (Next.js):** Root Directory must be **`apps/web`**. If this is wrong in the Vercel UI, the frontend deploy will fail or serve the wrong app.
 
-### Backend (production API base, e.g. `https://eam.techivano.com`)
+### Backend (production API base, e.g. `https://pms.techivano.com`)
 
 - [ ] `GET /api/health` — JSON includes `ok: true`
 - [ ] `GET /api/licenses/mvp-report` — KPIs and rows as expected
@@ -146,7 +146,7 @@ Run through this list before a client or stakeholder demo.
 
 ### Deployment / CORS
 
-- [ ] API is reachable at your public domain (e.g. `https://eam.techivano.com`)
+- [ ] API is reachable at your public domain (e.g. `https://pms.techivano.com`)
 - [ ] Web app URL is known (e.g. `https://<project>.vercel.app` or custom domain)
 - [ ] **`CORS_ORIGIN`** on the **API** project includes the **exact** web origin (scheme + host, no trailing slash); comma-separate Preview + Production if both are used
 

@@ -11,5 +11,5 @@ export function getAppOrigin(): string {
     const host = vercel.replace(/^https?:\/\//, "");
     return `https://${host}`;
   }
-  return "https://eam.techivano.com";
+  return "https://pms.techivano.com";
 }
