@@ -98,6 +98,66 @@ export const createChannelMessage = mutation({
   }
 });
 
+export const markMessageReviewed = authedMutation({
+  args: { messageId: v.id("bookingChannelMessage") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get("bookingChannelMessage", args.messageId);
+    if (!message) throw new Error("Message not found");
+    assertPropertyAccess(ctx.manager, message.propertyId);
+    await ctx.db.patch("bookingChannelMessage", args.messageId, {
+      status: "reviewed",
+      updatedAt: Date.now()
+    });
+    return null;
+  }
+});
+
+export const markMessageNew = authedMutation({
+  args: { messageId: v.id("bookingChannelMessage") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get("bookingChannelMessage", args.messageId);
+    if (!message) throw new Error("Message not found");
+    assertPropertyAccess(ctx.manager, message.propertyId);
+    await ctx.db.patch("bookingChannelMessage", args.messageId, {
+      status: "new",
+      updatedAt: Date.now()
+    });
+    return null;
+  }
+});
+
+export const archiveMessage = authedMutation({
+  args: { messageId: v.id("bookingChannelMessage") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get("bookingChannelMessage", args.messageId);
+    if (!message) throw new Error("Message not found");
+    assertPropertyAccess(ctx.manager, message.propertyId);
+    await ctx.db.patch("bookingChannelMessage", args.messageId, {
+      status: "archived",
+      updatedAt: Date.now()
+    });
+    return null;
+  }
+});
+
+export const unarchiveMessage = authedMutation({
+  args: { messageId: v.id("bookingChannelMessage") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get("bookingChannelMessage", args.messageId);
+    if (!message) throw new Error("Message not found");
+    assertPropertyAccess(ctx.manager, message.propertyId);
+    await ctx.db.patch("bookingChannelMessage", args.messageId, {
+      status: "reviewed",
+      updatedAt: Date.now()
+    });
+    return null;
+  }
+});
+
 export const convertChannelMessageToBooking = authedMutation({
   args: {
     messageId: v.id("bookingChannelMessage"),
