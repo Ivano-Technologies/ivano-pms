@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { internalMutation } from "../_generated/server";
+import { internalMutation, internalQuery } from "../_generated/server";
 import { authedQuery } from "../lib/customFunctions";
 import { assertInternalJobSecret } from "../lib/secrets";
 
@@ -81,6 +81,7 @@ export const upsertChannelTokenInternal = internalMutation({
   handler: async (ctx, args) => {
     assertInternalJobSecret(args.secret);
 
+    // accessToken and refreshToken are AES-256-GCM ciphertext (v1: prefix). See channelTokenActions.
     const existing = await ctx.db
       .query("channelToken")
       .withIndex("by_property_channel", (q) =>
@@ -114,3 +115,22 @@ export const upsertChannelTokenInternal = internalMutation({
 });
 
 export { channelTokenDoc };
+
+export const getChannelTokenRowInternal = internalQuery({
+  args: {
+    secret: v.string(),
+    propertyId: v.id("property"),
+    channel: messageChannel
+  },
+  returns: v.union(channelTokenDoc, v.null()),
+  handler: async (ctx, args) => {
+    assertInternalJobSecret(args.secret);
+
+    return await ctx.db
+      .query("channelToken")
+      .withIndex("by_property_channel", (q) =>
+        q.eq("propertyId", args.propertyId).eq("channel", args.channel)
+      )
+      .first();
+  }
+});

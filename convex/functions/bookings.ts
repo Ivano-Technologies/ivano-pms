@@ -25,7 +25,7 @@ function addDays(dateStr: string, days: number): string {
 
 /**
  * Rejects overlapping bookings on the same unit for active statuses.
- * Scans up to 200 bookings per unit (see ADR-005).
+ * Scans up to 200 bookings per unit (see ADR-006).
  */
 async function checkOverlap(
   ctx: MutationCtx,

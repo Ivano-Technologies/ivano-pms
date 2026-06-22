@@ -25,6 +25,9 @@ Copy [`.env.example`](.env.example) to `apps/web/.env.local`.
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | `apps/web/.env.local` | Clerk auth |
 | `CLERK_SECRET_KEY` | `apps/web/.env.local` | Clerk server |
 | `INTERNAL_JOB_SECRET` | Convex dashboard **and** `apps/web/.env.local` | Shared secret for webhooks + seed reset (generate with `openssl rand -hex 32`) |
+| `CHANNEL_TOKEN_ENCRYPTION_KEY` | **Convex dashboard only** | AES-256 key for channel OAuth tokens (`openssl rand -base64 32`). Validated on every encrypt/decrypt action — missing or wrong-size keys throw immediately. |
+
+**Key rotation (not automated):** The `v1:` ciphertext prefix is a format version, not a key ID. To rotate the key, set a new `CHANNEL_TOKEN_ENCRYPTION_KEY` and re-save each channel token via `upsertChannelToken` so tokens are re-encrypted. Until re-saved, legacy plaintext rows (no `v1:` prefix) still decrypt as-is. See [ADR-007](docs/adr/007-channel-token-encryption.md).
 | `WEBHOOK_SECRET` | `apps/web/.env.local` | HMAC signature for `POST /api/webhooks` |
 | `DEFAULT_PROPERTY_ID` | `apps/web/.env.local` | Property ID after seed |
 | `CLERK_JWT_ISSUER_DOMAIN` | **Convex dashboard only** | Clerk JWT issuer for Convex auth (see Clerk → JWT templates → Convex) |
@@ -46,6 +49,10 @@ Copy [`.env.example`](.env.example) to `apps/web/.env.local`.
 For Playwright webhook E2E: set `WEBHOOK_SECRET` in `apps/web/.env.local` (defaults to `test-webhook-secret-12345` in tests if unset). Optional `WEBHOOK_TEST_URL` overrides `http://localhost:3000`.
 
 For Playwright dashboard stretch (optional): store `CLERK_TEST_USER_EMAIL` / `CLERK_TEST_USER_PASSWORD` in `apps/web/.env.local` only — never commit.
+
+## Planning & smoke tests
+
+After Week 4–5 delivery, see [docs/planning/README.md](docs/planning/README.md) for smoke test and Week 6 kickoff.
 
 ## Start development (2 terminals)
 

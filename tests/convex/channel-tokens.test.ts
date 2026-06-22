@@ -10,6 +10,9 @@ import {
 
 beforeAll(() => {
   process.env.INTERNAL_JOB_SECRET = "test-internal-secret";
+  process.env.CHANNEL_TOKEN_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString(
+    "base64"
+  );
 });
 
 describe("getChannelTokens", () => {
@@ -35,7 +38,7 @@ describe("upsertChannelTokenInternal", () => {
     const asManager = authedClient(t, seed.clerkUserId);
     const now = Date.now();
 
-    await t.mutation(internal.functions.channelTokens.upsertChannelTokenInternal, {
+    await t.action(internal.functions.channelTokenActions.upsertChannelToken, {
       secret: process.env.INTERNAL_JOB_SECRET ?? "test-internal-secret",
       propertyId: seed.propertyId,
       channel: "whatsapp",
@@ -52,5 +55,16 @@ describe("upsertChannelTokenInternal", () => {
     const whatsapp = tokens.find((row) => row.channel === "whatsapp");
     expect(whatsapp?.isConnected).toBe(true);
     expect(whatsapp?.phoneNumberId).toBe("12345");
+
+    const decrypted = await t.action(
+      internal.functions.channelTokenActions.getDecryptedChannelToken,
+      {
+        secret: process.env.INTERNAL_JOB_SECRET ?? "test-internal-secret",
+        propertyId: seed.propertyId,
+        channel: "whatsapp"
+      }
+    );
+
+    expect(decrypted?.accessToken).toBe("test-token");
   });
 });

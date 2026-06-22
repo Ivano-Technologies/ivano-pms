@@ -11,6 +11,7 @@
 import type * as functions_audit from "../functions/audit.js";
 import type * as functions_bookings from "../functions/bookings.js";
 import type * as functions_channelMessages from "../functions/channelMessages.js";
+import type * as functions_channelTokenActions from "../functions/channelTokenActions.js";
 import type * as functions_channelTokens from "../functions/channelTokens.js";
 import type * as functions_checklists from "../functions/checklists.js";
 import type * as functions_dashboard from "../functions/dashboard.js";
@@ -25,6 +26,7 @@ import type * as functions_webhooks from "../functions/webhooks.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_bookingStates from "../lib/bookingStates.js";
 import type * as lib_bookingStats from "../lib/bookingStats.js";
+import type * as lib_channelTokenCrypto from "../lib/channelTokenCrypto.js";
 import type * as lib_customFunctions from "../lib/customFunctions.js";
 import type * as lib_nlp from "../lib/nlp.js";
 import type * as lib_secrets from "../lib/secrets.js";
@@ -41,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   "functions/audit": typeof functions_audit;
   "functions/bookings": typeof functions_bookings;
   "functions/channelMessages": typeof functions_channelMessages;
+  "functions/channelTokenActions": typeof functions_channelTokenActions;
   "functions/channelTokens": typeof functions_channelTokens;
   "functions/checklists": typeof functions_checklists;
   "functions/dashboard": typeof functions_dashboard;
@@ -55,6 +58,7 @@ declare const fullApi: ApiFromModules<{
   "lib/auth": typeof lib_auth;
   "lib/bookingStates": typeof lib_bookingStates;
   "lib/bookingStats": typeof lib_bookingStats;
+  "lib/channelTokenCrypto": typeof lib_channelTokenCrypto;
   "lib/customFunctions": typeof lib_customFunctions;
   "lib/nlp": typeof lib_nlp;
   "lib/secrets": typeof lib_secrets;
