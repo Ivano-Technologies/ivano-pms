@@ -43,4 +43,31 @@ describe("channelTokenCrypto", () => {
       "base64"
     );
   });
+
+  it("throws on truncated v1 ciphertext instead of treating as legacy", () => {
+    expect(() => decryptChannelToken("v1:abc")).toThrow(
+      /Invalid encrypted channel token format/
+    );
+    expect(() => decryptChannelToken("v1:")).toThrow(
+      /Invalid encrypted channel token format/
+    );
+  });
+
+  it("throws on empty v1 segments", () => {
+    expect(() => decryptChannelToken("v1:::")).toThrow(
+      /Invalid encrypted channel token format/
+    );
+  });
+
+  it("throws on tampered v1 ciphertext instead of returning garbage", () => {
+    const encrypted = encryptChannelToken("EAAtest-token");
+    const parts = encrypted.split(":");
+    const data = parts[3]!;
+    parts[3] = `${data.slice(0, -1)}X`;
+    const tampered = parts.join(":");
+
+    expect(() => decryptChannelToken(tampered)).toThrow(
+      /Failed to decrypt channel token/
+    );
+  });
 });

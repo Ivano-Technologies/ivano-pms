@@ -70,14 +70,26 @@ export function decryptChannelToken(stored: string): string {
   }
 
   const [, ivB64, tagB64, dataB64] = parts;
-  const key = getEncryptionKey();
-  const iv = Buffer.from(ivB64!, "base64url");
-  const tag = Buffer.from(tagB64!, "base64url");
-  const data = Buffer.from(dataB64!, "base64url");
+  if (!ivB64 || !tagB64 || !dataB64) {
+    throw new Error("Invalid encrypted channel token format");
+  }
 
-  const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
-  decipher.setAuthTag(tag);
-  return Buffer.concat([decipher.update(data), decipher.final()]).toString(
-    "utf8"
-  );
+  const key = getEncryptionKey();
+  const iv = Buffer.from(ivB64, "base64url");
+  const tag = Buffer.from(tagB64, "base64url");
+  const data = Buffer.from(dataB64, "base64url");
+
+  if (iv.length === 0 || tag.length === 0 || data.length === 0) {
+    throw new Error("Invalid encrypted channel token format");
+  }
+
+  try {
+    const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
+    decipher.setAuthTag(tag);
+    return Buffer.concat([decipher.update(data), decipher.final()]).toString(
+      "utf8"
+    );
+  } catch {
+    throw new Error("Failed to decrypt channel token (corrupted ciphertext or wrong key)");
+  }
 }
