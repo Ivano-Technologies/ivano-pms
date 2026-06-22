@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 import { BookingCalendar, type CalendarBooking } from "@/components/bookings/booking-calendar";
 import { BookingDetailPopover } from "@/components/bookings/booking-detail-popover";
 import { QuickCreateBookingModal } from "@/components/bookings/quick-create-booking-modal";
+import { usePropertyScope } from "@/components/layout/property-context";
 import { addDays, getDayKey } from "@/lib/calendar-utils";
 
 import { api } from "../../../../../convex/_generated/api";
@@ -15,17 +16,24 @@ import type { Id } from "../../../../../convex/_generated/dataModel";
 export function BookingsCalendarView() {
   const today = useMemo(() => getDayKey(new Date()), []);
   const windowEnd = useMemo(() => addDays(today, 29), [today]);
+  const { propertyArgs } = usePropertyScope();
 
   const manager = useQuery(api.functions.managers.getCurrentManagerProfile);
   const canQuery = manager !== undefined && manager !== null;
 
   const bookings = useQuery(
     api.functions.bookings.getBookingsByDateRange,
-    canQuery ? { startDate: today, endDate: windowEnd } : "skip"
+    canQuery ? { startDate: today, endDate: windowEnd, ...propertyArgs } : "skip"
   );
 
-  const units = useQuery(api.functions.units.getUnits, canQuery ? {} : "skip");
-  const guests = useQuery(api.functions.guests.getGuests, canQuery ? {} : "skip");
+  const units = useQuery(
+    api.functions.units.getUnits,
+    canQuery ? { ...propertyArgs } : "skip"
+  );
+  const guests = useQuery(
+    api.functions.guests.getGuests,
+    canQuery ? { ...propertyArgs } : "skip"
+  );
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(today);

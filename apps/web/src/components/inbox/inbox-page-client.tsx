@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { CheckCheck } from "lucide-react";
 import { toast } from "sonner";
@@ -9,14 +10,23 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc } from "../../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
+import { usePropertyScope } from "@/components/layout/property-context";
 import { type MessageStatus, STATUS_FILTER_OPTIONS } from "@/lib/inbox-utils";
 import { cn } from "@/lib/utils";
-import { ConvertToBookingModal } from "./convert-to-booking-modal";
 import { InboxMessageCard } from "./inbox-message-card";
+
+const ConvertToBookingModal = dynamic(
+  () =>
+    import("./convert-to-booking-modal").then((m) => ({
+      default: m.ConvertToBookingModal
+    })),
+  { ssr: false }
+);
 
 type StatusFilter = MessageStatus | "all";
 
 export function InboxPageClient() {
+  const { propertyArgs } = usePropertyScope();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("new");
   const [convertingMessage, setConvertingMessage] =
     useState<Doc<"bookingChannelMessage"> | null>(null);
@@ -26,12 +36,13 @@ export function InboxPageClient() {
 
   const messages = useQuery(api.functions.channelMessages.getChannelMessages, {
     status: queryStatus,
-    limit: 50
+    limit: 50,
+    ...propertyArgs
   });
 
   const unreadMessages = useQuery(
     api.functions.channelMessages.getChannelMessages,
-    { status: "new", limit: 100 }
+    { status: "new", limit: 100, ...propertyArgs }
   );
 
   const markReviewed = useMutation(

@@ -7,6 +7,8 @@ import type { ReactNode } from "react";
 
 import { BRAND_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
+import { PropertyProvider } from "@/components/layout/property-context";
+import { PropertySwitcher } from "@/components/layout/property-switcher";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview" },
@@ -22,10 +24,12 @@ export function PmsDashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="bg-background text-foreground flex min-h-screen">
-      <aside className="border-border w-56 shrink-0 border-r p-4">
-        <div className="mb-8 font-semibold">{BRAND_NAME}</div>
-        <nav className="space-y-1">
+    <PropertyProvider>
+      <div className="bg-background text-foreground flex min-h-screen">
+        <aside className="border-border w-56 shrink-0 border-r p-4">
+          <div className="mb-4 font-semibold">{BRAND_NAME}</div>
+          <PropertySwitcher />
+          <nav className="space-y-1">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
@@ -50,5 +54,6 @@ export function PmsDashboardLayout({ children }: { children: ReactNode }) {
         <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
+    </PropertyProvider>
   );
 }

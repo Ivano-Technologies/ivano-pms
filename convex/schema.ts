@@ -136,6 +136,7 @@ export default defineSchema({
     instagramHandle: v.optional(v.string()),
     idType,
     idNumber: v.string(),
+    notes: v.optional(v.string()),
     isDeleted: v.boolean(),
     deletedAt: v.optional(v.number()),
     createdAt: v.number(),
@@ -186,6 +187,18 @@ export default defineSchema({
   })
     .index("by_property", ["propertyId"])
     .index("by_property_status_created", ["propertyId", "status", "createdAt"]),
+
+  // SECURITY TODO (Week 6): encrypt accessToken at rest before production.
+  channelToken: defineTable({
+    propertyId: v.id("property"),
+    channel: messageChannel,
+    accessToken: v.string(),
+    refreshToken: v.optional(v.string()),
+    expiresAt: v.optional(v.number()),
+    phoneNumberId: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number()
+  }).index("by_property_channel", ["propertyId", "channel"]),
 
   manager: defineTable({
     propertyId: v.id("property"),

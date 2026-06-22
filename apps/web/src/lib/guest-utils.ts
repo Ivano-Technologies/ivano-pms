@@ -12,6 +12,7 @@ export type GuestFormValues = {
   whatsapp: string;
   idType: GuestIdType;
   idNumber: string;
+  notes: string;
 };
 
 export const ID_TYPE_OPTIONS: { value: GuestIdType; label: string }[] = [
@@ -40,7 +41,8 @@ export function emptyGuestForm(): GuestFormValues {
     email: "",
     whatsapp: "",
     idType: "passport",
-    idNumber: ""
+    idNumber: "",
+    notes: ""
   };
 }
 
@@ -75,6 +77,10 @@ export function validateGuestForm(values: GuestFormValues): GuestFormErrors {
     errors.idNumber = "ID number is required";
   }
 
+  if (values.notes.length > 500) {
+    errors.notes = "Max 500 characters";
+  }
+
   return errors;
 }
 
@@ -86,6 +92,7 @@ export function guestFormFromDoc(guest: {
   whatsapp?: string;
   idType: GuestIdType;
   idNumber: string;
+  notes?: string;
 }): GuestFormValues {
   return {
     firstName: guest.firstName,
@@ -94,7 +101,8 @@ export function guestFormFromDoc(guest: {
     email: guest.email ?? "",
     whatsapp: guest.whatsapp ?? "",
     idType: guest.idType,
-    idNumber: guest.idNumber
+    idNumber: guest.idNumber,
+    notes: guest.notes ?? ""
   };
 }
 
@@ -106,7 +114,8 @@ export function toGuestMutationArgs(values: GuestFormValues) {
     idType: values.idType,
     idNumber: values.idNumber.trim(),
     email: values.email.trim() || undefined,
-    whatsapp: values.whatsapp.trim() || undefined
+    whatsapp: values.whatsapp.trim() || undefined,
+    notes: values.notes.trim() || undefined
   };
 }
 

@@ -25,6 +25,7 @@ const guestDoc = v.object({
   instagramHandle: v.optional(v.string()),
   idType,
   idNumber: v.string(),
+  notes: v.optional(v.string()),
   isDeleted: v.boolean(),
   deletedAt: v.optional(v.number()),
   createdAt: v.number(),
@@ -106,7 +107,8 @@ export const createGuest = authedMutation({
     idType: idType,
     idNumber: v.string(),
     email: v.optional(v.string()),
-    whatsapp: v.optional(v.string())
+    whatsapp: v.optional(v.string()),
+    notes: v.optional(v.string())
   },
   returns: v.id("guest"),
   handler: async (ctx, args) => {
@@ -120,6 +122,7 @@ export const createGuest = authedMutation({
       whatsapp: args.whatsapp?.trim() || undefined,
       idType: args.idType,
       idNumber: args.idNumber.trim(),
+      notes: args.notes?.trim() || undefined,
       isDeleted: false,
       createdAt: now,
       updatedAt: now
@@ -136,7 +139,8 @@ export const updateGuest = authedMutation({
     idType: idType,
     idNumber: v.string(),
     email: v.optional(v.string()),
-    whatsapp: v.optional(v.string())
+    whatsapp: v.optional(v.string()),
+    notes: v.optional(v.string())
   },
   returns: guestDoc,
   handler: async (ctx, args) => {
@@ -156,6 +160,7 @@ export const updateGuest = authedMutation({
       whatsapp: args.whatsapp?.trim() || undefined,
       idType: args.idType,
       idNumber: args.idNumber.trim(),
+      notes: args.notes?.trim() || undefined,
       updatedAt: now
     });
 

@@ -1,13 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { DeleteGuestDialog } from "@/components/guests/delete-guest-dialog";
-import { GuestFormModal } from "@/components/guests/guest-form-modal";
 import { GuestsTable } from "@/components/guests/guests-table";
 import { Button } from "@/components/ui/button";
+import { usePropertyScope } from "@/components/layout/property-context";
 import {
   filterGuests,
   formatGuestName,
@@ -19,8 +19,25 @@ import {
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc } from "../../../../../convex/_generated/dataModel";
 
+const GuestFormModal = dynamic(
+  () =>
+    import("@/components/guests/guest-form-modal").then((m) => ({
+      default: m.GuestFormModal
+    })),
+  { ssr: false }
+);
+
+const DeleteGuestDialog = dynamic(
+  () =>
+    import("@/components/guests/delete-guest-dialog").then((m) => ({
+      default: m.DeleteGuestDialog
+    })),
+  { ssr: false }
+);
+
 export function GuestsPageClient() {
-  const guests = useQuery(api.functions.guests.getGuests);
+  const { propertyArgs } = usePropertyScope();
+  const guests = useQuery(api.functions.guests.getGuests, propertyArgs);
   const softDeleteGuest = useMutation(api.functions.guests.softDeleteGuest);
   const restoreGuest = useMutation(api.functions.guests.restoreGuest);
 

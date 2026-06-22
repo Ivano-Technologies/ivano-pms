@@ -6,6 +6,7 @@ import { useMemo } from "react";
 
 import StatsCards from "@/components/dashboard/stats-cards";
 import PendingMessagesList from "@/components/dashboard/pending-messages-list";
+import { usePropertyScope } from "@/components/layout/property-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { countActiveBookings, formatMessageExtractionBadge } from "@/lib/format";
 
@@ -19,23 +20,24 @@ function todayIsoDate(): string {
 export function DashboardOverview() {
   const { isLoaded: isUserLoaded } = useUser();
   const today = useMemo(() => todayIsoDate(), []);
+  const { propertyArgs } = usePropertyScope();
 
   const manager = useQuery(api.functions.managers.getCurrentManagerProfile);
   const canQuery = isUserLoaded && manager !== undefined && manager !== null;
 
   const dashboardStats = useQuery(
     api.functions.dashboard.getDashboardStats,
-    canQuery ? { today } : "skip"
+    canQuery ? { today, ...propertyArgs } : "skip"
   );
 
   const channelMessages = useQuery(
     api.functions.channelMessages.getChannelMessages,
-    canQuery ? { status: "new" as const, limit: 5 } : "skip"
+    canQuery ? { status: "new" as const, limit: 5, ...propertyArgs } : "skip"
   );
 
   const property = useQuery(
     api.functions.property.getProperty,
-    canQuery ? {} : "skip"
+    canQuery ? { ...propertyArgs } : "skip"
   );
 
   const statsLoading =

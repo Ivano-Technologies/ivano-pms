@@ -213,6 +213,22 @@ export function GuestFormModal({
               <p className="text-destructive text-xs">{errors.idNumber}</p>
             ) : null}
           </label>
+
+          <label className="block space-y-1.5 sm:col-span-2">
+            <span className="text-sm font-medium">Notes</span>
+            <textarea
+              className={`${inputClassName} min-h-[80px] resize-y`}
+              value={values.notes}
+              maxLength={500}
+              rows={3}
+              onChange={(e) => updateField("notes", e.target.value)}
+              onBlur={() => validateField("notes")}
+              placeholder="Optional guest notes"
+            />
+            {errors.notes ? (
+              <p className="text-destructive text-xs">{errors.notes}</p>
+            ) : null}
+          </label>
         </div>
 
         <div className="mt-6 flex justify-end gap-2">

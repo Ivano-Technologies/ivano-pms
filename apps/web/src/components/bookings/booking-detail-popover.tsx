@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -11,12 +12,28 @@ import {
   type BookingStatusKey
 } from "@/lib/booking-status-colors";
 import { getTransitionLabel } from "@/lib/booking-states";
-import { formatNgn, formatMessageTimestamp } from "@/lib/format";
+import { formatNgn } from "@/lib/format";
 import type { CalendarBooking } from "@/lib/calendar-utils";
 import { cn } from "@/lib/utils";
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Id } from "../../../../../convex/_generated/dataModel";
+
+const BookingAuditTrail = dynamic(
+  () =>
+    import("./booking-audit-trail").then((m) => ({
+      default: m.BookingAuditTrail
+    })),
+  { ssr: false, loading: () => <Skeleton className="h-20 w-full" /> }
+);
+
+const BookingChecklist = dynamic(
+  () =>
+    import("./booking-checklist").then((m) => ({
+      default: m.BookingChecklist
+    })),
+  { ssr: false, loading: () => <Skeleton className="h-20 w-full" /> }
+);
 
 type BookingDetailPopoverProps = {
   booking: CalendarBooking | null;
@@ -24,7 +41,7 @@ type BookingDetailPopoverProps = {
   onClose: () => void;
 };
 
-type TabId = "details" | "history";
+type TabId = "details" | "history" | "checklist";
 
 function formatStatusLabel(status: string): string {
   return status.replaceAll("_", " ");
@@ -44,11 +61,6 @@ export function BookingDetailPopover({
 
   const bookingDetails = useQuery(
     api.functions.bookings.getBookingById,
-    bookingId ? { bookingId } : "skip"
-  );
-
-  const auditTrail = useQuery(
-    api.functions.bookings.getBookingAuditTrail,
     bookingId ? { bookingId } : "skip"
   );
 
@@ -131,7 +143,7 @@ export function BookingDetailPopover({
         </div>
 
         <div className="mb-4 flex gap-1 rounded-lg border p-1">
-          {(["details", "history"] as const).map((tab) => (
+          {(["details", "history", "checklist"] as const).map((tab) => (
             <button
               key={tab}
               type="button"
@@ -232,55 +244,11 @@ export function BookingDetailPopover({
               </dl>
             )}
           </>
-        ) : (
-          <div className="space-y-3">
-            {auditTrail === undefined ? (
-              <>
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-              </>
-            ) : auditTrail.length === 0 ? (
-              <p className="text-muted-foreground text-sm">
-                No status history yet.
-              </p>
-            ) : (
-              <ul className="divide-border divide-y text-sm">
-                {auditTrail.map((entry) => {
-                  const newStatus =
-                    typeof entry.newValues === "object" &&
-                    entry.newValues !== null &&
-                    "status" in entry.newValues &&
-                    typeof entry.newValues.status === "string"
-                      ? entry.newValues.status
-                      : "updated";
-                  const reason =
-                    typeof entry.newValues === "object" &&
-                    entry.newValues !== null &&
-                    "reason" in entry.newValues &&
-                    typeof entry.newValues.reason === "string"
-                      ? entry.newValues.reason
-                      : null;
-
-                  return (
-                    <li key={entry._id} className="py-2">
-                      <p>
-                        <span className="font-medium">
-                          {entry.actorName ?? "Manager"}
-                        </span>{" "}
-                        changed status to{" "}
-                        <span className="font-medium capitalize">
-                          {formatStatusLabel(newStatus)}
-                        </span>{" "}
-                        on {formatMessageTimestamp(entry.createdAt)}
-                        {reason ? ` — ${reason}` : ""}
-                      </p>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-        )}
+        ) : activeTab === "history" && bookingId ? (
+          <BookingAuditTrail bookingId={bookingId} />
+        ) : activeTab === "checklist" && bookingId ? (
+          <BookingChecklist bookingId={bookingId} />
+        ) : null}
       </div>
     </div>
   );

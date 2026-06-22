@@ -1,5 +1,7 @@
 import { v } from "convex/values";
 
+import type { Id } from "../_generated/dataModel";
+import type { MutationCtx } from "../_generated/server";
 import { assertPropertyAccess } from "../lib/auth";
 import {
   getAvailableTransitions,
@@ -7,6 +9,45 @@ import {
   type BookingStatusType
 } from "../lib/bookingStates";
 import { authedMutation, authedQuery } from "../lib/customFunctions";
+
+const OVERLAP_BLOCK_STATUSES = new Set([
+  "inquiry",
+  "pending_confirmation",
+  "confirmed",
+  "checked_in"
+]);
+
+function addDays(dateStr: string, days: number): string {
+  const d = new Date(`${dateStr}T00:00:00`);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Rejects overlapping bookings on the same unit for active statuses.
+ * Scans up to 200 bookings per unit (see ADR-005).
+ */
+async function checkOverlap(
+  ctx: MutationCtx,
+  unitId: Id<"unit">,
+  checkIn: string,
+  checkOut: string,
+  excludeBookingId?: Id<"booking">
+): Promise<void> {
+  const existing = await ctx.db
+    .query("booking")
+    .withIndex("by_unit", (q) => q.eq("unitId", unitId))
+    .take(200);
+
+  for (const b of existing) {
+    if (excludeBookingId && b._id === excludeBookingId) continue;
+    if (!OVERLAP_BLOCK_STATUSES.has(b.status)) continue;
+    const existingOut = b.checkOutDate ?? checkOut;
+    if (b.checkInDate < checkOut && existingOut > checkIn) {
+      throw new Error("Unit already booked for these dates");
+    }
+  }
+}
 
 const bookingType = v.union(
   v.literal("nightly"),
@@ -274,6 +315,13 @@ export const createBooking = authedMutation({
     if (!unit || unit.propertyId !== propertyId) {
       throw new Error("Unit not found");
     }
+
+    if (args.checkOutDate && args.checkOutDate <= args.checkInDate) {
+      throw new Error("Check-out must be after check-in");
+    }
+
+    const effectiveCheckOut = args.checkOutDate ?? addDays(args.checkInDate, 1);
+    await checkOverlap(ctx, args.unitId, args.checkInDate, effectiveCheckOut);
 
     const now = Date.now();
     return await ctx.db.insert("booking", {

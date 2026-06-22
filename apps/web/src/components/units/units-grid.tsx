@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -9,17 +10,25 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
+import { usePropertyScope } from "@/components/layout/property-context";
 import { type AvailabilityStatus } from "@/lib/unit-utils";
 import { UnitCard } from "./unit-card";
-import { UnitFormModal } from "./unit-form-modal";
+
+const UnitFormModal = dynamic(
+  () =>
+    import("./unit-form-modal").then((m) => ({ default: m.UnitFormModal })),
+  { ssr: false }
+);
 
 export function UnitsGrid() {
+  const { propertyArgs } = usePropertyScope();
   const [includeInactive, setIncludeInactive] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState<Doc<"unit"> | null>(null);
 
   const units = useQuery(api.functions.units.getUnits, {
-    includeMaintenanceReserved: includeInactive
+    includeMaintenanceReserved: includeInactive,
+    ...propertyArgs
   });
 
   const setUnitAvailability = useMutation(api.functions.units.setUnitAvailability);

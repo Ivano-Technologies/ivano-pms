@@ -2,6 +2,7 @@ import {
   customMutation,
   customQuery
 } from "convex-helpers/server/customFunctions";
+import { v } from "convex/values";
 
 import type { Doc } from "../_generated/dataModel";
 import { mutation, query } from "../_generated/server";
@@ -12,10 +13,14 @@ export type AuthedCtx = {
   manager: Doc<"manager">;
 };
 
+const propertyScopeArgs = {
+  selectedPropertyId: v.optional(v.id("property"))
+};
+
 export const authedQuery = customQuery(query, {
-  args: {},
+  args: propertyScopeArgs,
   input: async (ctx, args) => {
-    const manager = await getCurrentManager(ctx);
+    const manager = await getCurrentManager(ctx, args.selectedPropertyId);
     return {
       ctx: { ...ctx, manager },
       args
@@ -24,9 +29,9 @@ export const authedQuery = customQuery(query, {
 });
 
 export const authedMutation = customMutation(mutation, {
-  args: {},
+  args: propertyScopeArgs,
   input: async (ctx, args) => {
-    const manager = await getCurrentManager(ctx);
+    const manager = await getCurrentManager(ctx, args.selectedPropertyId);
     return {
       ctx: { ...ctx, manager },
       args

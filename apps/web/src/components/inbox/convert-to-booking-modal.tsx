@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
+import { usePropertyScope } from "@/components/layout/property-context";
 import { formatNgn } from "@/lib/unit-utils";
 import { inputClassName } from "@/lib/unit-utils";
 
@@ -40,8 +41,9 @@ export function ConvertToBookingModal({
   isOpen,
   onClose
 }: ConvertToBookingModalProps) {
-  const guests = useQuery(api.functions.guests.getGuests, {});
-  const units = useQuery(api.functions.units.getUnits, {});
+  const { propertyArgs } = usePropertyScope();
+  const guests = useQuery(api.functions.guests.getGuests, propertyArgs);
+  const units = useQuery(api.functions.units.getUnits, propertyArgs);
   const convert = useMutation(api.functions.channelMessages.convertChannelMessageToBooking);
 
   const [guestId, setGuestId] = useState<Id<"guest"> | "">("");

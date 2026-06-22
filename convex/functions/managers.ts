@@ -17,13 +17,12 @@ export const upsertManagerFromClerk = mutation({
     const existing = await ctx.db
       .query("manager")
       .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
+      .take(10);
 
-    if (existing) {
-      if (existing.isDeleted) {
-        throw new Error("Manager account deactivated");
-      }
-      return existing._id;
+    const active = existing.find((m) => !m.isDeleted);
+
+    if (active) {
+      return active._id;
     }
 
     const property = await ctx.db.query("property").first();
@@ -70,12 +69,14 @@ export const getCurrentManagerProfile = query({
       return null;
     }
 
-    const manager = await ctx.db
+    const managers = await ctx.db
       .query("manager")
       .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
+      .take(10);
 
-    if (!manager || manager.isDeleted) {
+    const manager = managers.find((m) => !m.isDeleted);
+
+    if (!manager) {
       return null;
     }
 
@@ -88,5 +89,49 @@ export const getCurrentManagerProfile = query({
       phone: manager.phone,
       role: manager.role
     };
+  }
+});
+
+const propertySummary = v.object({
+  _id: v.id("property"),
+  name: v.string(),
+  address: v.string(),
+  managerId: v.id("manager"),
+  role: v.union(
+    v.literal("owner"),
+    v.literal("manager"),
+    v.literal("staff")
+  )
+});
+
+export const getMyProperties = query({
+  args: {},
+  returns: v.array(propertySummary),
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const managers = await ctx.db
+      .query("manager")
+      .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", identity.subject))
+      .take(10);
+
+    const results = [];
+    for (const manager of managers) {
+      if (manager.isDeleted) continue;
+      const property = await ctx.db.get("property", manager.propertyId);
+      if (!property) continue;
+      results.push({
+        _id: property._id,
+        name: property.name,
+        address: property.address,
+        managerId: manager._id,
+        role: manager.role
+      });
+    }
+
+    return results;
   }
 });

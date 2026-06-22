@@ -114,7 +114,7 @@ describe("overlapping bookings", () => {
     expect(booking?.status).toBe("confirmed");
   });
 
-  it("allows overlapping booking B on the same unit (no overlap validation yet)", async () => {
+  it("rejects overlapping booking B on the same unit", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
     const asManager = authedClient(t, seed.clerkUserId);
@@ -125,28 +125,20 @@ describe("overlapping bookings", () => {
       createBookingInput(seed, { unitId })
     );
 
-    const bookingBId = await asManager.mutation(
-      api.functions.bookings.createBooking,
-      createBookingInput(seed, {
-        unitId,
-        guestId: seed.guestIds[1]!,
-        checkInDate: "2025-07-02",
-        checkOutDate: "2025-07-04"
-      })
-    );
-
-    const bookingB = await t.run(async (ctx) => ctx.db.get("booking", bookingBId));
-    expect(bookingB).toBeTruthy();
-
-    // Overlap detection deferred to Week 4 (ADR-005)
-    const inRange = await asManager.query(
-      api.functions.bookings.getBookingsByDateRange,
-      { startDate: "2025-07-01", endDate: "2025-07-04" }
-    );
-    expect(inRange.filter((b) => b.unitId === unitId)).toHaveLength(2);
+    await expect(
+      asManager.mutation(
+        api.functions.bookings.createBooking,
+        createBookingInput(seed, {
+          unitId,
+          guestId: seed.guestIds[1]!,
+          checkInDate: "2025-07-02",
+          checkOutDate: "2025-07-04"
+        })
+      )
+    ).rejects.toThrow(/Unit already booked for these dates/);
   });
 
-  it("allows a containing booking C (July 1–10) alongside A and B", async () => {
+  it("rejects a containing booking C that overlaps existing booking A", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
     const asManager = authedClient(t, seed.clerkUserId);
@@ -156,68 +148,52 @@ describe("overlapping bookings", () => {
       api.functions.bookings.createBooking,
       createBookingInput(seed, { unitId })
     );
-    await asManager.mutation(
-      api.functions.bookings.createBooking,
-      createBookingInput(seed, {
-        unitId,
-        guestId: seed.guestIds[1]!,
-        checkInDate: "2025-07-02",
-        checkOutDate: "2025-07-04"
-      })
-    );
-    await asManager.mutation(
-      api.functions.bookings.createBooking,
-      createBookingInput(seed, {
-        unitId,
-        guestId: seed.guestIds[2]!,
-        checkInDate: "2025-07-01",
-        checkOutDate: "2025-07-10"
-      })
-    );
 
-    const inRange = await asManager.query(
-      api.functions.bookings.getBookingsByDateRange,
-      { startDate: "2025-07-01", endDate: "2025-07-10" }
-    );
-    expect(inRange.filter((b) => b.unitId === unitId)).toHaveLength(3);
+    await expect(
+      asManager.mutation(
+        api.functions.bookings.createBooking,
+        createBookingInput(seed, {
+          unitId,
+          guestId: seed.guestIds[2]!,
+          checkInDate: "2025-07-01",
+          checkOutDate: "2025-07-10"
+        })
+      )
+    ).rejects.toThrow(/Unit already booked for these dates/);
   });
 });
 
 describe("boundary dates", () => {
-  it("allows same-day check-in and check-out (no date-order validation yet)", async () => {
+  it("rejects same-day check-in and check-out", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
     const asManager = authedClient(t, seed.clerkUserId);
 
-    const bookingId = await asManager.mutation(
-      api.functions.bookings.createBooking,
-      createBookingInput(seed, {
-        checkInDate: "2025-07-05",
-        checkOutDate: "2025-07-05"
-      })
-    );
-
-    const booking = await t.run(async (ctx) => ctx.db.get("booking", bookingId));
-    expect(booking?.checkInDate).toBe("2025-07-05");
-    expect(booking?.checkOutDate).toBe("2025-07-05");
+    await expect(
+      asManager.mutation(
+        api.functions.bookings.createBooking,
+        createBookingInput(seed, {
+          checkInDate: "2025-07-05",
+          checkOutDate: "2025-07-05"
+        })
+      )
+    ).rejects.toThrow(/Check-out must be after check-in/);
   });
 
-  it("allows check-out before check-in (validation deferred)", async () => {
+  it("rejects check-out before check-in", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
     const asManager = authedClient(t, seed.clerkUserId);
 
-    const bookingId = await asManager.mutation(
-      api.functions.bookings.createBooking,
-      createBookingInput(seed, {
-        checkInDate: "2025-07-10",
-        checkOutDate: "2025-07-05"
-      })
-    );
-
-    const booking = await t.run(async (ctx) => ctx.db.get("booking", bookingId));
-    expect(booking?.checkInDate).toBe("2025-07-10");
-    expect(booking?.checkOutDate).toBe("2025-07-05");
+    await expect(
+      asManager.mutation(
+        api.functions.bookings.createBooking,
+        createBookingInput(seed, {
+          checkInDate: "2025-07-10",
+          checkOutDate: "2025-07-05"
+        })
+      )
+    ).rejects.toThrow(/Check-out must be after check-in/);
   });
 });
 
