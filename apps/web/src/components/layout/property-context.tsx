@@ -58,11 +58,15 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, id);
   }, []);
 
-  const propertyArgs = useMemo(
-    () =>
-      selectedPropertyId ? { selectedPropertyId } : {},
-    [selectedPropertyId]
-  );
+  // Only include selectedPropertyId in args once it has been validated
+  // against the loaded properties list. This prevents a stale localStorage
+  // value (e.g. from a previous user's session) from being sent to Convex
+  // queries before validation runs, which would cause "Not authorized" errors.
+  const propertyArgs = useMemo(() => {
+    if (!properties || !selectedPropertyId) return {};
+    const valid = properties.some((p) => p._id === selectedPropertyId);
+    return valid ? { selectedPropertyId } : {};
+  }, [selectedPropertyId, properties]);
 
   const value = useMemo(
     () => ({
