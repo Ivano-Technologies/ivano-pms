@@ -8,6 +8,8 @@
 CONVEX_DEPLOYMENT=prod:flippant-eel-758 npx convex deploy --yes
 ```
 
+**First-time prod data:** Dev and prod Convex databases are separate. Before the first manager sign-in on a fresh prod deployment, run `npx convex run seed:seedDemoData --prod` (or real onboarding data). See [`docs/runbooks/deploy.md`](docs/runbooks/deploy.md).
+
 ### Convex Production Environment Variables
 
 Set these in the Convex dashboard (`flippant-eel-758`) or via CLI:
@@ -106,6 +108,8 @@ After merging to `main` and Vercel redeploys:
    - [ ] `accessToken` and `refreshToken` are absent from all response payloads
 
 See also [`docs/planning/WEEK-4-5-SMOKE-TEST.md`](docs/planning/WEEK-4-5-SMOKE-TEST.md) for the full smoke test checklist.
+
+Automated Chrome smoke: `node scripts/smoke-prod.mjs` (from `apps/web`; see [`docs/runbooks/deploy.md`](docs/runbooks/deploy.md)).
 
 ### Known Issues & Deferrals
 

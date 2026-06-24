@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "convex/react";
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc, Id } from "../../../../../convex/_generated/dataModel";
-import { Button } from "@/components/ui/button";
+import { getConvexUserMessage } from "@/lib/convex-error";
 import { usePropertyScope } from "@/components/layout/property-context";
 import { formatNgn } from "@/lib/unit-utils";
 import { inputClassName } from "@/lib/unit-utils";
@@ -100,7 +100,7 @@ export function ConvertToBookingModal({
       toast.success("Booking created");
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create booking");
+      toast.error(getConvexUserMessage(err, "Failed to create booking"));
     } finally {
       setSaving(false);
     }

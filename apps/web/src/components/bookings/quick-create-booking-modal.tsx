@@ -4,7 +4,7 @@ import { useMutation } from "convex/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
+import { getConvexUserMessage } from "@/lib/convex-error";
 import {
   type CalendarUnit,
   addDays,
@@ -86,7 +86,7 @@ export function QuickCreateBookingModal({
       toast.success("Booking created");
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create booking");
+      toast.error(getConvexUserMessage(err, "Failed to create booking"));
     } finally {
       setIsSubmitting(false);
     }

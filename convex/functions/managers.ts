@@ -27,7 +27,9 @@ export const upsertManagerFromClerk = mutation({
 
     const property = await ctx.db.query("property").first();
     if (!property) {
-      throw new Error("No property configured. Run seed first.");
+      throw new Error(
+        "No property exists in this Convex deployment. On a new production environment, run once: npx convex run seed:seedDemoData --prod (or add a property via onboarding)."
+      );
     }
 
     const now = Date.now();

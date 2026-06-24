@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 
 import type { Id } from "../_generated/dataModel";
 import type { MutationCtx } from "../_generated/server";
@@ -44,7 +44,7 @@ async function checkOverlap(
     if (!OVERLAP_BLOCK_STATUSES.has(b.status)) continue;
     const existingOut = b.checkOutDate ?? checkOut;
     if (b.checkInDate < checkOut && existingOut > checkIn) {
-      throw new Error("Unit already booked for these dates");
+      throw new ConvexError("Unit already booked for these dates");
     }
   }
 }
