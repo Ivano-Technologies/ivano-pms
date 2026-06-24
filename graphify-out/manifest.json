@@ -15,8 +15,8 @@
     "semantic_hash": ""
   },
   "apps/web/next-env.d.ts": {
-    "mtime": 1782031094.700858,
-    "ast_hash": "2a74d3909800ca5467fa83b0ab4a4890",
+    "mtime": 1782265560.3127003,
+    "ast_hash": "d0f8375ae1199dc7acd3977fc33b78b8",
     "semantic_hash": ""
   },
   "apps/web/next.config.ts": {
@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "apps/web/package.json": {
-    "mtime": 1782090711.0696285,
-    "ast_hash": "c732b823e4b5a53c42ad1035d7bc8d73",
+    "mtime": 1782263843.4552853,
+    "ast_hash": "0ebd94c4b514c2811099b6f748d375f3",
     "semantic_hash": ""
   },
   "apps/web/postcss.config.mjs": {
@@ -120,8 +120,8 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/layout.tsx": {
-    "mtime": 1782262294.6511126,
-    "ast_hash": "d80ff4e8190eb64e5ac1289b1e8e8042",
+    "mtime": 1782264260.8340209,
+    "ast_hash": "1877875b2d4b06b8a777f7bbceea45a8",
     "semantic_hash": ""
   },
   "apps/web/src/app/opengraph-image.tsx": {
@@ -270,8 +270,8 @@
     "semantic_hash": ""
   },
   "apps/web/vitest.config.ts": {
-    "mtime": 1782028569.8259275,
-    "ast_hash": "5231601183a7e8016862ec4ca62d0c84",
+    "mtime": 1782263880.8080244,
+    "ast_hash": "fa553d7a64155ff43fc66b44000ec883",
     "semantic_hash": ""
   },
   "convex.json": {
@@ -315,8 +315,8 @@
     "semantic_hash": ""
   },
   "convex/schema.ts": {
-    "mtime": 1782263157.8710916,
-    "ast_hash": "243b942bacf3159d03632fab83124e67",
+    "mtime": 1782336802.5555062,
+    "ast_hash": "e0caf18104a3157df168ce3ec9744ade",
     "semantic_hash": ""
   },
   "convex/seed.ts": {
@@ -870,8 +870,8 @@
     "semantic_hash": ""
   },
   "apps/web/src/components/settings/settings-page-client.tsx": {
-    "mtime": 1782093243.4395452,
-    "ast_hash": "b13e340cefaf45ee6a0d5bab58517f8e",
+    "mtime": 1782336923.9861364,
+    "ast_hash": "272eace1c8958c27de8e62a0f0390a8a",
     "semantic_hash": ""
   },
   "apps/web/src/components/units/unit-card.tsx": {
@@ -1060,8 +1060,8 @@
     "semantic_hash": ""
   },
   "convex/functions/telegram.ts": {
-    "mtime": 1782263208.767277,
-    "ast_hash": "87fcdd348c7fd50a3e212771ca4f4f60",
+    "mtime": 1782336874.2915611,
+    "ast_hash": "1351e2ec498136e67851a367ad2aa563",
     "semantic_hash": ""
   },
   "convex/functions/telegramWebhookActions.ts": {
@@ -1070,8 +1070,8 @@
     "semantic_hash": ""
   },
   "convex/lib/telegram.ts": {
-    "mtime": 1782263152.8439808,
-    "ast_hash": "c5b8200321a90e243c72d5a1d5e9d0de",
+    "mtime": 1782336797.9175248,
+    "ast_hash": "0e47d79607c86b26415864c213596a84",
     "semantic_hash": ""
   },
   "docs/planning/ux-audit/screenshot-script.mjs": {
@@ -1090,8 +1090,8 @@
     "semantic_hash": ""
   },
   "tests/convex/telegram-lib.test.ts": {
-    "mtime": 1782263119.2990358,
-    "ast_hash": "fe25db338fa00318e32cf36252c0ff70",
+    "mtime": 1782336901.7078507,
+    "ast_hash": "b1740436b1a31417b8d03a068438b7b3",
     "semantic_hash": ""
   },
   "tests/convex/telegram-register-webhook.test.ts": {
@@ -1267,6 +1267,146 @@
   ".agents/skills/convex-setup-auth/assets/icon.svg": {
     "mtime": 1782262497.7512276,
     "ast_hash": "5fd65f0f070bca77e1ea8ed46fbc1fd3",
+    "semantic_hash": ""
+  },
+  "apps/web/.storybook/main.ts": {
+    "mtime": 1782263832.7403116,
+    "ast_hash": "b38a4b9bbaded2d29a39559432aed8b0",
+    "semantic_hash": ""
+  },
+  "apps/web/.storybook/preview.tsx": {
+    "mtime": 1782263937.1114075,
+    "ast_hash": "36d0b5ff0828d83d89ab3a028f1e1923",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/settings/telegram-connection-card.tsx": {
+    "mtime": 1782336916.7135832,
+    "ast_hash": "3c3d6f1d1896e91dcaf6a94184b1e7de",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/Button.stories.ts": {
+    "mtime": 456789000.0,
+    "ast_hash": "153d9905c4db7500a06888ae598b0210",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/Button.tsx": {
+    "mtime": 456789000.0,
+    "ast_hash": "bddcafa7fa05e792bf35bde3efc4888f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/Header.stories.ts": {
+    "mtime": 456789000.0,
+    "ast_hash": "de0645e75909934fddd8c32e13bd8265",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/Header.tsx": {
+    "mtime": 456789000.0,
+    "ast_hash": "46043635fa29aae3a6fc52a369cedbb2",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/Page.stories.ts": {
+    "mtime": 456789000.0,
+    "ast_hash": "e528bb99d65b3fc24d9631a14d49f4a3",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/Page.tsx": {
+    "mtime": 456789000.0,
+    "ast_hash": "b96b6e44dcd83c0554c891ea6541a49e",
+    "semantic_hash": ""
+  },
+  "apps/web/vitest.shims.d.ts": {
+    "mtime": 1782263880.7329633,
+    "ast_hash": "9cf5890a1d960f038fb6f7337b6ebb6f",
+    "semantic_hash": ""
+  },
+  "tests/convex/telegram-connection.test.ts": {
+    "mtime": 1782336889.1144874,
+    "ast_hash": "81ca7f80aed80156fae7684032d87194",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/Configure.mdx": {
+    "mtime": 1782263834.9591942,
+    "ast_hash": "9c687a96a028784e4c7f17b26e0bde87",
+    "semantic_hash": ""
+  },
+  "docs/planning/channels-telegram-email-spec.md": {
+    "mtime": 1782261690.2291396,
+    "ast_hash": "eccd1c26baf4a69d173df96e033b9cb2",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/accessibility.png": {
+    "mtime": 1782263712.4855292,
+    "ast_hash": "1fa05b556b0e43b05b11a4d08d84f36c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/accessibility.svg": {
+    "mtime": 1782263712.4875286,
+    "ast_hash": "e5564af3aea142c5f655bb918e36756d",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/addon-library.png": {
+    "mtime": 1782263712.8865776,
+    "ast_hash": "9e34676f985b1581d42d47fef5425187",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/assets.png": {
+    "mtime": 1782263712.8885767,
+    "ast_hash": "57835e2f38e15d8ff012804ed7c58ac5",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/context.png": {
+    "mtime": 1782263712.8985846,
+    "ast_hash": "aca13835556255e2c24fdfa733ded23f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/discord.svg": {
+    "mtime": 1782263712.902583,
+    "ast_hash": "c589ed2705d48fe97f2ea98be82dd94a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/docs.png": {
+    "mtime": 1782263712.9070952,
+    "ast_hash": "9058ccf5504337b36bfec10f162bef81",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/figma-plugin.png": {
+    "mtime": 1782263712.9150953,
+    "ast_hash": "a5cacbfdd62896794b7ff1dd7bb1f392",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/github.svg": {
+    "mtime": 1782263712.917095,
+    "ast_hash": "b522f8894cddbca5531d9343c0e35d76",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/share.png": {
+    "mtime": 1782263712.9207344,
+    "ast_hash": "081c0e6b5243e695a874df6d77fa39dc",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/styling.png": {
+    "mtime": 1782263712.9217412,
+    "ast_hash": "219057f206a890c82e43ad79c0b89616",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/testing.png": {
+    "mtime": 1782263712.927742,
+    "ast_hash": "e7775490f0c4d76407b3d632429a00ba",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/theming.png": {
+    "mtime": 1782263712.9557667,
+    "ast_hash": "afed910b763f2446abd568317d2fb93c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/tutorials.svg": {
+    "mtime": 1782263712.9617755,
+    "ast_hash": "9ef52728e46bb4c63f0f1e3fa5861f3a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/stories/assets/youtube.svg": {
+    "mtime": 1782263712.9637768,
+    "ast_hash": "42e8d9907ff8affc79bc8562059b4638",
     "semantic_hash": ""
   }
 }

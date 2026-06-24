@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildTelegramDeepLink,
   parseStartCommand,
   telegramChatIdString,
   telegramDisplayName,
@@ -50,5 +51,19 @@ describe("telegram id helpers", () => {
     expect(
       telegramUserIdString({ id: 42, first_name: "Ada" })
     ).toBe("42");
+  });
+});
+
+describe("buildTelegramDeepLink", () => {
+  it("builds t.me link with encoded start token", () => {
+    expect(buildTelegramDeepLink("IvanoPMSBot", "abc_123")).toBe(
+      "https://t.me/IvanoPMSBot?start=abc_123"
+    );
+  });
+
+  it("strips leading @ from bot username", () => {
+    expect(buildTelegramDeepLink("@IvanoPMSBot", "tok")).toBe(
+      "https://t.me/IvanoPMSBot?start=tok"
+    );
   });
 });

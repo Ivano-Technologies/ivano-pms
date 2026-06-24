@@ -120,7 +120,7 @@ npx convex deploy --yes
 
 ## Telegram bot webhook (Task 6.1.1)
 
-**Convex env:** `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_URL`, `TELEGRAM_WEBHOOK_SECRET`  
+**Convex env:** `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `TELEGRAM_WEBHOOK_URL`, `TELEGRAM_WEBHOOK_SECRET`  
 **Vercel env:** `TELEGRAM_WEBHOOK_SECRET` (must match Convex)
 
 1. Set secrets (generate webhook secret with `openssl rand -hex 32`):
@@ -136,7 +136,7 @@ npx convex deploy --yes
      '{"secret":"YOUR_INTERNAL_JOB_SECRET"}' --prod
    ```
 
-3. Property managers share deep link: `https://t.me/<bot>?start=<property_token>`  
+3. In **Settings → Connected channels**, copy the Telegram guest link/QR for each property (or share `https://t.me/<bot>?start=<property_token>` manually).  
    Guest sends `/start <property_token>` → chat binds to property → messages flow to inbox.
 
 4. Smoke: `node scripts/smoke-prod.mjs` (dashboard) + send test message to bot after linking.

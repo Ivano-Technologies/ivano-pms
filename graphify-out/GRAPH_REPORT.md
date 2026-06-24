@@ -1,16 +1,16 @@
 # Graph Report - ivano-pms  (2026-06-24)
 
 ## Corpus Check
-- 222 files · ~155,025 words
+- 235 files · ~186,585 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1441 nodes · 1822 edges · 135 communities (118 shown, 17 thin omitted)
+- 1512 nodes · 1914 edges · 141 communities (122 shown, 19 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bacb26fd`
+- Built from commit: `407d8848`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -130,39 +130,43 @@
 - [[_COMMUNITY_Community 130|Community 130]]
 - [[_COMMUNITY_Community 131|Community 131]]
 - [[_COMMUNITY_Community 132|Community 132]]
+- [[_COMMUNITY_Community 135|Community 135]]
+- [[_COMMUNITY_Community 136|Community 136]]
+- [[_COMMUNITY_Community 137|Community 137]]
+- [[_COMMUNITY_Community 138|Community 138]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `cn()` - 46 edges
-2. `usePropertyScope()` - 19 edges
-3. `Button()` - 18 edges
+1. `cn()` - 48 edges
+2. `usePropertyScope()` - 21 edges
+3. `Button()` - 19 edges
 4. `compilerOptions` - 16 edges
-5. `scripts` - 14 edges
-6. `createTestConvex()` - 14 edges
-7. `seedAuthedManager()` - 14 edges
+5. `createTestConvex()` - 15 edges
+6. `seedAuthedManager()` - 15 edges
+7. `scripts` - 14 edges
 8. `Ivano PMS — UI/UX Redesign Architecture` - 14 edges
-9. `Convex Create Component` - 12 edges
-10. `Migrations Component Reference` - 12 edges
+9. `scripts` - 12 edges
+10. `authedQuery` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `IvanoPmsLogo()` --calls--> `cn()`  [EXTRACTED]
-  apps/web/src/components/brand/techivano-logo.tsx → apps/web/src/lib/utils.ts
-- `TechivanoMark()` --calls--> `cn()`  [EXTRACTED]
-  apps/web/src/components/brand/techivano-mark.tsx → apps/web/src/lib/utils.ts
 - `CardAction()` --calls--> `cn()`  [EXTRACTED]
   apps/web/src/components/ui/card.tsx → apps/web/src/lib/utils.ts
 - `CardFooter()` --calls--> `cn()`  [EXTRACTED]
   apps/web/src/components/ui/card.tsx → apps/web/src/lib/utils.ts
-- `StatusBadge()` --calls--> `cn()`  [EXTRACTED]
-  apps/web/src/components/ui/status-badge.tsx → apps/web/src/lib/utils.ts
+- `BookingDetailPopover()` --calls--> `cn()`  [EXTRACTED]
+  apps/web/src/components/bookings/booking-detail-popover.tsx → apps/web/src/lib/utils.ts
+- `BookingsCalendarView()` --calls--> `usePropertyScope()`  [EXTRACTED]
+  apps/web/src/components/bookings/bookings-calendar-view.tsx → apps/web/src/components/layout/property-context.tsx
+- `PoweredByTechivano()` --calls--> `cn()`  [EXTRACTED]
+  apps/web/src/components/brand/powered-by-techivano.tsx → apps/web/src/lib/utils.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (135 total, 17 thin omitted)
+## Communities (141 total, 19 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.15
-Nodes (15): CARDS, DashboardStatsView, StatsCardsProps, StatValue(), formatOccupancyRate(), AVAILABILITY_STATUS_META, Card(), CardAction() (+7 more)
+Cohesion: 0.12
+Nodes (18): CHANNEL_META, PendingMessagesListProps, PendingMessageView, CARDS, DashboardStatsView, StatsCardsProps, StatValue(), formatOccupancyRate() (+10 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.11
@@ -217,8 +221,8 @@ Cohesion: 0.18
 Nodes (9): PrefsState, DashboardLayout, DashboardSectionId, DeletionState, DigestPreferences, SavedView, SavedViewFilter, UserConsentsPreferences (+1 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.11
-Nodes (18): devDependencies, dotenv, eslint, eslint-config-next, jsdom, @playwright/test, png-to-ico, sharp (+10 more)
+Cohesion: 0.07
+Nodes (30): devDependencies, @chromatic-com/storybook, dotenv, eslint, eslint-config-next, eslint-plugin-storybook, jsdom, playwright (+22 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.22
@@ -286,27 +290,27 @@ Nodes (30): BookingCalendar, BookingCalendarProps, BookingAuditTrail, BookingChe
 
 ### Community 41 - "Community 41"
 Cohesion: 0.15
-Nodes (17): InboxMessageCard(), InboxMessageCardProps, ConvertToBookingModal, InboxPageClient(), StatusFilter, CHANNEL_META, formatRelativeTime(), isUnread() (+9 more)
+Nodes (18): InboxMessageCard(), InboxMessageCardProps, ConvertToBookingModal, InboxPageClient(), StatusFilter, CHANNEL_META, formatRelativeTime(), isUnread() (+10 more)
 
 ### Community 43 - "Community 43"
-Cohesion: 0.07
-Nodes (38): seedDemoData, seedDemoDataV2, seedReset, backfillMessageNlp, backfillMessagesForProperty(), NlpCtx, bindingDoc, ensureTelegramConnectTokenInternal (+30 more)
+Cohesion: 0.09
+Nodes (32): seedDemoData, seedDemoDataV2, seedReset, backfillMessageNlp, backfillMessagesForProperty(), NlpCtx, channelMessageVerification, listChannelMessagesForVerification (+24 more)
 
 ### Community 44 - "Community 44"
-Cohesion: 0.16
-Nodes (10): geistMono, inter, metadata, playfair, plusJakartaSans, spaceGrotesk, ThemeProvider(), convex (+2 more)
+Cohesion: 0.18
+Nodes (9): geistMono, inter, metadata, playfair, spaceGrotesk, ThemeProvider(), convex, ConvexClientProvider() (+1 more)
 
 ### Community 48 - "Community 48"
 Cohesion: 0.12
 Nodes (21): DeleteGuestDialog(), DeleteGuestDialogProps, GuestFormModal(), GuestFormModalProps, DeleteGuestDialog, GuestFormModal, GuestsPageClient(), GuestsTable() (+13 more)
 
 ### Community 55 - "Community 55"
-Cohesion: 0.11
-Nodes (14): BookingAuditTrailProps, BookingChecklistProps, TASK_TYPES, DashboardOverview(), CHANNEL_META, PendingMessagesListProps, PendingMessageView, countActiveBookings() (+6 more)
+Cohesion: 0.13
+Nodes (11): BookingAuditTrailProps, BookingChecklistProps, TASK_TYPES, DashboardOverview(), countActiveBookings(), formatMessageExtractionBadge(), formatMessageTimestamp(), formatShortIsoDate() (+3 more)
 
 ### Community 56 - "Community 56"
-Cohesion: 0.30
-Nodes (10): GuestsTableProps, cn(), Table(), TableBody(), TableCaption(), TableCell(), TableFooter(), TableHead() (+2 more)
+Cohesion: 0.12
+Nodes (20): IvanoPmsLogo(), IvanoPmsLogoProps, motionClass, TechivanoMark(), TechivanoMarkAccent, TechivanoMarkProps, GuestsTableProps, cn() (+12 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.08
@@ -333,8 +337,8 @@ Cohesion: 0.53
 Nodes (5): assertExtraction(), main(), payload, pollConvexMessage(), signBody()
 
 ### Community 77 - "Community 77"
-Cohesion: 0.08
-Nodes (27): EdgeSeed, seedEdgeCaseFixture(), authedClient(), createTestConvex(), modules, seedAuthedManager(), auditTrailEntry, bookingDoc (+19 more)
+Cohesion: 0.14
+Nodes (13): EdgeSeed, seedEdgeCaseFixture(), authedClient(), createTestConvex(), modules, seedAuthedManager(), BOOKING_STATUSES, BookingStatusType (+5 more)
 
 ### Community 78 - "Community 78"
 Cohesion: 0.22
@@ -358,7 +362,7 @@ Nodes (6): bookingStatus, getDashboardStats, isBookingActiveOnDate(), isBookingR
 
 ### Community 83 - "Community 83"
 Cohesion: 0.05
-Nodes (35): DashboardManagerSync(), BookingType, ConvertToBookingModal(), ConvertToBookingModalProps, NAV_ITEMS, PmsDashboardLayout(), PropertyContext, PropertyContextValue (+27 more)
+Nodes (36): DashboardManagerSync(), BookingType, ConvertToBookingModal(), ConvertToBookingModalProps, NAV_ITEMS, PmsDashboardLayout(), PropertyContext, PropertyContextValue (+28 more)
 
 ### Community 84 - "Community 84"
 Cohesion: 0.28
@@ -369,16 +373,16 @@ Cohesion: 0.14
 Nodes (12): ACTIVE_BOOKING_STATUSES, availabilityStatus, createUnit, getUnitById, getUnits, INACTIVE_AVAILABILITY, occupancyStatus, setUnitAvailability (+4 more)
 
 ### Community 86 - "Community 86"
-Cohesion: 0.17
-Nodes (8): motionClass, TechivanoMark(), TechivanoMarkAccent, TechivanoMarkProps, StatusBadge(), StatusBadgeVariant, VARIANTS, TooltipContent
+Cohesion: 0.10
+Nodes (18): Button(), ButtonProps, Large, Primary, Secondary, Small, Story, Header() (+10 more)
 
 ### Community 87 - "Community 87"
 Cohesion: 0.22
 Nodes (7): ACTIVE_OCCUPANCY_STATUSES, getOccupancyByUnit, getRevenueByMonth, listMonthsBack(), monthKeyFromTimestamp(), occupancyUnitRow, revenueMonthRow
 
 ### Community 88 - "Community 88"
-Cohesion: 0.20
-Nodes (10): scripts, build, dev, generate:favicons, lint, prebuild, start, test (+2 more)
+Cohesion: 0.17
+Nodes (12): scripts, build, build-storybook, dev, generate:favicons, lint, prebuild, start (+4 more)
 
 ### Community 89 - "Community 89"
 Cohesion: 0.25
@@ -405,8 +409,8 @@ Cohesion: 0.12
 Nodes (16): Color, Color, Color, Direction 1 — "Operations" (Deep Teal), Direction 2 — "Workspace" (Amber + Warm Gray), Direction 3 — "Precision" (Forest Green + Zinc), Ivano PMS — Design Token Directions (A.1 Proposal), Open questions (need answers before A.3) (+8 more)
 
 ### Community 95 - "Community 95"
-Cohesion: 0.15
-Nodes (8): size, PoweredByTechivano(), PoweredByTechivanoProps, variantClass, IvanoPmsLogo(), IvanoPmsLogoProps, POWERED_BY_LINE, PRODUCT_NAME
+Cohesion: 0.20
+Nodes (6): size, PoweredByTechivano(), PoweredByTechivanoProps, variantClass, POWERED_BY_LINE, PRODUCT_NAME
 
 ### Community 96 - "Community 96"
 Cohesion: 0.08
@@ -465,8 +469,8 @@ Cohesion: 0.29
 Nodes (6): ADR-007: Channel Token Encryption at Rest, Decision, Key management, Related, Status, `v1:` prefix
 
 ### Community 110 - "Community 110"
-Cohesion: 0.19
-Nodes (14): callTelegramApi(), processTelegramUpdate, registerResult, registerTelegramWebhook, sendTelegramMessage(), buildTelegramApiUrl(), parseStartCommand(), TelegramChat (+6 more)
+Cohesion: 0.08
+Nodes (28): bindingDoc, ensureTelegramConnection, ensureTelegramConnectTokenInternal, getTelegramChatBindingInternal, getTelegramConnection, ingestTelegramMessageInternal, linkChatFromStartInternal, linkResult (+20 more)
 
 ### Community 111 - "Community 111"
 Cohesion: 0.29
@@ -552,24 +556,32 @@ Nodes (4): __dirname, OUT_DIR, ROUTES, VIEWPORTS
 Cohesion: 0.40
 Nodes (4): Convex, Route to the Right Skill, Start Here, When Not to Use
 
+### Community 135 - "Community 135"
+Cohesion: 0.12
+Nodes (14): auditTrailEntry, bookingDoc, bookingStatus, bookingType, bookingWithGuestUnit, createBooking, getBookingAuditTrail, getBookingById (+6 more)
+
+### Community 136 - "Community 136"
+Cohesion: 0.14
+Nodes (13): 0. Why this sequencing, 1. Telegram — connection model, 2. Email — connection model, 3. Inbox integration, 4. Keeping WhatsApp/Instagram available later, 5. Revised task breakdown, Channel Integration Spec — Telegram + Email (v1), Data model addition (+5 more)
+
 ## Knowledge Gaps
-- **842 isolated node(s):** `@playwright/mcp`, `ui-ux-pro-mcp`, `$schema`, `style`, `rsc` (+837 more)
+- **888 isolated node(s):** `@playwright/mcp`, `ui-ux-pro-mcp`, `config`, `preview`, `$schema` (+883 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `getTransitionLabel()` connect `Community 77` to `Community 40`?**
-  _High betweenness centrality (0.035) - this node is a cross-community bridge._
-- **Why does `cn()` connect `Community 56` to `Community 0`, `Community 40`, `Community 41`, `Community 83`, `Community 86`, `Community 55`, `Community 95`?**
-  _High betweenness centrality (0.025) - this node is a cross-community bridge._
-- **Why does `convex-helpers` connect `Community 2` to `Community 77`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
-- **What connects `@playwright/mcp`, `ui-ux-pro-mcp`, `$schema` to the rest of the system?**
-  _842 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.032) - this node is a cross-community bridge._
+- **Why does `cn()` connect `Community 56` to `Community 0`, `Community 40`, `Community 41`, `Community 83`, `Community 55`, `Community 95`?**
+  _High betweenness centrality (0.021) - this node is a cross-community bridge._
+- **Why does `Button()` connect `Community 41` to `Community 0`, `Community 40`, `Community 48`, `Community 83`, `Community 55`, `Community 56`, `Community 95`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **What connects `@playwright/mcp`, `ui-ux-pro-mcp`, `config` to the rest of the system?**
+  _888 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.14736842105263157 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**

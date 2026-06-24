@@ -73,3 +73,22 @@ export function buildTelegramApiUrl(
 ): string {
   return `https://api.telegram.org/bot${botToken}/${method}`;
 }
+
+/** Deep link guests tap to open the platform bot with a property token. */
+export function buildTelegramDeepLink(
+  botUsername: string,
+  connectToken: string
+): string {
+  const username = botUsername.replace(/^@/, "");
+  return `https://t.me/${username}?start=${encodeURIComponent(connectToken)}`;
+}
+
+export function getTelegramBotUsername(): string {
+  const raw = process.env.TELEGRAM_BOT_USERNAME?.trim();
+  if (!raw) {
+    throw new Error(
+      "TELEGRAM_BOT_USERNAME is not configured (set in Convex dashboard, e.g. IvanoPMSBot)"
+    );
+  }
+  return raw.replace(/^@/, "");
+}
