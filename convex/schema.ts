@@ -201,6 +201,28 @@ export default defineSchema({
     updatedAt: v.number()
   }).index("by_property_channel", ["propertyId", "channel"]),
 
+  /** Deep-link token for /start <property_token> (Telegram bot onboarding). */
+  propertyConnectToken: defineTable({
+    propertyId: v.id("property"),
+    channel: v.literal("telegram"),
+    token: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number()
+  })
+    .index("by_channel_token", ["channel", "token"])
+    .index("by_property_channel", ["propertyId", "channel"]),
+
+  /** Maps a Telegram chat to a property after /start resolution. */
+  telegramChatBinding: defineTable({
+    propertyId: v.id("property"),
+    telegramChatId: v.string(),
+    telegramUserId: v.string(),
+    linkedAt: v.number(),
+    updatedAt: v.number()
+  })
+    .index("by_chat", ["telegramChatId"])
+    .index("by_property", ["propertyId"]),
+
   manager: defineTable({
     propertyId: v.id("property"),
     clerkUserId: v.string(),

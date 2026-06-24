@@ -114,6 +114,32 @@ npx convex deploy --yes
 | All authed Convex queries throw / blank dashboard | Wrong `CLERK_JWT_ISSUER_DOMAIN` on Convex | Set to `https://clerk.techivano.com`, redeploy Convex |
 | Redirect to `eam.techivano.com/sign-in` | Missing `NEXT_PUBLIC_CLERK_SIGN_IN_URL` on Vercel | Set to `https://pms.techivano.com/sign-in` |
 | `upsertManagerFromClerk` server error in console | Empty prod property table | See prod seed step above |
+| Telegram updates return 401 | `TELEGRAM_WEBHOOK_SECRET` mismatch | Same value in Convex (`setWebhook`) and Vercel (route header check) |
+
+---
+
+## Telegram bot webhook (Task 6.1.1)
+
+**Convex env:** `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_URL`, `TELEGRAM_WEBHOOK_SECRET`  
+**Vercel env:** `TELEGRAM_WEBHOOK_SECRET` (must match Convex)
+
+1. Set secrets (generate webhook secret with `openssl rand -hex 32`):
+   ```bash
+   npx convex env set TELEGRAM_WEBHOOK_URL "https://pms.techivano.com/api/webhooks/telegram" --prod
+   npx convex env set TELEGRAM_WEBHOOK_SECRET "<secret>" --prod
+   ```
+   Add the same `TELEGRAM_WEBHOOK_SECRET` to Vercel.
+
+2. Register webhook with Telegram (once per URL):
+   ```bash
+   npx convex run internal.functions.telegramWebhookActions:registerTelegramWebhook \
+     '{"secret":"YOUR_INTERNAL_JOB_SECRET"}' --prod
+   ```
+
+3. Property managers share deep link: `https://t.me/<bot>?start=<property_token>`  
+   Guest sends `/start <property_token>` → chat binds to property → messages flow to inbox.
+
+4. Smoke: `node scripts/smoke-prod.mjs` (dashboard) + send test message to bot after linking.
 
 ---
 

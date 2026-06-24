@@ -60,10 +60,15 @@ describe("channelTokenCrypto", () => {
   });
 
   it("throws on tampered v1 ciphertext instead of returning garbage", () => {
+    process.env.CHANNEL_TOKEN_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString(
+      "base64"
+    );
     const encrypted = encryptChannelToken("EAAtest-token");
     const parts = encrypted.split(":");
     const data = parts[3]!;
-    parts[3] = `${data.slice(0, -1)}X`;
+    const mid = Math.floor(data.length / 2);
+    const flipped = data[mid] === "A" ? "B" : "A";
+    parts[3] = `${data.slice(0, mid)}${flipped}${data.slice(mid + 1)}`;
     const tampered = parts.join(":");
 
     expect(() => decryptChannelToken(tampered)).toThrow(
