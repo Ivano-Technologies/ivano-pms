@@ -1,6 +1,7 @@
 import { mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { extractMessageKeywords, referenceDateFromTimestamp } from "../lib/nlp";
+
+import { buildThreadKey, ingestChannelMessage } from "../lib/inboxIngestion";
 import { assertInternalJobSecret } from "../lib/secrets";
 
 const messageChannel = v.union(
@@ -51,24 +52,23 @@ export const processWebhookEvent = mutation({
     const now = Date.now();
 
     if (args.event.type === "channel.message") {
-      const referenceDate = referenceDateFromTimestamp(now);
-      const extracted = extractMessageKeywords(
-        args.event.messageText,
-        referenceDate
-      );
+      const threadKey = buildThreadKey(args.event.channel, {
+        senderPhone: args.event.senderPhone,
+        telegramUserId: args.event.telegramUserId,
+        instagramUserId: args.event.instagramUserId
+      });
 
-      return await ctx.db.insert("bookingChannelMessage", {
+      return await ingestChannelMessage(ctx, {
         propertyId: args.propertyId,
         channel: args.event.channel,
         senderName: args.event.senderName,
         messageText: args.event.messageText,
+        threadKey,
+        direction: "inbound",
         senderPhone: args.event.senderPhone,
         telegramUserId: args.event.telegramUserId,
         instagramUserId: args.event.instagramUserId,
-        ...extracted,
-        status: "new",
-        createdAt: now,
-        updatedAt: now
+        now
       });
     }
 

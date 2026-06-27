@@ -1,7 +1,12 @@
 import { v } from "convex/values";
 
+import { internal } from "../_generated/api";
 import { internalMutation, internalQuery } from "../_generated/server";
-import { extractMessageKeywords, referenceDateFromTimestamp } from "../lib/nlp";
+import {
+  buildThreadKey,
+  ensureInboxThread,
+  ingestChannelMessage
+} from "../lib/inboxIngestion";
 import { assertInternalJobSecret } from "../lib/secrets";
 import {
   buildTelegramDeepLink,
@@ -145,6 +150,20 @@ export const linkChatFromStartInternal = internalMutation({
       });
     }
 
+    const threadKey = buildThreadKey("telegram", {
+      telegramChatId: args.telegramChatId,
+      telegramUserId: args.telegramUserId
+    });
+    await ensureInboxThread(ctx, {
+      propertyId: connect.propertyId,
+      channel: "telegram",
+      threadKey,
+      guestDisplayName: args.senderName,
+      telegramChatId: args.telegramChatId,
+      telegramUserId: args.telegramUserId,
+      now
+    });
+
     return {
       propertyId: connect.propertyId,
       propertyName: property.name
@@ -204,8 +223,6 @@ export const ingestTelegramMessageInternal = internalMutation({
     }
 
     const now = Date.now();
-    const referenceDate = referenceDateFromTimestamp(now);
-    const extracted = extractMessageKeywords(args.messageText, referenceDate);
 
     await ctx.db.patch("telegramChatBinding", binding._id, {
       guestDisplayName: args.senderName,
@@ -213,16 +230,21 @@ export const ingestTelegramMessageInternal = internalMutation({
       updatedAt: now
     });
 
-    return await ctx.db.insert("bookingChannelMessage", {
+    const threadKey = buildThreadKey("telegram", {
+      telegramChatId: args.telegramChatId,
+      telegramUserId: args.telegramUserId
+    });
+
+    return await ingestChannelMessage(ctx, {
       propertyId: binding.propertyId,
       channel: "telegram",
       senderName: args.senderName,
       messageText: args.messageText,
+      threadKey,
+      direction: "inbound",
+      telegramChatId: args.telegramChatId,
       telegramUserId: args.telegramUserId,
-      ...extracted,
-      status: "new",
-      createdAt: now,
-      updatedAt: now
+      now
     });
   }
 });
@@ -314,6 +336,60 @@ export const listTelegramThreads = authedQuery({
         linkedAt: thread.linkedAt
       }))
       .sort((a, b) => (b.lastMessageAt ?? b.linkedAt) - (a.lastMessageAt ?? a.linkedAt));
+  }
+});
+
+export const replyToTelegramThread = authedMutation({
+  args: {
+    threadId: v.id("inboxThread"),
+    messageText: v.string()
+  },
+  returns: v.id("bookingChannelMessage"),
+  handler: async (ctx, args) => {
+    const trimmed = args.messageText.trim();
+    if (!trimmed) {
+      throw new Error("Reply cannot be empty");
+    }
+
+    const thread = await ctx.db.get("inboxThread", args.threadId);
+    if (!thread) {
+      throw new Error("Thread not found");
+    }
+    if (thread.propertyId !== ctx.manager.propertyId) {
+      throw new Error("Unauthorized");
+    }
+    if (thread.channel !== "telegram") {
+      throw new Error("Replies are only supported for Telegram threads");
+    }
+    if (!thread.telegramChatId) {
+      throw new Error("Telegram chat is not linked");
+    }
+
+    const secret = process.env.INTERNAL_JOB_SECRET;
+    if (!secret) {
+      throw new Error("INTERNAL_JOB_SECRET is not configured");
+    }
+
+    const messageId = await ingestChannelMessage(ctx, {
+      propertyId: thread.propertyId,
+      channel: "telegram",
+      senderName: ctx.manager.fullName,
+      messageText: trimmed,
+      threadKey: thread.threadKey,
+      direction: "outbound",
+      telegramChatId: thread.telegramChatId,
+      telegramUserId: thread.telegramUserId,
+      managerId: ctx.manager._id,
+      status: "reviewed"
+    });
+
+    await ctx.scheduler.runAfter(0, internal.functions.telegramReply.sendTelegramReplyInternal, {
+      secret,
+      telegramChatId: thread.telegramChatId,
+      messageText: trimmed
+    });
+
+    return messageId;
   }
 });
 

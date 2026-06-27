@@ -259,6 +259,7 @@ describe("processWebhookEvent NLP", () => {
         type: "channel.message",
         channel: "whatsapp",
         senderName: "Tunde",
+        senderPhone: "+2348012345678",
         messageText: "Need suite July 20-22 for Tunde"
       }
     });

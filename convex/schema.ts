@@ -61,6 +61,8 @@ const messageStatus = v.union(
   v.literal("archived")
 );
 
+const messageDirection = v.union(v.literal("inbound"), v.literal("outbound"));
+
 const managerRole = v.union(
   v.literal("owner"),
   v.literal("manager"),
@@ -171,7 +173,10 @@ export default defineSchema({
     propertyId: v.id("property"),
     bookingId: v.optional(v.id("booking")),
     channel: messageChannel,
+    threadKey: v.optional(v.string()),
+    direction: v.optional(messageDirection),
     senderPhone: v.optional(v.string()),
+    telegramChatId: v.optional(v.string()),
     telegramUserId: v.optional(v.string()),
     instagramUserId: v.optional(v.string()),
     senderName: v.string(),
@@ -186,7 +191,29 @@ export default defineSchema({
     updatedAt: v.number()
   })
     .index("by_property", ["propertyId"])
-    .index("by_property_status_created", ["propertyId", "status", "createdAt"]),
+    .index("by_property_status_created", ["propertyId", "status", "createdAt"])
+    .index("by_property_thread_created", ["propertyId", "threadKey", "createdAt"]),
+
+  /** Unified inbox thread (Telegram chat, WhatsApp phone, Instagram user). */
+  inboxThread: defineTable({
+    propertyId: v.id("property"),
+    channel: messageChannel,
+    threadKey: v.string(),
+    guestDisplayName: v.string(),
+    telegramChatId: v.optional(v.string()),
+    telegramUserId: v.optional(v.string()),
+    senderPhone: v.optional(v.string()),
+    instagramUserId: v.optional(v.string()),
+    lastMessagePreview: v.string(),
+    lastMessageAt: v.number(),
+    unreadCount: v.number(),
+    status: messageStatus,
+    bookingId: v.optional(v.id("booking")),
+    createdAt: v.number(),
+    updatedAt: v.number()
+  })
+    .index("by_property_last_message", ["propertyId", "lastMessageAt"])
+    .index("by_property_thread_key", ["propertyId", "threadKey"]),
 
   // accessToken and refreshToken are AES-256-GCM ciphertext (v1: prefix).
   // Raw values never leave the Convex action boundary. See ADR-007 and channelTokenActions.ts.
