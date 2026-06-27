@@ -33,7 +33,7 @@ const ROUTES = [
   { name: "02-bookings-calendar",    path: "/dashboard/bookings" },
   { name: "03-guests",               path: "/dashboard/guests" },
   { name: "04-units",                path: "/dashboard/units" },
-  { name: "05-channels",             path: "/dashboard/channels" },
+  { name: "05-inbox",                path: "/dashboard/inbox" },
   { name: "06-reports",              path: "/dashboard/reports" },
   { name: "07-settings",             path: "/dashboard/settings" },
 ];

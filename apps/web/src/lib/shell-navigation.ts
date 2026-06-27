@@ -22,8 +22,8 @@ export type ShellNavItem = {
 /**
  * Single source of truth for shell navigation.
  *
- * Route notes (current app, not rebuilt in Phase B):
- * - Inbox lives at /dashboard/channels (legacy route name).
+ * Route notes (current app):
+ * - Inbox is at /dashboard/inbox (/dashboard/channels redirects here).
  * - Telegram + Email inbound cards live under Settings → Connected channels.
  * - Bulk import button lives on Guests page header (not a top-level nav item).
  */
@@ -31,7 +31,7 @@ export const SHELL_NAV_ITEMS: ShellNavItem[] = [
   {
     id: "inbox",
     label: "Inbox",
-    href: "/dashboard/channels",
+    href: "/dashboard/inbox",
     icon: Inbox,
     mobilePrimary: true,
     hint: "Guest threads"

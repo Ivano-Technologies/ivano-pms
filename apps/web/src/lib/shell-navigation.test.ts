@@ -7,9 +7,9 @@ import {
 } from "./shell-navigation";
 
 describe("shell-navigation", () => {
-  it("maps inbox to the legacy /dashboard/channels route", () => {
+  it("maps inbox to /dashboard/inbox", () => {
     const inbox = SHELL_NAV_ITEMS.find((item) => item.id === "inbox");
-    expect(inbox?.href).toBe("/dashboard/channels");
+    expect(inbox?.href).toBe("/dashboard/inbox");
   });
 
   it("points settings at channel cards (Telegram, Email inbound)", () => {

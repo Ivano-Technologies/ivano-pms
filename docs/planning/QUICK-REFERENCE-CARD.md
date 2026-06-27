@@ -68,7 +68,7 @@ await ctx.runAction(internal.functions.channelTokenActions.upsertChannelToken, {
 | `/dashboard/bookings` | Calendar + overlap |
 | `/dashboard/guests` | Guest CRUD + notes |
 | `/dashboard/units` | Unit grid |
-| `/dashboard/channels` | Inbox |
+| `/dashboard/inbox` | Inbox (legacy `/dashboard/channels` redirects here) |
 | `/dashboard/reports` | Revenue + occupancy |
 | `/dashboard/settings` | Channel connections |
 
