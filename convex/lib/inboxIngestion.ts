@@ -2,14 +2,16 @@ import type { Id } from "../_generated/dataModel";
 import type { MutationCtx } from "../_generated/server";
 import { extractMessageKeywords, referenceDateFromTimestamp } from "./nlp";
 
-export type MessageChannel = "whatsapp" | "telegram" | "instagram";
+export type MessageChannel = "whatsapp" | "telegram" | "instagram" | "email";
 export type MessageDirection = "inbound" | "outbound";
 
 export type ThreadIdentity = {
+  propertyId?: Id<"property">;
   telegramChatId?: string;
   telegramUserId?: string;
   senderPhone?: string;
   instagramUserId?: string;
+  senderEmail?: string;
 };
 
 export function buildThreadKey(
@@ -33,10 +35,22 @@ export function buildThreadKey(
     return `wa:${ids.senderPhone}`;
   }
 
-  if (!ids.instagramUserId) {
-    throw new Error("Instagram thread requires user id");
+  if (channel === "instagram") {
+    if (!ids.instagramUserId) {
+      throw new Error("Instagram thread requires user id");
+    }
+    return `ig:${ids.instagramUserId}`;
   }
-  return `ig:${ids.instagramUserId}`;
+
+  if (!ids.senderEmail) {
+    throw new Error("Email thread requires sender email");
+  }
+  if (!ids.propertyId) {
+    throw new Error("Email thread requires property id");
+  }
+  // Scope email threads by property so one guest emailing two properties
+  // never merges into a single thread.
+  return `email:${ids.propertyId}:${ids.senderEmail.toLowerCase()}`;
 }
 
 function truncatePreview(text: string, max = 160): string {
@@ -57,6 +71,7 @@ export async function ensureInboxThread(
     telegramUserId?: string;
     senderPhone?: string;
     instagramUserId?: string;
+    senderEmail?: string;
     now?: number;
   }
 ): Promise<Id<"inboxThread">> {
@@ -76,6 +91,7 @@ export async function ensureInboxThread(
       telegramUserId: args.telegramUserId ?? existing.telegramUserId,
       senderPhone: args.senderPhone ?? existing.senderPhone,
       instagramUserId: args.instagramUserId ?? existing.instagramUserId,
+      senderEmail: args.senderEmail ?? existing.senderEmail,
       updatedAt: now
     });
     return existing._id;
@@ -90,6 +106,7 @@ export async function ensureInboxThread(
     telegramUserId: args.telegramUserId,
     senderPhone: args.senderPhone,
     instagramUserId: args.instagramUserId,
+    senderEmail: args.senderEmail,
     lastMessagePreview: "",
     lastMessageAt: now,
     unreadCount: 0,
@@ -110,6 +127,8 @@ type IngestMessageBase = {
   telegramUserId?: string;
   senderPhone?: string;
   instagramUserId?: string;
+  senderEmail?: string;
+  emailSubject?: string;
   managerId?: Id<"manager">;
   status?: "new" | "reviewed";
   now?: number;
@@ -164,6 +183,7 @@ export async function ingestChannelMessage(
     telegramUserId: args.telegramUserId,
     senderPhone: args.senderPhone,
     instagramUserId: args.instagramUserId,
+    senderEmail: args.senderEmail,
     now
   });
 
@@ -183,6 +203,8 @@ export async function ingestChannelMessage(
     telegramUserId: args.telegramUserId,
     senderPhone: args.senderPhone,
     instagramUserId: args.instagramUserId,
+    senderEmail: args.senderEmail,
+    emailSubject: args.emailSubject,
     managerId: args.managerId,
     ...extracted,
     status,

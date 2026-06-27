@@ -51,7 +51,8 @@ const sourceChannel = v.union(
 const messageChannel = v.union(
   v.literal("whatsapp"),
   v.literal("telegram"),
-  v.literal("instagram")
+  v.literal("instagram"),
+  v.literal("email")
 );
 
 const messageStatus = v.union(
@@ -104,6 +105,7 @@ const auditEntityType = v.union(
 export default defineSchema({
   property: defineTable({
     name: v.string(),
+    slug: v.string(),
     address: v.string(),
     phone: v.string(),
     whatsapp: v.string(),
@@ -111,7 +113,7 @@ export default defineSchema({
     timezone: v.string(),
     createdAt: v.number(),
     updatedAt: v.number()
-  }),
+  }).index("by_slug", ["slug"]),
 
   unit: defineTable({
     propertyId: v.id("property"),
@@ -179,6 +181,8 @@ export default defineSchema({
     telegramChatId: v.optional(v.string()),
     telegramUserId: v.optional(v.string()),
     instagramUserId: v.optional(v.string()),
+    senderEmail: v.optional(v.string()),
+    emailSubject: v.optional(v.string()),
     senderName: v.string(),
     messageText: v.string(),
     extractedCheckIn: v.optional(v.string()),
@@ -204,6 +208,7 @@ export default defineSchema({
     telegramUserId: v.optional(v.string()),
     senderPhone: v.optional(v.string()),
     instagramUserId: v.optional(v.string()),
+    senderEmail: v.optional(v.string()),
     lastMessagePreview: v.string(),
     lastMessageAt: v.number(),
     unreadCount: v.number(),
