@@ -3,6 +3,10 @@
     "user-playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "ui-ux-pro": {
+      "command": "npx",
+      "args": ["-y", "ui-ux-pro-mcp@1.0.0", "--stdio"]
     }
   }
 }
