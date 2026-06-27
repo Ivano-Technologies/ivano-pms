@@ -16,11 +16,15 @@ import type * as functions_channelTokens from "../functions/channelTokens.js";
 import type * as functions_checklists from "../functions/checklists.js";
 import type * as functions_dashboard from "../functions/dashboard.js";
 import type * as functions_guests from "../functions/guests.js";
+import type * as functions_inboxThreads from "../functions/inboxThreads.js";
 import type * as functions_managers from "../functions/managers.js";
 import type * as functions_nlp from "../functions/nlp.js";
 import type * as functions_occupancy from "../functions/occupancy.js";
 import type * as functions_property from "../functions/property.js";
 import type * as functions_reports from "../functions/reports.js";
+import type * as functions_telegram from "../functions/telegram.js";
+import type * as functions_telegramReply from "../functions/telegramReply.js";
+import type * as functions_telegramWebhookActions from "../functions/telegramWebhookActions.js";
 import type * as functions_units from "../functions/units.js";
 import type * as functions_webhooks from "../functions/webhooks.js";
 import type * as lib_auth from "../lib/auth.js";
@@ -28,9 +32,11 @@ import type * as lib_bookingStates from "../lib/bookingStates.js";
 import type * as lib_bookingStats from "../lib/bookingStats.js";
 import type * as lib_channelTokenCrypto from "../lib/channelTokenCrypto.js";
 import type * as lib_customFunctions from "../lib/customFunctions.js";
+import type * as lib_inboxIngestion from "../lib/inboxIngestion.js";
 import type * as lib_nlp from "../lib/nlp.js";
 import type * as lib_secrets from "../lib/secrets.js";
 import type * as lib_seedData from "../lib/seedData.js";
+import type * as lib_telegram from "../lib/telegram.js";
 import type * as seed from "../seed.js";
 
 import type {
@@ -48,11 +54,15 @@ declare const fullApi: ApiFromModules<{
   "functions/checklists": typeof functions_checklists;
   "functions/dashboard": typeof functions_dashboard;
   "functions/guests": typeof functions_guests;
+  "functions/inboxThreads": typeof functions_inboxThreads;
   "functions/managers": typeof functions_managers;
   "functions/nlp": typeof functions_nlp;
   "functions/occupancy": typeof functions_occupancy;
   "functions/property": typeof functions_property;
   "functions/reports": typeof functions_reports;
+  "functions/telegram": typeof functions_telegram;
+  "functions/telegramReply": typeof functions_telegramReply;
+  "functions/telegramWebhookActions": typeof functions_telegramWebhookActions;
   "functions/units": typeof functions_units;
   "functions/webhooks": typeof functions_webhooks;
   "lib/auth": typeof lib_auth;
@@ -60,9 +70,11 @@ declare const fullApi: ApiFromModules<{
   "lib/bookingStats": typeof lib_bookingStats;
   "lib/channelTokenCrypto": typeof lib_channelTokenCrypto;
   "lib/customFunctions": typeof lib_customFunctions;
+  "lib/inboxIngestion": typeof lib_inboxIngestion;
   "lib/nlp": typeof lib_nlp;
   "lib/secrets": typeof lib_secrets;
   "lib/seedData": typeof lib_seedData;
+  "lib/telegram": typeof lib_telegram;
   seed: typeof seed;
 }>;
 
