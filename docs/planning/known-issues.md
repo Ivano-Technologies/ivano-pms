@@ -5,7 +5,34 @@ reports stop carrying them silently as "pre-existing."
 
 Last reviewed: 2026-06-27
 
-No open issues. See **Resolved** below.
+## Open
+
+- **2026-06-27 — Magic MCP (`@21st-dev/magic`) shows errored / not callable
+  from the agent.** The agent runtime exposes the server with no `tools/`
+  descriptors and a `STATUS.md` reading "The MCP server errored." A duplicate
+  registration also exists: both `@21st-dev/magic` (from global
+  `~/.cursor/mcp.json`, pinned `@0.0.46`) and a separate `Magic MCP` entry
+  defined outside the JSON config (Cursor's settings store) surface to the
+  runtime simultaneously.
+
+  **Investigated (time-boxed):** the suspected Windows `cmd /c` arg-quoting of
+  `API_KEY=\"...\"` was **ruled out** — running the exact configured command
+  by hand boots cleanly (`Server started (PID …)`) and waits on stdio as
+  expected. So quoting is not the root cause. Most likely culprit is the
+  duplicate registration conflicting during the MCP handshake/reload, but this
+  was not pursued further per scope guidance.
+
+  **Next step (when revisited):** remove the stray `Magic MCP` duplicate via
+  Cursor Settings → Tools & MCP so only the JSON-defined `@21st-dev/magic`
+  remains, then reload and recheck. Not blocking — Phase B can proceed manually.
+
+- **2026-06-27 — `ui-ux-pro` MCP server not registered with the agent
+  runtime.** Pinned to `ui-ux-pro-mcp@1.0.0` in project `.cursor/mcp.json`
+  (committed `8a0de12`). The package itself starts fine via `npx` (indexes
+  initialize), but no `mcps/ui-ux-pro*` descriptor folder is generated, so no
+  tools are exposed to the agent. Needs a full Cursor MCP host restart to
+  confirm registration; if it still fails to appear, suspect the `--stdio`
+  flag handling or host startup ordering. Not blocking Phase B.
 
 ---
 
