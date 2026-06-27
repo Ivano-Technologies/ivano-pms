@@ -21,7 +21,8 @@ vi.mock("@clerk/nextjs", () => ({
       primaryEmailAddress: { emailAddress: "manager@test.com" }
     }
   }),
-  ClerkProvider: ({ children }: { children: React.ReactNode }) => children
+  ClerkProvider: ({ children }: { children: React.ReactNode }) => children,
+  UserButton: () => React.createElement("div", { "data-testid": "user-button" })
 }));
 
 vi.mock("convex/react", () => ({
