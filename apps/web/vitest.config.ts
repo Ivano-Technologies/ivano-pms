@@ -1,27 +1,42 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-
-import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 
-const dir = path.dirname(fileURLToPath(import.meta.url));
+// Web-package workspace: the flat unit project plus the Storybook browser
+// project. The root workspace references ./vitest.unit.config.ts directly
+// instead of this file, so the unit project's jsdom environment and src/**
+// include apply correctly in the aggregate `pnpm test` run.
+// See docs/planning/known-issues.md (resolved).
+const dirname =
+  typeof __dirname !== "undefined"
+    ? __dirname
+    : path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(dir, "./src")
-    },
-    dedupe: ["react", "react-dom"]
-  },
   test: {
-    environment: "jsdom",
-    setupFiles: ["./src/test.setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}"],
-    exclude: ["**/node_modules/**", "**/.next/**"],
-    environmentMatchGlobs: [["src/app/api/**/*.test.ts", "node"]],
-    env: {
-      NODE_ENV: "development"
-    }
+    projects: [
+      "./vitest.unit.config.ts",
+      {
+        extends: "./vitest.unit.config.ts",
+        plugins: [
+          // See: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
+          storybookTest({
+            configDir: path.join(dirname, ".storybook")
+          })
+        ],
+        test: {
+          name: "storybook",
+          environment: undefined,
+          include: ["**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: "playwright",
+            instances: [{ browser: "chromium" }]
+          }
+        }
+      }
+    ]
   }
 });
