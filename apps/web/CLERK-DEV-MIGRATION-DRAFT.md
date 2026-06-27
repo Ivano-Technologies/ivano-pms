@@ -1,6 +1,6 @@
-# Draft: migrate `apps/web/.env.local` for Clerk dev keys
+# Migrate `apps/web/.env.local` for Clerk dev keys
 
-**Status:** Draft only — apply after you paste `pk_test_` / `sk_test_` from Clerk Dashboard (Development).
+**Status:** Applied — `next dev` now runs on the Clerk **development** instance via `apps/web/.env.development.local`.
 
 ## Goal
 
@@ -15,20 +15,26 @@ Local `next dev` must use Clerk **development** keys. Production keys (`pk_live_
 
 Copy [`.env.development.local.example`](./.env.development.local.example) → `.env.development.local` and fill in keys.
 
-## Remove or stop using in `.env.local` for local dev
+## How overriding works (no deletion needed)
 
-These production-oriented values should **not** drive `next dev` once migration is complete:
+`next dev` resolves env vars with `.env.development.local` taking precedence over `.env.local`
+(Next.js load order). So the prod-oriented values below **stay** in `.env.local` for prod builds
+and prod tooling, but are transparently overridden during local dev:
 
-```diff
-- CLERK_PUBLISHABLE_KEY=pk_live_...
-- CLERK_SECRET_KEY=sk_live_...
-- NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...
-- NEXT_PUBLIC_CLERK_SIGN_IN_URL=https://pms.techivano.com/sign-in
-- NEXT_PUBLIC_APP_URL=https://pms.techivano.com
-- NODE_ENV=production
-```
+| `.env.local` (prod) | overridden by `.env.development.local` (dev) |
+|---------------------|----------------------------------------------|
+| `pk_live_…` / `sk_live_…` | `pk_test_…` / `sk_test_…` |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL=https://pms.techivano.com/sign-in` | `http://localhost:3000/sign-in` |
+| `NEXT_PUBLIC_APP_URL=https://pms.techivano.com` | `http://localhost:3000` |
+| `CLERK_JWT_ISSUER_DOMAIN=https://clerk.techivano.com` | `https://striking-rodent-37.clerk.accounts.dev` |
+| `NEXT_PUBLIC_CONVEX_URL=…flippant-eel-758…` (prod) | `…amicable-aardvark-543…` (dev) |
 
-`NODE_ENV` is set automatically by Next.js; remove a manual `NODE_ENV=production` from `.env.local` if present.
+> **Do not delete the `pk_live_`/`sk_live_` keys from `.env.local`.** `scripts/smoke-prod.mjs`
+> and `scripts/smoke-debug.mjs` load `.env.local` directly and need the production `CLERK_SECRET_KEY`
+> to hit `pms.techivano.com`.
+
+**Only deletion applied:** remove a hardcoded `NODE_ENV=production` from `.env.local` — Next.js and
+the Convex CLI set `NODE_ENV` automatically, and hardcoding it misleads dev tooling.
 
 ## Keep in `.env.local` (unchanged)
 
@@ -43,6 +49,19 @@ These production-oriented values should **not** drive `next dev` once migration 
 3. Create/sign in as dev test user (step 2 — pending)
 4. Record auth: `node scripts/record-auth-state.mjs` (defaults to localhost when `pk_test_` detected)
 
-## Convex note
+## Convex wiring (required for the dashboard to load, not just sign-in)
 
-If local app uses Clerk **dev** JWTs, the **Convex dev deployment** `CLERK_JWT_ISSUER_DOMAIN` must be `https://striking-rodent-37.clerk.accounts.dev`, not `https://clerk.techivano.com`. Prod Convex keeps `https://clerk.techivano.com`. See [DEVELOPMENT.md](../../DEVELOPMENT.md#clerk-environments-dev-vs-prod).
+Sign-in is pure Clerk, but the dashboard's authed Convex queries (`getMyProperties`) need the
+**Convex dev deployment** (`amicable-aardvark-543`) to trust dev Clerk tokens. Completed:
+
+1. **Dev Clerk JWT template** — the dev instance had no templates; created a `convex` template
+   (`aud: "convex"`, matching `applicationID: "convex"` in `convex/auth.config.ts`).
+2. **Dev Convex env** — `npx convex env set CLERK_JWT_ISSUER_DOMAIN https://striking-rodent-37.clerk.accounts.dev`
+   and `CLERK_SECRET_KEY sk_test_…` on the dev deployment.
+3. **Re-push** — `npx convex dev --once` so `auth.config.ts` re-evaluates with the new issuer
+   (env change alone does not refresh the deployed auth config).
+4. **App points at dev Convex** — `NEXT_PUBLIC_CONVEX_URL=https://amicable-aardvark-543.convex.cloud`
+   in `.env.development.local`.
+
+Prod Convex (`flippant-eel-758`) keeps `https://clerk.techivano.com`. See
+[DEVELOPMENT.md](../../DEVELOPMENT.md#clerk-environments-dev-vs-prod).
