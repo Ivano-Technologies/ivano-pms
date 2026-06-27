@@ -1,7 +1,12 @@
 import "@testing-library/jest-dom/vitest";
 import { act } from "react";
 import * as React from "react";
-import { vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
+
+afterEach(() => {
+  cleanup();
+});
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 (React as typeof React & { act: typeof act }).act = act;
