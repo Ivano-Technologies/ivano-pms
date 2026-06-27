@@ -11,6 +11,7 @@ import {
   CardTitle
 } from "./card";
 import { CommandPaletteShell } from "./command-palette-shell";
+import { SHELL_NAV_ITEMS } from "@/lib/shell-navigation";
 import { Skeleton, SkeletonCard, SkeletonText } from "./skeleton";
 import { StatusChip } from "./status-chip";
 
@@ -81,11 +82,22 @@ export const Skeletons: StoryObj = {
 };
 
 export const CommandPalette: StoryObj = {
-  render: () => <CommandPaletteShell />,
+  render: () => (
+    <CommandPaletteShell
+      open
+      items={SHELL_NAV_ITEMS.map((item) => ({
+        id: item.id,
+        label: `Go to ${item.label}`,
+        hint: item.hint,
+        icon: item.icon
+      }))}
+    />
+  ),
   parameters: {
     docs: {
       description: {
-        story: "Open with Ctrl+K. Shell only — wiring to routes lands in Phase B."
+        story:
+          "Palette shell with all shell routes. Production wiring navigates via CommandPalette in the dashboard layout."
       }
     }
   }
