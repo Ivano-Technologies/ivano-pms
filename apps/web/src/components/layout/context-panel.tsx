@@ -92,7 +92,8 @@ export function ContextPanel({ className }: ContextPanelProps) {
   return (
     <aside
       className={cn(
-        "border-border bg-card hidden w-80 shrink-0 flex-col border-l lg:flex",
+        "border-border bg-card fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col border-l shadow-xl",
+        "lg:relative lg:z-auto lg:w-80 lg:max-w-none lg:shadow-none",
         className
       )}
       aria-label={title || "Context panel"}
