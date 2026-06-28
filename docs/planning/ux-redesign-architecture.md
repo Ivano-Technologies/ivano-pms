@@ -153,21 +153,44 @@ Nothing above is a hard blocker — Cursor with `@21st-dev/magic`, `ui-ux-pro-mc
 
 ## 12. Phased execution plan (turn into `[TASK-X.Y]` tickets)
 
-**Phase A — Foundation (block everything else)**
+### Phase naming note (2026-06-27)
+
+Commits tagged `[TASK-C.1]`–`[TASK-C.3]` shipped **context-shell wiring** (inbox route rename, context panel content from Inbox/Calendar, checklist slide-over). That work is **closed** — treat it as **Phase C** below.
+
+The **heavy flow redesigns** originally listed here as “Phase C — Core flows” (inbox thread states, create-booking-from-thread, calendar timeline, reports) were **not** part of those commits. Going forward, call that scope **Phase D-pre** so “Phase C” is not overloaded.
+
+| Label | Status | Scope |
+|-------|--------|--------|
+| Phase A | Done | Tokens, audit, primitives |
+| Phase B | Done | Command bar, nav rail, context panel shell |
+| **Phase C** | **Closed** | Context panel plumbing, checklist slide-over, `/dashboard/inbox` rename |
+| **Phase D-pre** | Next | Inbox/calendar/reports flow redesigns (below) |
+| Phase D | Planned | Channels & polish (section below) |
+
+Do not retroactively relabel the shipped `[TASK-C.*]` commits; use this table for future sessions only.
+
+---
+
+**Phase A — Foundation (block everything else)** — *done*
 - A.1 Lock design tokens (color, type, spacing, radius, motion) — Figma exploration, 2–3 directions reviewed
 - A.2 Run the audit in section 3, commit screenshots + component inventory to `docs/planning/ux-audit/`
 - A.3 Build/extend the primitive layer (button, card, status chip, skeleton, command palette shell) in Storybook
 
-**Phase B — Shell**
+**Phase B — Shell** — *done*
 - B.1 Command bar with property switcher + global search + `Cmd/Ctrl+K` palette
 - B.2 Nav rail (desktop) + bottom tab bar (mobile breakpoint)
 - B.3 Context panel pattern (shared by Inbox, Calendar, Checklists)
 
-**Phase C — Core flows**
-- C.1 Inbox redesign (channel tags, thread states, create-booking-from-thread)
-- C.2 Calendar redesign (timeline bars, conflict markers, drag-to-create)
-- C.3 Reports redesign (summary cards + sparklines, shared date-range picker)
-- C.4 Checklists as context-panel slide-over
+**Phase C — Context shell wiring** — *closed (commits `TASK-C.1`–`TASK-C.3`)*
+- C.1 Inbox route rename (`/dashboard/inbox`; legacy `/dashboard/channels` redirects)
+- C.2 Context panel content wired from Inbox (thread/booking) and Calendar (booking)
+- C.3 Checklist slide-over from booking context panel + Storybook
+
+**Phase D-pre — Core flow redesigns** *(formerly “Phase C — Core flows” in this doc)*
+- D-pre.1 Inbox redesign (channel tags, thread states, create-booking-from-thread)
+- D-pre.2 Calendar redesign (timeline bars, conflict markers, drag-to-create)
+- D-pre.3 Reports redesign (summary cards + sparklines, shared date-range picker)
+- ~~D-pre.4 Checklists as context-panel slide-over~~ — delivered under Phase C.3
 
 **Phase D — Channels & polish**
 - D.1 Unified channel-connection pattern (apply to the WhatsApp OAuth start route you're about to build, then reuse for Telegram/Instagram)
