@@ -116,7 +116,7 @@ Until Telegram is unparked per [telegram-verification-todo.md](../planning/teleg
 | `WHATSAPP_ACCESS_TOKEN` | — (`.env.example` only) | Not in code | **N** | Deferred; unset OK. |
 | `INSTAGRAM_VERIFY_TOKEN` | — (`.env.example` only) | Not in code | **N** | Deferred; unset OK. |
 | `BACKEND_API_ORIGIN` | Vercel (optional) | Next rewrites | **N** if unused | Leave empty unless external API deployed. |
-| `CRON_SECRET` | Vercel (optional) | `cron-auth.ts` | **N** | No route uses it yet. |
+| `CRON_SECRET` | Vercel | Vercel Cron `Authorization: Bearer …` | **N** | Required when cron routes exist (`verifyCronRequest`). Today: `vercel.json` schedules three paths but **handlers were removed** — crons 404; secret unused until routes are restored. |
 | `BLOB_READ_WRITE_TOKEN` | — | Not in PMS code | **N** | Legacy scaffold. |
 | `INGEST_SECRET` | — | Not in PMS code | **N** | Legacy scaffold. |
 | `RESEND_API_KEY` / `RESEND_FROM_EMAIL` | — | Not in PMS code | **N** | Outbound deferred per launch-scope. |
@@ -181,6 +181,26 @@ If the newly promoted color is broken:
 2. **Do not** roll back Convex schema/data unless you have a migration reversal plan — both colors share one database; a bad Convex deploy cannot be undone by “swapping color” alone.
 3. **Git:** Fix forward on the inactive branch; avoid force-pushing `main` unless that is your agreed break-glass process.
 4. **Telegram:** If webhook was re-registered during a bad swap, re-run `registerTelegramWebhook` after rollback so Telegram points at the live deployment again.
+
+---
+
+## Schema changes under blue/green
+
+Both colors share **one** Convex production deployment (`flippant-eel-758`). The database is **not** versioned per color — there is no “staging Convex” copy behind the inactive Vercel slot.
+
+| Fact | Implication |
+|------|-------------|
+| `npx convex deploy` targets prod immediately | Schema and function changes affect live data **before** any Vercel promotion |
+| Vercel swap only rolls back **frontend** code | Promoting the previous color **cannot** undo a Convex migration already applied |
+| Both colors may run against the same schema during a swap window | Old and new Next.js builds must tolerate the **current** prod schema |
+
+**Discipline while both colors are live:**
+
+1. **Additive / backward-compatible migrations only** — new optional fields, new tables, new indexes; old clients and the inactive color must keep working until promotion completes.
+2. **Promote the same day as any schema change** — deploy Convex, then ship and promote the Vercel color that depends on that schema; do not leave prod on a build that assumes a schema the other color cannot satisfy.
+3. **Destructive changes: expand → migrate → contract** — add the new shape, backfill or dual-write, cut reads to the old shape, then remove it in a later deploy. **Never** bare `rename` / `drop` on prod while blue/green is the rollback strategy.
+
+If a migration cannot be made backward-compatible, treat it as a **maintenance window** (take traffic off prod or accept that swap-back will not fix data shape) — not as something a Vercel color swap alone can reverse.
 
 ---
 

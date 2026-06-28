@@ -23,6 +23,8 @@ Vercel does **not** deploy Convex. Run this whenever `convex/` changes:
 CONVEX_DEPLOYMENT=prod:flippant-eel-758 npx convex deploy --yes
 ```
 
+> **Schema discipline:** This hits the **shared** prod database immediately; Vercel swap-back cannot undo it. Use additive migrations while both colors are live; destructive changes require expand → migrate → contract ([staging-env-checklist.md § Schema changes under blue/green](./staging-env-checklist.md#schema-changes-under-bluegreen)).
+
 ### 3. First-time production data (one-time per empty deployment)
 
 **Dev and prod Convex deployments are separate databases.** Seed data in dev does not carry over.
