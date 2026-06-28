@@ -8,7 +8,8 @@ import { assertInternalJobSecret } from "../lib/secrets";
 const messageChannel = v.union(
   v.literal("whatsapp"),
   v.literal("telegram"),
-  v.literal("instagram")
+  v.literal("instagram"),
+  v.literal("email")
 );
 
 const messageStatus = v.union(
@@ -203,7 +204,9 @@ export const convertChannelMessageToBooking = authedMutation({
       adultsCount: 1,
       childrenCount: 0,
       status: "pending_confirmation",
-      sourceChannel: message.channel,
+      // booking.sourceChannel has no "email" member; email-origin conversions
+      // fall back to "direct" (the message itself retains channel: "email").
+      sourceChannel: message.channel === "email" ? "direct" : message.channel,
       totalPriceNgn: args.totalPriceNgn,
       paidNgn: 0,
       createdAt: now,

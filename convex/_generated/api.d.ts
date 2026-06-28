@@ -10,11 +10,14 @@
 
 import type * as functions_audit from "../functions/audit.js";
 import type * as functions_bookings from "../functions/bookings.js";
+import type * as functions_bulkImport from "../functions/bulkImport.js";
 import type * as functions_channelMessages from "../functions/channelMessages.js";
 import type * as functions_channelTokenActions from "../functions/channelTokenActions.js";
 import type * as functions_channelTokens from "../functions/channelTokens.js";
 import type * as functions_checklists from "../functions/checklists.js";
 import type * as functions_dashboard from "../functions/dashboard.js";
+import type * as functions_email from "../functions/email.js";
+import type * as functions_emailWebhookActions from "../functions/emailWebhookActions.js";
 import type * as functions_guests from "../functions/guests.js";
 import type * as functions_inboxThreads from "../functions/inboxThreads.js";
 import type * as functions_managers from "../functions/managers.js";
@@ -28,10 +31,13 @@ import type * as functions_telegramWebhookActions from "../functions/telegramWeb
 import type * as functions_units from "../functions/units.js";
 import type * as functions_webhooks from "../functions/webhooks.js";
 import type * as lib_auth from "../lib/auth.js";
+import type * as lib_bookingOverlap from "../lib/bookingOverlap.js";
 import type * as lib_bookingStates from "../lib/bookingStates.js";
 import type * as lib_bookingStats from "../lib/bookingStats.js";
+import type * as lib_bulkImport from "../lib/bulkImport.js";
 import type * as lib_channelTokenCrypto from "../lib/channelTokenCrypto.js";
 import type * as lib_customFunctions from "../lib/customFunctions.js";
+import type * as lib_emailRouting from "../lib/emailRouting.js";
 import type * as lib_inboxIngestion from "../lib/inboxIngestion.js";
 import type * as lib_nlp from "../lib/nlp.js";
 import type * as lib_secrets from "../lib/secrets.js";
@@ -48,11 +54,14 @@ import type {
 declare const fullApi: ApiFromModules<{
   "functions/audit": typeof functions_audit;
   "functions/bookings": typeof functions_bookings;
+  "functions/bulkImport": typeof functions_bulkImport;
   "functions/channelMessages": typeof functions_channelMessages;
   "functions/channelTokenActions": typeof functions_channelTokenActions;
   "functions/channelTokens": typeof functions_channelTokens;
   "functions/checklists": typeof functions_checklists;
   "functions/dashboard": typeof functions_dashboard;
+  "functions/email": typeof functions_email;
+  "functions/emailWebhookActions": typeof functions_emailWebhookActions;
   "functions/guests": typeof functions_guests;
   "functions/inboxThreads": typeof functions_inboxThreads;
   "functions/managers": typeof functions_managers;
@@ -66,10 +75,13 @@ declare const fullApi: ApiFromModules<{
   "functions/units": typeof functions_units;
   "functions/webhooks": typeof functions_webhooks;
   "lib/auth": typeof lib_auth;
+  "lib/bookingOverlap": typeof lib_bookingOverlap;
   "lib/bookingStates": typeof lib_bookingStates;
   "lib/bookingStats": typeof lib_bookingStats;
+  "lib/bulkImport": typeof lib_bulkImport;
   "lib/channelTokenCrypto": typeof lib_channelTokenCrypto;
   "lib/customFunctions": typeof lib_customFunctions;
+  "lib/emailRouting": typeof lib_emailRouting;
   "lib/inboxIngestion": typeof lib_inboxIngestion;
   "lib/nlp": typeof lib_nlp;
   "lib/secrets": typeof lib_secrets;
