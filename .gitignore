@@ -52,3 +52,7 @@ skills-lock.json
 
 # Storybook init demo boilerplate (not project components)
 apps/web/src/stories/
+
+# Convex ai-files install boilerplate (regenerable pointer docs)
+AGENTS.md
+CLAUDE.md
