@@ -3,9 +3,28 @@
 Deliberately tracked tooling/config issues. Listed here so test-count
 reports stop carrying them silently as "pre-existing."
 
-Last reviewed: 2026-06-27
+Last reviewed: 2026-06-28
 
 ## Open
+
+- **2026-06-28 — Duplicate `vite` versions break `vitest.unit.config.ts`
+  typecheck.** `pnpm` resolves both `vite@8.1.0` (direct devDep) and
+  `vite@7.3.1` (transitive), so the `react()` plugin (typed against one) is not
+  assignable to `defineConfig` (typed against the other). Tests run fine
+  (vitest uses the config at runtime, 208 passing) — this is type-level only.
+  **Worked around** by excluding `vitest.unit.config.ts` / `vitest.config.ts`
+  from the Next production typecheck (`apps/web/tsconfig.json`), since a vitest
+  config has no place in the app build. **Proper fix when revisited:** dedupe
+  vite via a `pnpm.overrides` pin so one version resolves everywhere. Not
+  blocking — production build is green.
+
+- **2026-06-28 — `pnpm --filter @ivano/web lint` not fully green (pre-existing,
+  non-blocking).** 4 errors remain, none in the production bundle path:
+  `property-context.tsx:51` `react-hooks/set-state-in-effect` (property
+  validation writes state inside an effect — functional, needs a small
+  refactor), and `src/stories/Page.tsx` (2× `react/no-unescaped-entities`) which
+  is untracked `storybook init` demo scaffold. `next build` does not run eslint,
+  so these do not gate the build.
 
 - **2026-06-27 — Magic MCP (`@21st-dev/magic`) shows errored / not callable
   from the agent.** The agent runtime exposes the server with no `tools/`
@@ -37,6 +56,34 @@ Last reviewed: 2026-06-27
 ---
 
 ## Resolved
+
+- **2026-06-28 — Production build (`next build`) was broken by accumulated type
+  errors (launch-readiness audit).** Tests were green (vitest does not
+  type-check), masking a `next build` that failed on a chain of issues:
+  (1) **stale Convex codegen** — `convex/_generated/api.d.ts` was committed
+  without `bulkImport` / `email`, so `api.functions.bulkImport.*` and
+  `api.functions.email.*` did not exist on the api type (broke bulk-import +
+  email-inbound cards); fixed by `npx convex codegen`.
+  (2) **`email` channel missing from return validators** — schema's
+  `messageChannel` includes `"email"` but local unions in
+  `channelMessages.ts`, `channelTokens.ts`, `webhooks.ts` did not, so handler
+  return types did not match their `returns` validators; added `"email"`.
+  Convert-to-booking now coerces an `"email"`-origin message to
+  `sourceChannel: "direct"` (booking source has no `"email"` member).
+  (3) **`emailWebhookActions.processInboundEmail`** hit a self-referential
+  `any` (TS7022/7023); added an explicit `Promise<Id<"bookingChannelMessage">>`
+  return annotation.
+  (4) **JSX in a `.ts` file** — `use-booking-context-panel.ts` contained JSX
+  (parse error); renamed to `.tsx`.
+  (5) **missing `Button` imports** in `quick-create-booking-modal.tsx` and
+  `convert-to-booking-modal.tsx`.
+  (6) **`PendingMessageView`** excluded `"email"`; aligned to the shared
+  `MessageChannel` type and added an email entry to its local `CHANNEL_META`.
+  (7) **story/test mocks** used plain strings for branded `Id`/`Doc` types
+  (`phase-c.stories.tsx`, `thread-context-content.test.tsx`); added casts.
+  (8) Storybook stories imported the renderer package `@storybook/react`
+  directly; switched to `@storybook/nextjs-vite`.
+  `next build` and `npx convex codegen` are now both green; 208 tests pass.
 
 - **2026-06-27 — Root `pnpm test` dropped the web jsdom environment + e2e
   miscollection.** `apps/web/vitest.config.ts` declared its jsdom

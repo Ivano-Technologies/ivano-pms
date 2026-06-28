@@ -1,4 +1,4 @@
-import { Camera, MessageCircle, Send } from "lucide-react";
+import { Camera, Mail, MessageCircle, Send } from "lucide-react";
 
 import {
   Card,
@@ -9,11 +9,12 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatMessageExtractionBadge, formatMessageTimestamp, truncateText } from "@/lib/format";
+import type { MessageChannel } from "@/lib/inbox-utils";
 import { cn } from "@/lib/utils";
 
 export type PendingMessageView = {
   id: string;
-  channel: "whatsapp" | "telegram" | "instagram";
+  channel: MessageChannel;
   sender: string;
   text: string;
   timestamp: number;
@@ -43,6 +44,11 @@ const CHANNEL_META = {
     label: "Instagram",
     icon: Camera,
     className: "text-pink-700 bg-pink-50 dark:bg-pink-950/40 dark:text-pink-300"
+  },
+  email: {
+    label: "Email",
+    icon: Mail,
+    className: "text-violet-700 bg-violet-50 dark:bg-violet-950/40 dark:text-violet-300"
   }
 } as const;
 

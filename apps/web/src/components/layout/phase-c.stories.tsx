@@ -1,9 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
 
 import { BookingContextPanel } from "./booking-context-panel";
 import { ChecklistSlideOver } from "./checklist-slide-over";
 import { ThreadContextContent } from "./thread-context-content";
+
+import type { Doc, Id } from "../../../../../convex/_generated/dataModel";
 
 const meta = {
   title: "Shell/C. Phase",
@@ -20,20 +22,22 @@ const meta = {
 
 export default meta;
 
-const sampleThread = {
-  _id: "thread_demo",
+const sampleThread: Doc<"inboxThread"> = {
+  _id: "thread_demo" as Id<"inboxThread">,
   _creationTime: 1,
-  propertyId: "prop_demo",
-  channel: "telegram" as const,
+  propertyId: "prop_demo" as Id<"property">,
+  channel: "telegram",
   threadKey: "tg:demo",
   guestDisplayName: "Ada Okafor",
   lastMessagePreview: "Is studio A1 free 1–5 July?",
   lastMessageAt: Date.now(),
   unreadCount: 2,
-  status: "new" as const,
+  status: "new",
   createdAt: Date.now(),
   updatedAt: Date.now()
 };
+
+const sampleBookingId = "booking_demo" as Id<"booking">;
 
 export const ThreadContext: StoryObj = {
   render: () => <ThreadContextContent thread={sampleThread} />
@@ -42,7 +46,7 @@ export const ThreadContext: StoryObj = {
 export const ThreadWithBooking: StoryObj = {
   render: () => (
     <ThreadContextContent
-      thread={{ ...sampleThread, bookingId: "booking_demo" as never, status: "converted" }}
+      thread={{ ...sampleThread, bookingId: sampleBookingId, status: "converted" }}
       bookingSummary={{
         checkInDate: "2026-07-01",
         checkOutDate: "2026-07-05",
@@ -57,7 +61,7 @@ export const ChecklistSlideOverOpen: StoryObj = {
     const [open, setOpen] = useState(true);
     return (
       <ChecklistSlideOver
-        bookingId={"booking_demo" as never}
+        bookingId={sampleBookingId}
         guestName="Ada Okafor"
         open={open}
         onClose={() => setOpen(false)}
@@ -70,7 +74,7 @@ export const ChecklistSlideOverOpen: StoryObj = {
 export const BookingContext: StoryObj = {
   render: () => (
     <div className="max-w-sm">
-      <BookingContextPanel bookingId={"booking_demo" as never} guestName="Ada Okafor" />
+      <BookingContextPanel bookingId={sampleBookingId} guestName="Ada Okafor" />
     </div>
   )
 };

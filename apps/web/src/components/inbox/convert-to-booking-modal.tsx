@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "convex/react";
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc, Id } from "../../../../../convex/_generated/dataModel";
+import { Button } from "@/components/ui/button";
 import { getConvexUserMessage } from "@/lib/convex-error";
 import { usePropertyScope } from "@/components/layout/property-context";
 import { formatNgn } from "@/lib/unit-utils";
