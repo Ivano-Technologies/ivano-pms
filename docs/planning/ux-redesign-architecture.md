@@ -2,7 +2,7 @@
 
 Status: Draft for review
 Author: Claude (architecture), for execution by Cursor
-Related: ADR-005 (soft deletes), ADR-006 (booking overlap), ADR-007 (channel token encryption)
+Related: ADR-005 (soft deletes), ADR-006 (booking overlap), ADR-007 (channel token encryption), [launch-scope.md](./launch-scope.md) (Sept 1 IN/OUT)
 Suggested: ADR-008 (design system foundations) once token decisions are locked
 
 ## 0. How to use this document
@@ -10,10 +10,11 @@ Suggested: ADR-008 (design system foundations) once token decisions are locked
 This is a strategy and brief, not a spec to paste verbatim into Cursor. The flow is:
 
 1. Read sections 1–9 to align on direction.
-2. Pick or adjust the design tokens in section 6 (ideally in Figma first — see section 11).
-3. Turn section 12 into actual `[TASK-X.Y]` tickets in `docs/planning/`, same as the Week 4–6 work.
-4. Brief Cursor per-task using the prompting pattern in section 10, leaning on `@21st-dev/magic` for component generation and the UI/UX Pro Max skill for review/critique passes.
-5. Keep the test-first gate: each UI task still ships with a test count target, same convention as the rest of the codebase.
+2. **Check [launch-scope.md](./launch-scope.md)** — locked Sept 1 IN/OUT; do not treat Phase D-pre or Phase D as launch-blocking unless that doc is revised.
+3. Pick or adjust the design tokens in section 6 (ideally in Figma first — see section 11).
+4. Turn section 13 into actual `[TASK-X.Y]` tickets in `docs/planning/`, same as the Week 4–6 work.
+5. Brief Cursor per-task using the prompting pattern in section 10, leaning on `@21st-dev/magic` for component generation and the UI/UX Pro Max skill for review/critique passes.
+6. Keep the test-first gate: each UI task still ships with a test count target, same convention as the rest of the codebase.
 
 I don't have direct access to the `ivano-pms` repo from here, so this is architecture and direction, not a line-by-line diff. Section 4 gives Cursor a short audit script to run first so the plan gets grounded in what's actually on screen today before any component gets touched.
 
@@ -151,7 +152,18 @@ Direct answer to "are there other resources we'd need":
 
 Nothing above is a hard blocker — Cursor with `@21st-dev/magic`, `ui-ux-pro-mcp`/`uipro-cli`, your existing Playwright setup, and Figma (already available to me directly, if you want me to prototype screens there) covers the actual redesign work. Figma and Storybook are the two I'd genuinely prioritize adding, since both reduce drift on a redesign this broad.
 
-## 12. Phased execution plan (turn into `[TASK-X.Y]` tickets)
+## 12. Launch scope (Sept 1)
+
+**Locked decision** — full IN/OUT list: [launch-scope.md](./launch-scope.md).
+
+Summary:
+
+- **IN:** Shell redesign (Phases A–C, done), manual guest/booking entry, bulk import, email inbound (prod confirmation pending), Telegram backend (parked — not a launch gate).
+- **OUT (post-launch parallel track):** Phase D-pre flow redesigns, Phase D polish, full Telegram/Instagram/WhatsApp enablement, Resend outbound, DNS hardening, custom email domains.
+
+Do not treat Phase D-pre or Phase D work as launch-blocking unless `launch-scope.md` is explicitly revised.
+
+## 13. Phased execution plan (turn into `[TASK-X.Y]` tickets)
 
 ### Phase naming note (2026-06-27)
 
