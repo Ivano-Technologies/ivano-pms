@@ -21,7 +21,6 @@ Shell redesign phases A, B, and C are **done** — see the architecture doc §13
 | Shell redesign (Phases A, B, C) | Done | Tokens/audit/primitives, command bar + nav rail, context panel wiring |
 | Manual guest/booking entry | Done | Guests page, calendar create flow |
 | Bulk Excel/CSV import | Done | Guests page → Import spreadsheet |
-| Email inbound | Done in dev | **Needs prod deploy confirmation** — verify webhook + routing in production before calling launch-ready |
 | Telegram backend | Built, parked | Pending verification; **not required for launch** — full channel enablement is deferred (see [channels-telegram-email-spec.md](./channels-telegram-email-spec.md) §0) |
 
 ---
@@ -35,7 +34,8 @@ Shell redesign phases A, B, and C are **done** — see the architecture doc §13
 | Reports redesign | D-pre.3 | Summary cards, sparklines, shared date-range picker |
 | Channels & accessibility/mobile polish | Phase D | Unified channel-connection pattern, empty/loading/error pass, a11y, mobile |
 | Telegram / Instagram / WhatsApp full enablement | Post-launch | Telegram backend exists; manager-facing connect + prod verification not launch gates |
-| Resend outbound email | Post-launch | Inbound only for launch |
+| Email inbound (Cloudflare Worker) | Post-launch | Cloudflare Worker approach requires paid Cloudflare plan — deferred. Post-launch: replace Worker with Resend inbound parsing; Next.js webhook handler and Convex `processInboundEmail` unchanged, only the ingestion layer swaps |
+| Resend outbound email | Post-launch | Outbound + inbound parsing via Resend post-launch |
 | DNS hardening | Post-launch | Email deliverability / domain auth |
 | Custom domain support for email branding | Post-launch | Per-property or branded inbound addresses |
 
@@ -45,4 +45,5 @@ Shell redesign phases A, B, and C are **done** — see the architecture doc §13
 
 | Date | Decision |
 |------|----------|
+| 2026-07-03 | Email inbound deferred post-launch; Cloudflare Worker requires paid plan; replacement target: Resend inbound parsing |
 | 2026-06-28 | Launch Sept 1 with manual entry + bulk import + shell redesign. Defer D-pre/D and full channel enablement to post-launch parallel track. Email inbound must be confirmed in prod before launch sign-off. |

@@ -105,8 +105,8 @@ Until Telegram is unparked per [telegram-verification-todo.md](../planning/teleg
 | `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | Vercel (optional) | Clerk sign-up redirect | **N** | Prod URL if used. |
 | `NEXT_PUBLIC_APP_URL` | Vercel | Metadata / app origin | **Optional** | Prod URL on both is typical; preview-only difference irrelevant until swap. See section above. |
 | `NEXT_PUBLIC_API_BASE_URL` | Vercel | Legacy REST client | **Optional** | `https://pms.techivano.com/api` on both is typical. |
-| `WEBHOOK_SECRET` | Vercel | `POST /api/webhooks` HMAC | **N** | Same secret both colors — see webhook reasoning. |
-| `EMAIL_WEBHOOK_SECRET` | Vercel | `POST /api/webhooks/email` | **N** | Same both colors; matches Cloudflare Worker. |
+| `WEBHOOK_SECRET` | Vercel | `POST /api/webhooks` HMAC | **N** | Not yet set in Vercel. Set when email inbound or other HMAC-validated webhook routes go live post-launch. |
+| `EMAIL_WEBHOOK_SECRET` | Vercel | `POST /api/webhooks/email` | **N** | Not yet set in Vercel (Production or Preview). Required post-launch when email inbound is activated via Resend. Must match Resend webhook signing secret at that time. |
 | `PMS_WEBHOOK_URL` | Cloudflare Worker | Worker → Vercel email route | **N** | Single prod hostname; not per Vercel color. |
 | `DEFAULT_PROPERTY_ID` | Vercel | Default property for generic webhook | **N** | Same prod Convex document id on both colors. |
 | `TELEGRAM_BOT_TOKEN` | Convex (once) | Telegram Bot API | **N/A per Vercel color** | Lives on prod Convex only; not a branch-pairing decision. |
@@ -153,7 +153,9 @@ Project `techivano/ivano-pms` (`prj_qNzAGh7EqNuZq1JURu3Oja2MEUOJ`), root directo
 
 > **Build-time env caveat (critical):** `staging` builds run with the **Preview** env scope. `NEXT_PUBLIC_*` values are **inlined at build time**. For a staging deployment to be safely promotable to production, its **Preview** env scope must already hold the **production** values (prod Convex URL, prod Clerk keys, prod sign-in URL, matching `INTERNAL_JOB_SECRET`, webhook secrets) — exactly the "same on both colors" guidance in the variable table above, applied to the **Preview** scope, not only the Production scope.
 
-### Promotion mechanism (choose one — both are manual)
+### Promotion mechanism (Option A confirmed — both are manual)
+
+**Option A is the confirmed standing mechanism:** promote a specific deployment via Dashboard → Promote to Production or `vercel promote <url>`. Option B (Production Branch flip) is documented but not the default.
 
 **Option A — Promote a deployment (no settings change; available today).**
 `staging` already builds as Preview. After validating, promote that specific deployment so `pms.techivano.com` re-aliases to it — no rebuild, no Production Branch change. This is the same machinery as the documented rollback, used forward.
@@ -168,8 +170,6 @@ Project **Settings → Git → Production Branch**: `main` → `staging`. The ne
 
 - Cleaner env story (Production scope, no Preview-inlining caveat) but it **is** a Vercel settings change.
 - Revert is another settings flip, not an instant deployment promote — slightly slower break-glass than Option A.
-
-**Operator decision required:** Pick one as the standing mechanism. For same-day, low-friction swaps with instant rollback, **Option A** is recommended provided Preview-scope env = production values. Use **Option B** if you want `staging` to become the durable production branch.
 
 ### Swap sequence (code on `staging`, prod on `main` today — Option A)
 
@@ -226,11 +226,10 @@ If a migration cannot be made backward-compatible, treat it as a **maintenance w
 - ✅ **Production Branch = `main`** (sole production branch).
 - ✅ **`pms.techivano.com` → `main` production deployment** (verified by shared deployment hash with the `git-main` alias).
 - ✅ **`staging` = Preview env scope** (not a second Production Branch). → identical secrets must be set in the **Preview** scope so a promoted staging build embeds prod `NEXT_PUBLIC_*` values.
-- ✅ **Promotion mechanism** documented (Option A promote-deployment / Option B Production-Branch flip); no `pnpm swap` script exists in-repo — promotion is a manual Dashboard/CLI action.
+- ✅ **Promotion mechanism:** Option A confirmed (promote-deployment via Dashboard or `vercel promote <url>`); Option B documented but not the default. No `pnpm swap` script exists in-repo.
 
-Still open (operator choice, not a code fact):
+Still open (operator verification, not a code fact):
 
-- Which promotion **option** becomes the standing mechanism (A vs B).
 - Confirmation that the **Preview** env scope currently holds production values (required for Option A safety).
 
 ---

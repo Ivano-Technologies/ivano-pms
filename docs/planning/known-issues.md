@@ -3,9 +3,20 @@
 Deliberately tracked tooling/config issues. Listed here so test-count
 reports stop carrying them silently as "pre-existing."
 
-Last reviewed: 2026-06-28
+Last reviewed: 2026-07-03
 
 ## Open
+
+- **2026-07-03 — Email inbound deferred post-launch.** Cloudflare Email Routing
+  to Worker requires Workers Paid plan ($5/month). Code is complete
+  (`workers/email-inbound/`, `processInboundEmail`, EmailInboundCard in
+  settings, `/api/webhooks/email` route) — do not remove. Post-launch
+  path: wire Resend inbound parsing to the existing webhook handler;
+  Convex side unchanged. Also requires: Vercel env vars
+  `EMAIL_WEBHOOK_SECRET` (Production + Preview scopes) and Cloudflare
+  routing rules — none of these have been set in production yet.
+  `WEBHOOK_SECRET` also missing from Vercel env — set both when
+  implementing post-launch.
 
 - **2026-06-28 — Removed Vercel cron routes (deferred rebuild).** Three cron
   paths (`/api/cron/reingest`, `/api/cron/send-reports`,

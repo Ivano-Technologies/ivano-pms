@@ -1,3 +1,25 @@
+## Status: inactive — pending Resend migration (post-launch)
+
+This Cloudflare Worker handles email inbound parsing and forwarding
+to the Next.js webhook route. It is NOT currently deployed or active
+in production.
+
+Reason: Cloudflare Email Routing to a Worker requires the Workers
+Paid plan ($5/month), which is not yet budgeted.
+
+Post-launch path:
+- Replace this Worker with Resend inbound parsing
+- The Next.js handler (`apps/web/src/app/api/webhooks/email/route.ts`)
+  and Convex `processInboundEmail` function are unchanged — only this
+  ingestion layer needs to swap
+- When implementing: set `EMAIL_WEBHOOK_SECRET` and `WEBHOOK_SECRET` in
+  Vercel (Production + Preview scopes); update `staging-env-checklist.md`
+
+Do not wire this Worker to production routing rules or set
+`EMAIL_WEBHOOK_SECRET` in Vercel until the Resend migration is complete.
+
+---
+
 # Cloudflare Email Inbound Worker
 
 Receives email from Cloudflare Email Routing, parses MIME with `postal-mime`, and POSTs a normalized JSON payload to the Ivano PMS Next.js webhook (`/api/webhooks/email`).
