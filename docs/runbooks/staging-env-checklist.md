@@ -116,7 +116,7 @@ Until Telegram is unparked per [telegram-verification-todo.md](../planning/teleg
 | `WHATSAPP_ACCESS_TOKEN` | — (`.env.example` only) | Not in code | **N** | Deferred; unset OK. |
 | `INSTAGRAM_VERIFY_TOKEN` | — (`.env.example` only) | Not in code | **N** | Deferred; unset OK. |
 | `BACKEND_API_ORIGIN` | Vercel (optional) | Next rewrites | **N** if unused | Leave empty unless external API deployed. |
-| `CRON_SECRET` | Vercel | Vercel Cron `Authorization: Bearer …` | **N** | Required when cron routes exist (`verifyCronRequest`). Today: `vercel.json` schedules three paths but **handlers were removed** — crons 404; secret unused until routes are restored. |
+| `CRON_SECRET` | Vercel | Vercel Cron `Authorization: Bearer …` | **N** | Required when cron routes exist (`verifyCronRequest`). Cron declarations removed from `vercel.json` in `5ac4ec5`; `/api/cron/reingest`, `/api/cron/send-reports`, and `/api/cron/weekly-summary` no longer exist — secret unset/unused until routes are rebuilt post-launch. |
 | `BLOB_READ_WRITE_TOKEN` | — | Not in PMS code | **N** | Legacy scaffold. |
 | `INGEST_SECRET` | — | Not in PMS code | **N** | Legacy scaffold. |
 | `RESEND_API_KEY` / `RESEND_FROM_EMAIL` | — | Not in PMS code | **N** | Outbound deferred per launch-scope. |
