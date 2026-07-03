@@ -7,6 +7,16 @@ Last reviewed: 2026-06-28
 
 ## Open
 
+- **2026-06-28 — Removed Vercel cron routes (deferred rebuild).** Three cron
+  paths (`/api/cron/reingest`, `/api/cron/send-reports`,
+  `/api/cron/weekly-summary`) were removed in `79375e2` along with their
+  dependencies (`internal-convex-refs`, `parse-excel-ingest`, etc.).
+  `vercel.json` cron declarations removed in staging commit `5ac4ec5`. If
+  these features are wanted post-launch they need to be rebuilt, not just
+  restored — the dependent Convex functions and worker code no longer exist.
+  `verifyCronRequest` in `cron-auth.ts` is retained and correct for when
+  routes come back.
+
 - **2026-06-28 — Duplicate `vite` versions break `vitest.unit.config.ts`
   typecheck.** `pnpm` resolves both `vite@8.1.0` (direct devDep) and
   `vite@7.3.1` (transitive), so the `react()` plugin (typed against one) is not
