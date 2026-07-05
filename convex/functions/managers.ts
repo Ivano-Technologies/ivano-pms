@@ -1,7 +1,12 @@
-import { mutation, query } from "../_generated/server";
 import { v } from "convex/values";
 
-export const upsertManagerFromClerk = mutation({
+import {
+  clerkMutation,
+  clerkQuery,
+  optionalClerkQuery
+} from "../lib/customFunctions";
+
+export const upsertManagerFromClerk = clerkMutation({
   args: {
     email: v.string(),
     fullName: v.string(),
@@ -9,14 +14,9 @@ export const upsertManagerFromClerk = mutation({
   },
   returns: v.id("manager"),
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
     const existing = await ctx.db
       .query("manager")
-      .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", identity.subject))
+      .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", ctx.identity.subject))
       .take(10);
 
     const active = existing.find((m) => !m.isDeleted);
@@ -35,7 +35,7 @@ export const upsertManagerFromClerk = mutation({
     const now = Date.now();
     return await ctx.db.insert("manager", {
       propertyId: property._id,
-      clerkUserId: identity.subject,
+      clerkUserId: ctx.identity.subject,
       email: args.email,
       fullName: args.fullName,
       phone: args.phone ?? "",
@@ -47,7 +47,7 @@ export const upsertManagerFromClerk = mutation({
   }
 });
 
-export const getCurrentManagerProfile = query({
+export const getCurrentManagerProfile = optionalClerkQuery({
   args: {},
   returns: v.union(
     v.object({
@@ -66,14 +66,13 @@ export const getCurrentManagerProfile = query({
     v.null()
   ),
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    if (!ctx.identity) {
       return null;
     }
 
     const managers = await ctx.db
       .query("manager")
-      .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", identity.subject))
+      .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", ctx.identity!.subject))
       .take(10);
 
     const manager = managers.find((m) => !m.isDeleted);
@@ -106,18 +105,13 @@ const propertySummary = v.object({
   )
 });
 
-export const getMyProperties = query({
+export const getMyProperties = clerkQuery({
   args: {},
   returns: v.array(propertySummary),
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
     const managers = await ctx.db
       .query("manager")
-      .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", identity.subject))
+      .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", ctx.identity.subject))
       .take(10);
 
     const results = [];

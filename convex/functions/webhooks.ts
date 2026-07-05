@@ -1,8 +1,7 @@
-import { mutation } from "../_generated/server";
 import { v } from "convex/values";
 
 import { buildThreadKey, ingestChannelMessage } from "../lib/inboxIngestion";
-import { assertInternalJobSecret } from "../lib/secrets";
+import { internalJobMutation } from "../lib/customFunctions";
 
 const messageChannel = v.union(
   v.literal("whatsapp"),
@@ -33,7 +32,7 @@ const channelMessageVerification = v.object({
   createdAt: v.number()
 });
 
-export const processWebhookEvent = mutation({
+export const processWebhookEvent = internalJobMutation({
   args: {
     secret: v.string(),
     propertyId: v.id("property"),
@@ -49,7 +48,6 @@ export const processWebhookEvent = mutation({
   },
   returns: v.id("bookingChannelMessage"),
   handler: async (ctx, args) => {
-    assertInternalJobSecret(args.secret);
     const now = Date.now();
 
     if (args.event.type === "channel.message") {
@@ -78,7 +76,7 @@ export const processWebhookEvent = mutation({
 });
 
 /** Secret-guarded listing for webhook E2E / smoke scripts (not for dashboard UI). */
-export const listChannelMessagesForVerification = mutation({
+export const listChannelMessagesForVerification = internalJobMutation({
   args: {
     secret: v.string(),
     propertyId: v.id("property"),
@@ -87,8 +85,6 @@ export const listChannelMessagesForVerification = mutation({
   },
   returns: v.array(channelMessageVerification),
   handler: async (ctx, args) => {
-    assertInternalJobSecret(args.secret);
-
     const limit = args.limit ?? 50;
     let messages = await ctx.db
       .query("bookingChannelMessage")

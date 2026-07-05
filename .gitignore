@@ -20,7 +20,6 @@ mcps/
 .github/
 convex/_generated/
 data/
-eslint-rules/
 eslint.config.mjs
 
 # Playwright (apps/web + root MVP audit)

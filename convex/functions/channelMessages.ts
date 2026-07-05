@@ -1,9 +1,11 @@
-import { mutation } from "../_generated/server";
 import { v } from "convex/values";
 
 import { assertPropertyAccess } from "../lib/auth";
-import { authedMutation, authedQuery } from "../lib/customFunctions";
-import { assertInternalJobSecret } from "../lib/secrets";
+import {
+  authedMutation,
+  authedQuery,
+  internalJobMutation
+} from "../lib/customFunctions";
 
 const messageChannel = v.union(
   v.literal("whatsapp"),
@@ -69,7 +71,7 @@ export const getChannelMessages = authedQuery({
   }
 });
 
-export const createChannelMessage = mutation({
+export const createChannelMessage = internalJobMutation({
   args: {
     secret: v.string(),
     propertyId: v.id("property"),
@@ -82,7 +84,6 @@ export const createChannelMessage = mutation({
   },
   returns: v.id("bookingChannelMessage"),
   handler: async (ctx, args) => {
-    assertInternalJobSecret(args.secret);
     const now = Date.now();
     return await ctx.db.insert("bookingChannelMessage", {
       propertyId: args.propertyId,
