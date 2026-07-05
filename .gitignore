@@ -20,12 +20,10 @@ mcps/
 .github/
 convex/_generated/
 data/
-eslint.config.mjs
 
 # Playwright (apps/web + root MVP audit)
 apps/web/test-results/
 apps/web/playwright-report/
-playwright-report-mvp/
 test-results/
 tests/mvp-audit/.auth/
 apps/web/blob-report/
@@ -36,9 +34,9 @@ apps/web/e2e/.e2e-context.json
 apps/web/playwright-run.log
 .playwright-mcp/
 .vercel
-graphify-out/
-debug-storybook.log
-storybook-install-log.txt
+
+# Local debug screenshots, logs, graphify cache, Playwright reports
+_artifacts/
 
 # Playwright storage state (local only — regenerate via scripts/record-auth-state.mjs)
 **/auth.json
