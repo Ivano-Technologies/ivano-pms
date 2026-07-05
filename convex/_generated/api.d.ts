@@ -21,6 +21,7 @@ import type * as functions_emailWebhookActions from "../functions/emailWebhookAc
 import type * as functions_guests from "../functions/guests.js";
 import type * as functions_inboxThreads from "../functions/inboxThreads.js";
 import type * as functions_managers from "../functions/managers.js";
+import type * as functions_migrations from "../functions/migrations.js";
 import type * as functions_nlp from "../functions/nlp.js";
 import type * as functions_occupancy from "../functions/occupancy.js";
 import type * as functions_property from "../functions/property.js";
@@ -65,6 +66,7 @@ declare const fullApi: ApiFromModules<{
   "functions/guests": typeof functions_guests;
   "functions/inboxThreads": typeof functions_inboxThreads;
   "functions/managers": typeof functions_managers;
+  "functions/migrations": typeof functions_migrations;
   "functions/nlp": typeof functions_nlp;
   "functions/occupancy": typeof functions_occupancy;
   "functions/property": typeof functions_property;
