@@ -105,7 +105,7 @@ const auditEntityType = v.union(
 export default defineSchema({
   property: defineTable({
     name: v.string(),
-    slug: v.optional(v.string()),
+    slug: v.string(),
     address: v.string(),
     phone: v.string(),
     whatsapp: v.string(),
