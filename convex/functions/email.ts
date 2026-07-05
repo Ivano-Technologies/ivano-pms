@@ -24,6 +24,9 @@ export const getEmailInboundConnection = authedQuery({
     if (!property) {
       throw new Error("Property not found");
     }
+    if (!property.slug) {
+      throw new Error("Property slug not configured");
+    }
 
     return {
       slug: property.slug,
