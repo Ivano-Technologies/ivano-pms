@@ -1,3 +1,6 @@
+// TODO: Retained for post-launch cron route restoration — no callers today (routes
+// removed in 79375e2; vercel.json crons cleared separately). Pattern is correct for Vercel.
+
 /**
  * Vercel Cron should send: Authorization: Bearer ${CRON_SECRET}
  * @see https://vercel.com/docs/cron-jobs

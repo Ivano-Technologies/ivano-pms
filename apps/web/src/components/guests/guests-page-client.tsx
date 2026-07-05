@@ -35,6 +35,14 @@ const DeleteGuestDialog = dynamic(
   { ssr: false }
 );
 
+const BulkImportModal = dynamic(
+  () =>
+    import("@/components/guests/bulk-import-modal").then((m) => ({
+      default: m.BulkImportModal
+    })),
+  { ssr: false }
+);
+
 export function GuestsPageClient() {
   const { propertyArgs } = usePropertyScope();
   const guests = useQuery(api.functions.guests.getGuests, propertyArgs);
@@ -50,6 +58,7 @@ export function GuestsPageClient() {
     null
   );
   const [isDeleting, setIsDeleting] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   const deletingGuestDetails = useQuery(
     api.functions.guests.getGuestById,
@@ -132,9 +141,14 @@ export function GuestsPageClient() {
             Manage guest profiles for bookings and channel conversions.
           </p>
         </div>
-        <Button type="button" onClick={openCreate}>
-          Add guest
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" onClick={() => setImportOpen(true)}>
+            Import spreadsheet
+          </Button>
+          <Button type="button" onClick={openCreate}>
+            Add guest
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -186,6 +200,11 @@ export function GuestsPageClient() {
           }
         }}
         onConfirm={() => void handleDeleteConfirm()}
+      />
+
+      <BulkImportModal
+        isOpen={importOpen}
+        onClose={() => setImportOpen(false)}
       />
     </div>
   );

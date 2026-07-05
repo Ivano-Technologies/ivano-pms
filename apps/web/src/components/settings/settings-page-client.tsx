@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { usePropertyScope } from "@/components/layout/property-context";
 import { ChannelTokenCard } from "./channel-token-card";
+import { EmailInboundCard } from "./email-inbound-card";
 import { TelegramConnectionCard } from "./telegram-connection-card";
 
 export function SettingsPageClient() {
@@ -30,6 +31,7 @@ export function SettingsPageClient() {
           </div>
         ) : (
           <div className="space-y-3">
+            <EmailInboundCard />
             <TelegramConnectionCard />
             {tokens
               .filter((token) => token.channel !== "telegram")

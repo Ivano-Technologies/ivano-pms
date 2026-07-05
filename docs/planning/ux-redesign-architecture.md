@@ -2,7 +2,7 @@
 
 Status: Draft for review
 Author: Claude (architecture), for execution by Cursor
-Related: ADR-005 (soft deletes), ADR-006 (booking overlap), ADR-007 (channel token encryption)
+Related: ADR-005 (soft deletes), ADR-006 (booking overlap), ADR-007 (channel token encryption), [launch-scope.md](./launch-scope.md) (Sept 1 IN/OUT)
 Suggested: ADR-008 (design system foundations) once token decisions are locked
 
 ## 0. How to use this document
@@ -10,10 +10,11 @@ Suggested: ADR-008 (design system foundations) once token decisions are locked
 This is a strategy and brief, not a spec to paste verbatim into Cursor. The flow is:
 
 1. Read sections 1–9 to align on direction.
-2. Pick or adjust the design tokens in section 6 (ideally in Figma first — see section 11).
-3. Turn section 12 into actual `[TASK-X.Y]` tickets in `docs/planning/`, same as the Week 4–6 work.
-4. Brief Cursor per-task using the prompting pattern in section 10, leaning on `@21st-dev/magic` for component generation and the UI/UX Pro Max skill for review/critique passes.
-5. Keep the test-first gate: each UI task still ships with a test count target, same convention as the rest of the codebase.
+2. **Check [launch-scope.md](./launch-scope.md)** — locked Sept 1 IN/OUT; do not treat Phase D-pre or Phase D as launch-blocking unless that doc is revised.
+3. Pick or adjust the design tokens in section 6 (ideally in Figma first — see section 11).
+4. Turn section 13 into actual `[TASK-X.Y]` tickets in `docs/planning/`, same as the Week 4–6 work.
+5. Brief Cursor per-task using the prompting pattern in section 10, leaning on `@21st-dev/magic` for component generation and the UI/UX Pro Max skill for review/critique passes.
+6. Keep the test-first gate: each UI task still ships with a test count target, same convention as the rest of the codebase.
 
 I don't have direct access to the `ivano-pms` repo from here, so this is architecture and direction, not a line-by-line diff. Section 4 gives Cursor a short audit script to run first so the plan gets grounded in what's actually on screen today before any component gets touched.
 
@@ -151,23 +152,57 @@ Direct answer to "are there other resources we'd need":
 
 Nothing above is a hard blocker — Cursor with `@21st-dev/magic`, `ui-ux-pro-mcp`/`uipro-cli`, your existing Playwright setup, and Figma (already available to me directly, if you want me to prototype screens there) covers the actual redesign work. Figma and Storybook are the two I'd genuinely prioritize adding, since both reduce drift on a redesign this broad.
 
-## 12. Phased execution plan (turn into `[TASK-X.Y]` tickets)
+## 12. Launch scope (Sept 1)
 
-**Phase A — Foundation (block everything else)**
+**Locked decision** — full IN/OUT list: [launch-scope.md](./launch-scope.md).
+
+Summary:
+
+- **IN:** Shell redesign (Phases A–C, done), manual guest/booking entry, bulk import, email inbound (prod confirmation pending), Telegram backend (parked — not a launch gate).
+- **OUT (post-launch parallel track):** Phase D-pre flow redesigns, Phase D polish, full Telegram/Instagram/WhatsApp enablement, Resend outbound, DNS hardening, custom email domains.
+
+Do not treat Phase D-pre or Phase D work as launch-blocking unless `launch-scope.md` is explicitly revised.
+
+## 13. Phased execution plan (turn into `[TASK-X.Y]` tickets)
+
+### Phase naming note (2026-06-27)
+
+Commits tagged `[TASK-C.1]`–`[TASK-C.3]` shipped **context-shell wiring** (inbox route rename, context panel content from Inbox/Calendar, checklist slide-over). That work is **closed** — treat it as **Phase C** below.
+
+The **heavy flow redesigns** originally listed here as “Phase C — Core flows” (inbox thread states, create-booking-from-thread, calendar timeline, reports) were **not** part of those commits. Going forward, call that scope **Phase D-pre** so “Phase C” is not overloaded.
+
+| Label | Status | Scope |
+|-------|--------|--------|
+| Phase A | Done | Tokens, audit, primitives |
+| Phase B | Done | Command bar, nav rail, context panel shell |
+| **Phase C** | **Closed** | Context panel plumbing, checklist slide-over, `/dashboard/inbox` rename |
+| **Phase D-pre** | Next | Inbox/calendar/reports flow redesigns (below) |
+| Phase D | Planned | Channels & polish (section below) |
+
+Do not retroactively relabel the shipped `[TASK-C.*]` commits; use this table for future sessions only.
+
+---
+
+**Phase A — Foundation (block everything else)** — *done*
 - A.1 Lock design tokens (color, type, spacing, radius, motion) — Figma exploration, 2–3 directions reviewed
 - A.2 Run the audit in section 3, commit screenshots + component inventory to `docs/planning/ux-audit/`
 - A.3 Build/extend the primitive layer (button, card, status chip, skeleton, command palette shell) in Storybook
 
-**Phase B — Shell**
+**Phase B — Shell** — *done*
 - B.1 Command bar with property switcher + global search + `Cmd/Ctrl+K` palette
 - B.2 Nav rail (desktop) + bottom tab bar (mobile breakpoint)
 - B.3 Context panel pattern (shared by Inbox, Calendar, Checklists)
 
-**Phase C — Core flows**
-- C.1 Inbox redesign (channel tags, thread states, create-booking-from-thread)
-- C.2 Calendar redesign (timeline bars, conflict markers, drag-to-create)
-- C.3 Reports redesign (summary cards + sparklines, shared date-range picker)
-- C.4 Checklists as context-panel slide-over
+**Phase C — Context shell wiring** — *closed (commits `TASK-C.1`–`TASK-C.3`)*
+- C.1 Inbox route rename (`/dashboard/inbox`; legacy `/dashboard/channels` redirects)
+- C.2 Context panel content wired from Inbox (thread/booking) and Calendar (booking)
+- C.3 Checklist slide-over from booking context panel + Storybook
+
+**Phase D-pre — Core flow redesigns** *(formerly “Phase C — Core flows” in this doc)*
+- D-pre.1 Inbox redesign (channel tags, thread states, create-booking-from-thread)
+- D-pre.2 Calendar redesign (timeline bars, conflict markers, drag-to-create)
+- D-pre.3 Reports redesign (summary cards + sparklines, shared date-range picker)
+- ~~D-pre.4 Checklists as context-panel slide-over~~ — delivered under Phase C.3
 
 **Phase D — Channels & polish**
 - D.1 Unified channel-connection pattern (apply to the WhatsApp OAuth start route you're about to build, then reuse for Telegram/Instagram)

@@ -10,7 +10,7 @@
  *
  * Overrides:
  *   BASE_URL=...           force target app URL
- *   STORAGE_STATE=...      output path (default: ./auth.json at repo root)
+ *   STORAGE_STATE=...      output path (default: ./test-artifacts/auth.json at repo root)
  *   DEV_SMOKE_EMAIL=...    Clerk user in development instance
  *   PROD_SMOKE_EMAIL=...   Clerk user in production instance
  *   SMOKE_EMAIL=...        legacy alias (used when profile-specific email unset)
@@ -18,6 +18,7 @@
  */
 import { chromium } from "@playwright/test";
 import dotenv from "dotenv";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -151,7 +152,7 @@ const profile = clerkKeyProfile();
 const target = resolveTarget(profile);
 const clerkSecretKey = process.env.CLERK_SECRET_KEY;
 const out =
-  process.env.STORAGE_STATE ?? path.join(root, "auth.json");
+  process.env.STORAGE_STATE ?? path.join(root, "test-artifacts", "auth.json");
 
 console.log(
   `[record-auth-state] profile=${profile} base=${target.baseUrl} email=${target.email}`
@@ -162,6 +163,7 @@ const context = await browser.newContext();
 const page = await context.newPage();
 
 await signIn(page, { ...target, clerkSecretKey });
+fs.mkdirSync(path.dirname(out), { recursive: true });
 await context.storageState({ path: out });
 await browser.close();
 

@@ -2,6 +2,7 @@ import type { GenericMutationCtx } from "convex/server";
 import type { DataModel, Id } from "../_generated/dataModel";
 
 import { backfillMessagesForProperty } from "../functions/nlp";
+import { slugifyPropertyName } from "./emailRouting";
 
 type SeedCtx = GenericMutationCtx<DataModel>;
 
@@ -48,6 +49,7 @@ export async function insertDemoData(ctx: SeedCtx): Promise<SeedResult> {
 
   const propertyId = await ctx.db.insert("property", {
     name: "Gwarimpa Estate",
+    slug: slugifyPropertyName("Gwarimpa Estate"),
     address: "Gwarimpa, Abuja, Nigeria",
     phone: "+2348012345678",
     whatsapp: "+2348012345678",

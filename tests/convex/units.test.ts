@@ -209,15 +209,22 @@ describe("getUnitById", () => {
     const asManager = authedClient(t, seed.clerkUserId);
     const now = Date.now();
 
-    // Insert a booking that straddles today (2026-06-20 to 2026-06-25)
+    // Occupancy is computed against wall-clock `new Date()`, so derive the
+    // booking window relative to today to keep this test stable over time.
+    const dayMs = 24 * 60 * 60 * 1000;
+    const isoDate = (ts: number) => new Date(ts).toISOString().slice(0, 10);
+    const checkInDate = isoDate(now - 2 * dayMs);
+    const checkOutDate = isoDate(now + 3 * dayMs);
+
+    // Insert a booking that straddles today (yesterday-ish -> a few days out)
     await t.run(async (ctx) => {
       await ctx.db.insert("booking", {
         propertyId: seed.propertyId,
         guestId: seed.guestId,
         unitId: seed.unitId,
         bookingType: "nightly",
-        checkInDate: "2026-06-20",
-        checkOutDate: "2026-06-25",
+        checkInDate,
+        checkOutDate,
         adultsCount: 2,
         childrenCount: 0,
         status: "confirmed",

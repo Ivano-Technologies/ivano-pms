@@ -6,7 +6,8 @@ import { authedMutation, authedQuery } from "../lib/customFunctions";
 const messageChannel = v.union(
   v.literal("whatsapp"),
   v.literal("telegram"),
-  v.literal("instagram")
+  v.literal("instagram"),
+  v.literal("email")
 );
 
 const messageStatus = v.union(
@@ -29,6 +30,7 @@ const inboxThreadDoc = v.object({
   telegramUserId: v.optional(v.string()),
   senderPhone: v.optional(v.string()),
   instagramUserId: v.optional(v.string()),
+  senderEmail: v.optional(v.string()),
   lastMessagePreview: v.string(),
   lastMessageAt: v.number(),
   unreadCount: v.number(),
@@ -50,6 +52,8 @@ const threadMessageDoc = v.object({
   telegramUserId: v.optional(v.string()),
   senderPhone: v.optional(v.string()),
   instagramUserId: v.optional(v.string()),
+  senderEmail: v.optional(v.string()),
+  emailSubject: v.optional(v.string()),
   senderName: v.string(),
   messageText: v.string(),
   status: messageStatus,

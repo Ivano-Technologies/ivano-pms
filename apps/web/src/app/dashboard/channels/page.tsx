@@ -1,5 +1,6 @@
-import { InboxPageClient } from "@/components/inbox/inbox-page-client";
+import { redirect } from "next/navigation";
 
-export default function ChannelsPage() {
-  return <InboxPageClient />;
+/** Legacy route — inbox moved to /dashboard/inbox in Phase C. */
+export default function ChannelsRedirectPage() {
+  redirect("/dashboard/inbox");
 }

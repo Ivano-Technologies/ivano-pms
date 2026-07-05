@@ -1,0 +1,7 @@
+name = "ivano-email-inbound"
+main = "src/index.ts"
+compatibility_date = "2025-06-27"
+
+[vars]
+# Set in Cloudflare dashboard / wrangler secret:
+# PMS_WEBHOOK_URL = https://pms.techivano.com/api/webhooks/email

@@ -1,32 +1,39 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Calendar, Inbox, Search, Settings, X } from "lucide-react";
+import { Search, X } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-type CommandItem = {
+export type CommandPaletteItem = {
   id: string;
   label: string;
   hint?: string;
-  icon: typeof Inbox;
+  icon: LucideIcon;
+  href?: string;
 };
 
-const DEFAULT_ITEMS: CommandItem[] = [
-  { id: "inbox", label: "Go to Inbox", hint: "Guest threads", icon: Inbox },
-  { id: "bookings", label: "Go to Bookings", hint: "Calendar", icon: Calendar },
-  { id: "settings", label: "Go to Settings", hint: "Channels", icon: Settings }
-];
+type CommandPaletteShellProps = {
+  items: CommandPaletteItem[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSelect?: (item: CommandPaletteItem) => void;
+  className?: string;
+};
 
 export function CommandPaletteShell({
-  items = DEFAULT_ITEMS,
+  items,
+  open: openProp,
+  onOpenChange,
+  onSelect,
   className
-}: {
-  items?: CommandItem[];
-  className?: string;
-}) {
-  const [open, setOpen] = useState(false);
+}: CommandPaletteShellProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [query, setQuery] = useState("");
+
+  const open = openProp ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -41,11 +48,17 @@ export function CommandPaletteShell({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [setOpen]);
 
   const filtered = items.filter((item) =>
-    item.label.toLowerCase().includes(query.trim().toLowerCase())
+    `${item.label} ${item.hint ?? ""}`.toLowerCase().includes(query.trim().toLowerCase())
   );
+
+  function handleSelect(item: CommandPaletteItem) {
+    onSelect?.(item);
+    setOpen(false);
+    setQuery("");
+  }
 
   if (!open) {
     return null;
@@ -74,7 +87,7 @@ export function CommandPaletteShell({
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search actions…"
+            placeholder="Search pages and actions…"
             className="placeholder:text-muted-foreground h-11 flex-1 bg-transparent text-sm outline-none"
             aria-label="Search commands"
           />
@@ -97,7 +110,7 @@ export function CommandPaletteShell({
                   type="button"
                   role="option"
                   className="hover:bg-muted flex min-h-11 w-full items-center gap-3 rounded-[var(--radius)] px-3 py-2 text-left text-sm"
-                  onClick={() => setOpen(false)}
+                  onClick={() => handleSelect(item)}
                 >
                   <item.icon className="text-muted-foreground size-4 shrink-0" aria-hidden />
                   <span className="font-medium">{item.label}</span>

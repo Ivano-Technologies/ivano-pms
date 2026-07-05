@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 
 export type MessageStatus = "new" | "reviewed" | "converted" | "archived";
-export type MessageChannel = "whatsapp" | "telegram" | "instagram";
+export type MessageChannel = "whatsapp" | "telegram" | "instagram" | "email";
 
 export const CHANNEL_META: Record<
   MessageChannel,
@@ -21,6 +21,11 @@ export const CHANNEL_META: Record<
     label: "Instagram",
     badgeClass:
       "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950/40 dark:text-purple-300"
+  },
+  email: {
+    label: "Email",
+    badgeClass:
+      "bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950/40 dark:text-amber-200"
   }
 };
 

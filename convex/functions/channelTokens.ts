@@ -7,7 +7,8 @@ import { assertInternalJobSecret } from "../lib/secrets";
 const messageChannel = v.union(
   v.literal("whatsapp"),
   v.literal("telegram"),
-  v.literal("instagram")
+  v.literal("instagram"),
+  v.literal("email")
 );
 
 const channelTokenDoc = v.object({

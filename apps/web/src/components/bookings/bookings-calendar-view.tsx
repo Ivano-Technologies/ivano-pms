@@ -4,8 +4,8 @@ import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 
 import { BookingCalendar, type CalendarBooking } from "@/components/bookings/booking-calendar";
-import { BookingDetailPopover } from "@/components/bookings/booking-detail-popover";
 import { QuickCreateBookingModal } from "@/components/bookings/quick-create-booking-modal";
+import { useBookingContextPanel } from "@/components/layout/use-booking-context-panel";
 import { usePropertyScope } from "@/components/layout/property-context";
 import { addDays, getDayKey } from "@/lib/calendar-utils";
 
@@ -38,9 +38,7 @@ export function BookingsCalendarView() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(today);
   const [selectedUnitId, setSelectedUnitId] = useState<Id<"unit"> | null>(null);
-  const [selectedBooking, setSelectedBooking] = useState<CalendarBooking | null>(
-    null
-  );
+  const { showBooking } = useBookingContextPanel();
 
   const calendarBookings = useMemo(
     () =>
@@ -83,9 +81,15 @@ export function BookingsCalendarView() {
     setModalOpen(true);
   }, []);
 
-  const handleBookingClick = useCallback((booking: CalendarBooking) => {
-    setSelectedBooking(booking);
-  }, []);
+  const handleBookingClick = useCallback(
+    (booking: CalendarBooking) => {
+      showBooking(
+        booking._id as Id<"booking">,
+        guestNames[booking.guestId] ?? "Guest"
+      );
+    },
+    [showBooking, guestNames]
+  );
 
   const isLoading =
     !canQuery ||
@@ -120,14 +124,6 @@ export function BookingsCalendarView() {
         onClose={() => setModalOpen(false)}
         guests={guests ?? []}
         units={calendarUnits}
-      />
-
-      <BookingDetailPopover
-        booking={selectedBooking}
-        guestName={
-          selectedBooking ? (guestNames[selectedBooking.guestId] ?? "Guest") : ""
-        }
-        onClose={() => setSelectedBooking(null)}
       />
     </div>
   );

@@ -18,6 +18,7 @@ export async function seedAuthedManager(t: ReturnType<typeof createTestConvex>) 
   return await t.run(async (ctx) => {
     const propertyId = await ctx.db.insert("property", {
       name: "Test Property",
+      slug: "test-property",
       address: "1 Test Lane",
       phone: "+2348000000000",
       whatsapp: "+2348000000000",
@@ -29,6 +30,7 @@ export async function seedAuthedManager(t: ReturnType<typeof createTestConvex>) 
 
     const otherPropertyId = await ctx.db.insert("property", {
       name: "Other Property",
+      slug: "other-property",
       address: "2 Other Lane",
       phone: "+2348000000001",
       whatsapp: "+2348000000001",

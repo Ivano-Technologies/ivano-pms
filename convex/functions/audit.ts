@@ -1,5 +1,7 @@
-import { internalMutation, query } from "../_generated/server";
+import { internalMutation } from "../_generated/server";
 import { v } from "convex/values";
+import { assertPropertyAccess } from "../lib/auth";
+import { authedQuery } from "../lib/customFunctions";
 import { assertInternalJobSecret } from "../lib/secrets";
 
 const auditAction = v.union(
@@ -19,7 +21,7 @@ const auditEntityType = v.union(
   v.literal("checklist")
 );
 
-export const getAuditLog = query({
+export const getAuditLog = authedQuery({
   args: {
     propertyId: v.id("property"),
     entityType: v.optional(auditEntityType)
@@ -39,6 +41,8 @@ export const getAuditLog = query({
     })
   ),
   handler: async (ctx, args) => {
+    assertPropertyAccess(ctx.manager, args.propertyId);
+
     const logs = await ctx.db
       .query("auditLog")
       .withIndex("by_property_created", (q) =>

@@ -1,13 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useMutation, useQuery } from "convex/react";
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc } from "../../../../../convex/_generated/dataModel";
+import { useBookingContextPanel } from "@/components/layout/use-booking-context-panel";
 import { usePropertyScope } from "@/components/layout/property-context";
 import { type MessageStatus, STATUS_FILTER_OPTIONS } from "@/lib/inbox-utils";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ type StatusFilter = MessageStatus | "all";
 
 export function InboxPageClient() {
   const { propertyArgs } = usePropertyScope();
+  const { showThread, close } = useBookingContextPanel();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("new");
   const [selectedThreadId, setSelectedThreadId] =
     useState<Doc<"inboxThread">["_id"] | null>(null);
@@ -58,6 +60,14 @@ export function InboxPageClient() {
     (threads && threads.length > 0 && !selectedThreadId ? threads[0] : null);
 
   const activeThreadId = selectedThread?._id ?? null;
+
+  useEffect(() => {
+    if (selectedThread) {
+      showThread(selectedThread);
+    } else {
+      close();
+    }
+  }, [selectedThread, showThread, close]);
 
   async function handleMarkThreadReviewed(threadId: Doc<"inboxThread">["_id"]) {
     try {
