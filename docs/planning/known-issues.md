@@ -7,6 +7,18 @@ Last reviewed: 2026-07-03
 
 ## Open
 
+- **2026-07-05 — Channel/inbox UI removed to simplify launch build.** The
+  frontend surfaces that queried the deferred channel functions were removed
+  because their `useQuery` calls fired `Could not find public function` against
+  production on load. Removed: Inbox nav item + `/dashboard/inbox` and
+  `/dashboard/channels` routes, the `inbox/` component directory, the Settings
+  Telegram/Email/channel-token cards (Settings now shows a placeholder), and the
+  dashboard "Pending channel messages" list. No Convex functions were deleted —
+  `telegram`, `email`, `inboxThreads`, `channelMessages`, `channelTokens` and
+  their webhook routes remain deployed and unit-tested, just unreferenced by the
+  UI. Post-launch: re-add the nav item, routes, and cards to restore the
+  messaging pipeline.
+
 - **2026-07-03 — Email inbound deferred post-launch.** Cloudflare Email Routing
   to Worker requires Workers Paid plan ($5/month). Code is complete
   (`workers/email-inbound/`, `processInboundEmail`, EmailInboundCard in

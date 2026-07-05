@@ -5,10 +5,9 @@ import { useQuery } from "convex/react";
 import { useMemo } from "react";
 
 import StatsCards from "@/components/dashboard/stats-cards";
-import PendingMessagesList from "@/components/dashboard/pending-messages-list";
 import { usePropertyScope } from "@/components/layout/property-context";
 import { Skeleton } from "@/components/ui/skeleton";
-import { countActiveBookings, formatMessageExtractionBadge } from "@/lib/format";
+import { countActiveBookings } from "@/lib/format";
 
 import { api } from "../../../../../convex/_generated/api";
 
@@ -30,11 +29,6 @@ export function DashboardOverview() {
     canQuery ? { today, ...propertyArgs } : "skip"
   );
 
-  const channelMessages = useQuery(
-    api.functions.channelMessages.getChannelMessages,
-    canQuery ? { status: "new" as const, limit: 5, ...propertyArgs } : "skip"
-  );
-
   const property = useQuery(
     api.functions.property.getProperty,
     canQuery ? { ...propertyArgs } : "skip"
@@ -42,9 +36,6 @@ export function DashboardOverview() {
 
   const statsLoading =
     !isUserLoaded || manager === undefined || (canQuery && dashboardStats === undefined);
-
-  const messagesLoading =
-    !isUserLoaded || manager === undefined || (canQuery && channelMessages === undefined);
 
   const statsView =
     dashboardStats === undefined || dashboardStats === null
@@ -55,17 +46,6 @@ export function DashboardOverview() {
           pendingMessages: dashboardStats.pendingMessageCount,
           activeBookings: countActiveBookings(dashboardStats.bookingCountByStatus)
         };
-
-  const messageViews =
-    channelMessages?.map((message) => ({
-      id: message._id,
-      channel: message.channel,
-      sender: message.senderName,
-      text: message.messageText,
-      timestamp: message.createdAt,
-      status: message.status,
-      extractionBadge: formatMessageExtractionBadge(message)
-    })) ?? [];
 
   const managerMissing = isUserLoaded && manager === null;
 
@@ -89,15 +69,6 @@ export function DashboardOverview() {
         <StatsCards
           stats={statsView}
           isLoading={statsLoading || managerMissing}
-          error={managerMissing ? new Error("Manager not found") : null}
-        />
-      </section>
-
-      <section aria-label="Pending messages">
-        <PendingMessagesList
-          messages={messageViews}
-          totalUnread={dashboardStats?.pendingMessageCount ?? 0}
-          isLoading={messagesLoading || managerMissing}
           error={managerMissing ? new Error("Manager not found") : null}
         />
       </section>

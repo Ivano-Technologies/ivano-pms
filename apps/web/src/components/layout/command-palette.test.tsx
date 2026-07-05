@@ -15,16 +15,16 @@ describe("CommandPalette", () => {
     push.mockClear();
   });
 
-  it("navigates to inbox route when a command is selected", () => {
+  it("navigates to bookings route when a command is selected", () => {
     render(<CommandPalette />);
 
     fireEvent.keyDown(window, { key: "k", ctrlKey: true });
-    fireEvent.click(screen.getByRole("option", { name: /go to inbox/i }));
+    fireEvent.click(screen.getByRole("option", { name: /go to bookings/i }));
 
-    expect(push).toHaveBeenCalledWith("/dashboard/inbox");
+    expect(push).toHaveBeenCalledWith("/dashboard/bookings");
   });
 
-  it("navigates to settings for channel integrations", () => {
+  it("navigates to settings for property configuration", () => {
     render(<CommandPalette />);
 
     fireEvent.keyDown(window, { key: "k", ctrlKey: true });
