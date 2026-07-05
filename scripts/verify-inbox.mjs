@@ -1,7 +1,7 @@
 import { chromium } from "@playwright/test";
 import path from "node:path";
 
-const auth = path.join(process.cwd(), "auth.json");
+const auth = path.join(process.cwd(), "test-artifacts", "auth.json");
 const shot = path.join(process.cwd(), "docs/planning/ux-audit/screenshots/inbox-threads-verify.png");
 
 const browser = await chromium.launch({ headless: true });

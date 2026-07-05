@@ -41,7 +41,9 @@ graphify-out/
 debug-storybook.log
 storybook-install-log.txt
 
-auth.json
+# Playwright storage state (local only — regenerate via scripts/record-auth-state.mjs)
+**/auth.json
+test-artifacts/
 
 # IDE / editor state
 .vscode/

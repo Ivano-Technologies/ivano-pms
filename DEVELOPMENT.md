@@ -60,10 +60,17 @@ Ivano PMS uses one Clerk application with two instances:
 |--------|----------------|-------------|
 | `next dev` | Development (`pk_test_` in `.env.development.local`) | `http://localhost:3000` |
 | `node scripts/record-auth-state.mjs` | Auto from key prefix | localhost if `pk_test_`, else `https://pms.techivano.com` |
-| `node docs/planning/ux-audit/screenshot-script.mjs` | Uses `auth.json` (record against same `BASE_URL` you will screenshot) |
+| `node docs/planning/ux-audit/screenshot-script.mjs` | Uses `test-artifacts/auth.json` (record against same `BASE_URL` you will screenshot) |
 | `node scripts/smoke-prod.mjs` | **Production only** | `https://pms.techivano.com` |
 
-`auth.json` is gitignored. Re-record after switching Clerk instance or base URL.
+Playwright storage state is written to `test-artifacts/auth.json` (gitignored). Regenerate locally:
+
+```bash
+node scripts/record-auth-state.mjs
+# optional: STORAGE_STATE=./test-artifacts/auth.json BASE_URL=http://localhost:3000
+```
+
+Re-record after switching Clerk instance or base URL. Do not commit `auth.json` — it contains live session cookies.
 
 ## Clerk + Convex auth
 
