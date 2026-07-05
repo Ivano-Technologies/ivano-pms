@@ -7,15 +7,13 @@ import {
 } from "./shell-navigation";
 
 describe("shell-navigation", () => {
-  it("maps inbox to /dashboard/inbox", () => {
-    const inbox = SHELL_NAV_ITEMS.find((item) => item.id === "inbox");
-    expect(inbox?.href).toBe("/dashboard/inbox");
+  it("does not expose deferred channel/inbox navigation", () => {
+    expect(SHELL_NAV_ITEMS.find((item) => item.id === "inbox")).toBeUndefined();
   });
 
-  it("points settings at channel cards (Telegram, Email inbound)", () => {
+  it("keeps settings for property configuration", () => {
     const settings = SHELL_NAV_ITEMS.find((item) => item.id === "settings");
     expect(settings?.href).toBe("/dashboard/settings");
-    expect(settings?.hint).toMatch(/telegram/i);
   });
 
   it("keeps guests reachable for bulk import", () => {
@@ -27,7 +25,7 @@ describe("shell-navigation", () => {
   it("limits mobile tabs to five primary destinations", () => {
     expect(MOBILE_TAB_ITEMS).toHaveLength(5);
     expect(MOBILE_TAB_ITEMS.map((item) => item.id)).toEqual([
-      "inbox",
+      "overview",
       "bookings",
       "guests",
       "reports",
