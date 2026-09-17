@@ -238,6 +238,7 @@ Still open (operator verification, not a code fact):
 
 - [deploy.md](./deploy.md) — Convex deploy + prod smoke
 - [DEPLOYMENT.md](../../DEPLOYMENT.md) — prod checklist + promote rollback mention
+- [vercel-secrets.md](./vercel-secrets.md) — production `WEBHOOK_SECRET` / `EMAIL_WEBHOOK_SECRET` (IVA-11 go-live unpark)
 - [launch-scope.md](../planning/launch-scope.md) — launch IN/OUT
 - [telegram-verification-todo.md](../planning/telegram-verification-todo.md) — Telegram parking
 - [ADR-008](../adr/008-separate-clerk-instance.md) — PMS vs EAM Clerk
