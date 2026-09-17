@@ -1,94 +1,83 @@
 # Vercel webhook secrets — Ivano PMS
 
+**Owns:** Product Ops (vault, checklist, smoke/verify, Linear)  
+**Sole Vercel admin:** Kezie — no Project Member seats  
 **Linear:** [IVA-15](https://linear.app/ivano-technologies/issue/IVA-15/team-owned-vercel-secrets-runbook-unpark-iva-11-without-kezie) (this runbook) · [IVA-11](https://linear.app/ivano-technologies/issue/IVA-11/set-production-webhook-secret-email-webhook-secret-on-vercel) (parked until go-live)
 
 **Project:** `techivano/ivano-pms`  
 **Prod host:** `https://pms.techivano.com`
 
-Never paste real secret values into git, Slack, Linear, or this file.
+Never paste real secret values into git, Slack, Linear, or this file. Vault + Kezie’s Vercel UI only.
 
 ---
 
 ## 1. Purpose
 
-Set or rotate production `WEBHOOK_SECRET` and `EMAIL_WEBHOOK_SECRET` on the ivano-pms Vercel project **without Kezie**, except a one-time Member seat grant.
+At PMS go-live, get `WEBHOOK_SECRET` and `EMAIL_WEBHOOK_SECRET` onto Vercel Production with a **≤2-minute Kezie checklist**, then Product Ops verifies.
 
-[IVA-11](https://linear.app/ivano-technologies/issue/IVA-11/set-production-webhook-secret-email-webhook-secret-on-vercel) stays **parked** until PMS go-live. This runbook is how Product Ops unparks it.
-
-Do not set these vars before unpark.
+Do **not** set these vars before unpark. Never ask Kezie for secrets outside that checklist.
 
 ---
 
 ## 2. Roles
 
-| Role | Who | Access |
-|------|-----|--------|
-| Org / billing owner | Kezie | Vercel Owner. Billing, seats, delete project, org GitHub App. **Not** routine env flips. |
-| Secrets operators | Named humans — **TBD**. CoS escalates one-time Member grant to Kezie. | Project **Member** (Environment Variables + Redeploy). Not billing. |
-| Execution | Product Ops (or named on-call eng with a Member seat) | Runs this book. Owns Linear. |
-| Unpark gate | CoS / Product Ops at PMS go-live | Unpark IVA-11, then run this book. |
+| Role | Who | Does |
+|------|-----|------|
+| Sole Vercel admin | Kezie | Paste two env vars + Redeploy Production (checklist only) |
+| Process owner | Product Ops | Generate secrets → vault → send checklist → smoke → close [IVA-11](https://linear.app/ivano-technologies/issue/IVA-11/set-production-webhook-secret-email-webhook-secret-on-vercel) |
+| Unpark gate | CoS / Product Ops | Unpark IVA-11 at go-live, then run this book |
 
-**Standing rule:** Do not ping Kezie for env/secret rotation. Escalate to CoS only for the one-time seat grant.
+**Standing rule:** Never escalate secrets to Kezie except the go-live checklist.
 
 ---
 
 ## 3. Secrets
 
-Names and headers only. Values live in the vault item `ivano-pms-prod-webhooks`, never here.
+Names and headers only. Values live in vault item `ivano-pms-prod-webhooks`, never here.
 
-| Variable | Vercel scopes | Header / mechanism | Must match |
-|----------|---------------|--------------------|------------|
-| `WEBHOOK_SECRET` | **Production and Preview** (both blue/green colors) | `x-webhook-signature` — HMAC-SHA256(raw body) as lowercase hex. See [webhooks.md](../webhooks.md). | Channel senders that POST `https://pms.techivano.com/api/webhooks` |
-| `EMAIL_WEBHOOK_SECRET` | **Production and Preview** (both colors) | `x-email-webhook-secret` — shared secret, not HMAC. `POST /api/webhooks/email` | Cloudflare Email Worker `EMAIL_WEBHOOK_SECRET` |
+| Variable | Where | Header / mechanism | Must match |
+|----------|-------|--------------------|------------|
+| `WEBHOOK_SECRET` | Vercel **Production** and **Preview** (both blue/green colors) | `x-webhook-signature` — HMAC-SHA256(raw body) as lowercase hex. See [webhooks.md](../webhooks.md). | Channel senders that POST `https://pms.techivano.com/api/webhooks` |
+| `EMAIL_WEBHOOK_SECRET` | Vercel Production and Preview; Cloudflare Email Worker | `x-email-webhook-secret` — shared secret, not HMAC. `POST /api/webhooks/email` | Worker `EMAIL_WEBHOOK_SECRET` |
 
-Same values on both colors. Preview builds (`staging`) must already embed prod values so a promote-to-production swap does not break signatures. See [staging-env-checklist.md](./staging-env-checklist.md).
+Same values on both colors so a promote-to-production swap does not break signatures. See [staging-env-checklist.md](./staging-env-checklist.md).
 
 Out of scope: `INTERNAL_JOB_SECRET`, Clerk, Convex, `TELEGRAM_WEBHOOK_SECRET`. Do not rotate those here.
 
 ---
 
-## 4. Procedure — set or rotate
+## 4. Procedure
 
-**Prereqs:** Member seat on `techivano/ivano-pms`. Vault item `ivano-pms-prod-webhooks` (fields: both secrets, last-rotated). Cloudflare Worker env access for `EMAIL_WEBHOOK_SECRET`. IVA-11 unparked.
+**Prereqs:** Vault item `ivano-pms-prod-webhooks` (both secrets + last-rotated). IVA-11 unparked. Cloudflare Worker access if Product Ops mirrors `EMAIL_WEBHOOK_SECRET` (else put the Worker step on Kezie’s checklist).
 
-### 4.1 Generate
+### 4.1 Product Ops — prepare (before pinging Kezie)
 
 ```bash
 openssl rand -hex 32   # WEBHOOK_SECRET
 openssl rand -hex 32   # EMAIL_WEBHOOK_SECRET
 ```
 
-Write both into the vault **before** Vercel. Do not leave values only in terminal scrollback.
+1. Store both in the vault **first**. Do not leave values only in terminal scrollback.
+2. Draft the **Kezie 2-minute checklist** (below). Deliver secret values via vault share / 1Password link — **not** Linear or Slack.
+3. Unpark [IVA-11](https://linear.app/ivano-technologies/issue/IVA-11/set-production-webhook-secret-email-webhook-secret-on-vercel) → In Progress.
 
-### 4.2 Vercel
+### 4.2 Kezie 2-minute checklist (send at go-live)
 
-Dashboard: project **ivano-pms** → Settings → Environment Variables.
+> **ivano-pms — set webhook secrets (≈2 min)**
+>
+> 1. Open Vercel → project **ivano-pms** → Settings → Environment Variables.
+> 2. Set `WEBHOOK_SECRET` = *(from vault)* for **Production** and **Preview**.
+> 3. Set `EMAIL_WEBHOOK_SECRET` = *(from vault)* for the same envs.
+> 4. Save → **Redeploy Production**.
+> 5. Reply “done” (do not paste values).
 
-1. Set `WEBHOOK_SECRET` and `EMAIL_WEBHOOK_SECRET` for **Production** and **Preview** — **same values**.
-2. Save.
-3. **Redeploy** Production (and Preview if you will smoke a preview URL). Env changes do not apply to already-built deployments.
+Optional same message: Cloudflare Worker `EMAIL_WEBHOOK_SECRET` must match; keep `PMS_WEBHOOK_URL=https://pms.techivano.com/api/webhooks/email`. Include this only if Kezie owns the Worker. If Product Ops owns Worker env, Product Ops mirrors after Kezie’s “done” — do not wait on a second Kezie ping.
 
-CLI (if `vercel` is linked to this project):
-
-```bash
-vercel env add WEBHOOK_SECRET production
-vercel env add WEBHOOK_SECRET preview
-vercel env add EMAIL_WEBHOOK_SECRET production
-vercel env add EMAIL_WEBHOOK_SECRET preview
-# Redeploy: dashboard Redeploy, or promote per staging-env-checklist.md
-```
-
-### 4.3 Mirror Cloudflare Worker
-
-Set Worker `EMAIL_WEBHOOK_SECRET` to the **same** vault value.
-
-Keep `PMS_WEBHOOK_URL=https://pms.techivano.com/api/webhooks/email`. Do not point the production worker at a `*.vercel.app` preview during a swap.
-
-### 4.4 Smoke
+### 4.3 Product Ops — verify
 
 Load secrets from the vault into the shell. Do not echo them. Prod host only.
 
-If Vercel Deployment Protection returns 401 before the route runs, use the project's protection bypass token (not a webhook secret). Do not paste that token in Linear.
+If Vercel Deployment Protection returns 401 before the route runs, use the project’s protection bypass token (not a webhook secret). Do not paste that token in Linear.
 
 **Channel HMAC** (`POST /api/webhooks`) — payload schema per [webhooks.md](../webhooks.md):
 
@@ -101,7 +90,7 @@ curl -sS -o /tmp/wh.json -w "%{http_code}\n" -X POST "https://pms.techivano.com/
   -d "$BODY"
 ```
 
-Expect **2xx** on a valid signed body. Bad/missing signature is **400**, not a successful ingest. Missing env on the deployment is **500**.
+Expect **2xx** on a valid signed body. Bad/missing signature is **400**. Missing env on the deployment is **500**.
 
 **Email** (`POST /api/webhooks/email`):
 
@@ -109,17 +98,17 @@ Expect **2xx** on a valid signed body. Bad/missing signature is **400**, not a s
 curl -sS -o /tmp/email-wh.json -w "%{http_code}\n" -X POST "https://pms.techivano.com/api/webhooks/email" \
   -H "Content-Type: application/json" \
   -H "x-email-webhook-secret: $EMAIL_WEBHOOK_SECRET" \
-  -d '{"toAddress":"booking+ops-smoke@pms.techivano.com","fromAddress":"ops-smoke@example.com","subject":"ops smoke","textBody":"ping"}'
+  -d '{"smoke":true}'
 ```
 
-Expect **200** when the header matches and required fields are present. Wrong/missing header is **401**. Schema-only failure with a matching header is **400** — secret is still good. Missing env is **500**.
+Expect **not 401** from secret mismatch (this body is schema-invalid → **400** is fine; secret still good). Matching header + `toAddress`/`fromAddress` → **200**. Missing env → **500**.
 
 Optional: `pnpm verify:webhook` / `scripts/verify-webhook-convex.mjs` against prod only with care; those scripts default to local + fixture secrets.
 
-### 4.5 Close Linear
+### 4.4 Close the loop
 
 1. Vault: update `last-rotated`.
-2. [IVA-11](https://linear.app/ivano-technologies/issue/IVA-11/set-production-webhook-secret-email-webhook-secret-on-vercel) (or successor) → Done. Comment: HTTP status codes + deployment URL/hash. **No secret values.**
+2. [IVA-11](https://linear.app/ivano-technologies/issue/IVA-11/set-production-webhook-secret-email-webhook-secret-on-vercel) → Done. Comment: HTTP status codes + deployment URL/hash. **No secret values.**
 3. If this was the first live use of this book, note the date on [IVA-15](https://linear.app/ivano-technologies/issue/IVA-15/team-owned-vercel-secrets-runbook-unpark-iva-11-without-kezie).
 
 ---
@@ -129,10 +118,10 @@ Optional: `pnpm verify:webhook` / `scripts/verify-webhook-convex.mjs` against pr
 Do not execute until PMS go-live is confirmed.
 
 1. CoS / Product Ops confirm go-live.
-2. Unpark [IVA-11](https://linear.app/ivano-technologies/issue/IVA-11/set-production-webhook-secret-email-webhook-secret-on-vercel): remove `parked`, move to In Progress. Do not escalate secrets to Kezie.
-3. Confirm a named operator has a Vercel Member seat. If not: CoS → Kezie **once** for the grant, then continue without her.
-4. Run §4 end-to-end (generate → vault → Vercel Production+Preview → redeploy → Worker mirror → smoke → Linear).
-5. Mark IVA-11 Done with smoke evidence, no secrets.
+2. Unpark [IVA-11](https://linear.app/ivano-technologies/issue/IVA-11/set-production-webhook-secret-email-webhook-secret-on-vercel): remove `parked`, move to In Progress.
+3. Product Ops: generate → vault → send Kezie the §4.2 checklist (vault link, not values in chat).
+4. Kezie: set Production (+ Preview) + redeploy. Reply “done”.
+5. Product Ops: smoke → close IVA-11 with evidence, no secrets.
 
 ---
 
@@ -140,13 +129,12 @@ Do not execute until PMS go-live is confirmed.
 
 Ping Kezie **only** for:
 
-- Granting or revoking Vercel project Member / Admin seats
+- This go-live checklist (env paste + Redeploy Production)
 - Billing
 - Deleting the Vercel project
 - Org-wide GitHub App installs
-- Any other org Owner action
 
-Not for setting, rotating, or verifying `WEBHOOK_SECRET` / `EMAIL_WEBHOOK_SECRET`.
+Never ask Kezie for secrets outside that checklist.
 
 ---
 
