@@ -67,6 +67,10 @@ Covers: dashboard stability, channel token WS boundary, overlap rejection, prope
 | `NEXT_PUBLIC_CONVEX_URL` | — | ✅ | `https://flippant-eel-758.convex.cloud` |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | — | ✅ | Live key (`pk_live_...`) |
 | `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | — | ✅ | `https://pms.techivano.com/sign-in` |
+| `WHATSAPP_APP_ID` | — | ✅ | Meta app ID for WhatsApp Connect |
+| `WHATSAPP_APP_SECRET` | — | ✅ | Meta app secret (server only) |
+| `WHATSAPP_OAUTH_REDIRECT_URI` | — | ✅ | `https://pms.techivano.com/api/oauth/whatsapp/callback` |
+| `NEXT_PUBLIC_APP_URL` | — | ✅ | Used to build OAuth redirects when redirect URI env is unset |
 
 ---
 

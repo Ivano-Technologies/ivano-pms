@@ -63,6 +63,9 @@ Verify these are set in Vercel → Settings → Environment Variables:
 - [ ] `NEXT_PUBLIC_CLERK_SIGN_IN_URL` = `https://pms.techivano.com/sign-in`
 - [ ] `INTERNAL_JOB_SECRET` = shared secret (must match Convex dashboard env var)
 - [ ] `WEBHOOK_SECRET` = shared secret (must match channel config)
+- [ ] `WHATSAPP_APP_ID` = Meta app ID (WhatsApp Connect; Preview + Production)
+- [ ] `WHATSAPP_APP_SECRET` = Meta app secret (server only)
+- [ ] `WHATSAPP_OAUTH_REDIRECT_URI` = `https://pms.techivano.com/api/oauth/whatsapp/callback` (must match the Meta app)
 
 > **Note:** `CHANNEL_TOKEN_ENCRYPTION_KEY` lives in Convex dashboard only — tokens are encrypted/decrypted in Convex actions, never in Next.js.
 
@@ -113,8 +116,8 @@ Automated Chrome smoke: `node scripts/smoke-prod.mjs` (from `apps/web`; see [`do
 
 ### Known Issues & Deferrals
 
-- OAuth channel connection (WhatsApp/Telegram/Instagram) deferred to Week 6
-- Outbound message sending deferred to Week 6
+- WhatsApp OAuth Connect + inbox outbound send are implemented (IVA-12). They stay dark until Meta app credentials are set on Vercel and the redirect URI is registered. Instagram Connect remains coming soon. Telegram uses the existing deep-link card (not OAuth).
+- WhatsApp template (paid / outside 24h window) sends are not in this restore — inbox replies are session text messages only.
 
 ### Rollback Plan
 

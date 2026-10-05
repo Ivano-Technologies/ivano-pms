@@ -31,6 +31,8 @@ import type * as functions_telegramReply from "../functions/telegramReply.js";
 import type * as functions_telegramWebhookActions from "../functions/telegramWebhookActions.js";
 import type * as functions_units from "../functions/units.js";
 import type * as functions_webhooks from "../functions/webhooks.js";
+import type * as functions_whatsapp from "../functions/whatsapp.js";
+import type * as functions_whatsappActions from "../functions/whatsappActions.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_bookingOverlap from "../lib/bookingOverlap.js";
 import type * as lib_bookingStates from "../lib/bookingStates.js";
@@ -44,6 +46,7 @@ import type * as lib_nlp from "../lib/nlp.js";
 import type * as lib_secrets from "../lib/secrets.js";
 import type * as lib_seedData from "../lib/seedData.js";
 import type * as lib_telegram from "../lib/telegram.js";
+import type * as lib_whatsapp from "../lib/whatsapp.js";
 import type * as seed from "../seed.js";
 
 import type {
@@ -76,6 +79,8 @@ declare const fullApi: ApiFromModules<{
   "functions/telegramWebhookActions": typeof functions_telegramWebhookActions;
   "functions/units": typeof functions_units;
   "functions/webhooks": typeof functions_webhooks;
+  "functions/whatsapp": typeof functions_whatsapp;
+  "functions/whatsappActions": typeof functions_whatsappActions;
   "lib/auth": typeof lib_auth;
   "lib/bookingOverlap": typeof lib_bookingOverlap;
   "lib/bookingStates": typeof lib_bookingStates;
@@ -89,6 +94,7 @@ declare const fullApi: ApiFromModules<{
   "lib/secrets": typeof lib_secrets;
   "lib/seedData": typeof lib_seedData;
   "lib/telegram": typeof lib_telegram;
+  "lib/whatsapp": typeof lib_whatsapp;
   seed: typeof seed;
 }>;
 
