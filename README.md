@@ -4,7 +4,7 @@ Hospitality property management for a single property (MVP). Manage bookings, gu
 
 **Stack:** Next.js + Clerk + Convex (webhooks at `/api/webhooks`)
 
-**Target launch:** September 1, 2026
+**Production:** [https://pms.techivano.com](https://pms.techivano.com) — soft-launched (see [docs/LAUNCH.md](docs/LAUNCH.md))
 
 ## Quick start
 
