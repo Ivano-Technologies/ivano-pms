@@ -23,10 +23,10 @@ export function ChannelTokenCard({
   propertyId
 }: ChannelTokenCardProps) {
   const meta = CHANNEL_META[channel];
-  const canConnectWhatsApp = channel === "whatsapp" && Boolean(propertyId);
-  const startHref = canConnectWhatsApp
-    ? `/api/oauth/whatsapp/start?propertyId=${encodeURIComponent(propertyId)}`
-    : undefined;
+  const startHref =
+    channel === "whatsapp" && propertyId
+      ? `/api/oauth/whatsapp/start?propertyId=${encodeURIComponent(propertyId)}`
+      : undefined;
 
   return (
     <div className="flex items-start justify-between gap-4 rounded-xl border p-4">

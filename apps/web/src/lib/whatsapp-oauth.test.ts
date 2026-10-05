@@ -116,7 +116,11 @@ describe("completeWhatsAppOAuth", () => {
       throw new Error(`unexpected fetch ${url}`);
     });
 
-    const result = await completeWhatsAppOAuth("auth-code", CONFIG, fetchImpl as typeof fetch);
+    const result = await completeWhatsAppOAuth(
+      "auth-code",
+      CONFIG,
+      fetchImpl as unknown as typeof fetch
+    );
     expect(result.accessToken).toBe("long-token");
     expect(result.phoneNumberId).toBe("phone-99");
     expect(result.expiresAt).toBeGreaterThan(Date.now());

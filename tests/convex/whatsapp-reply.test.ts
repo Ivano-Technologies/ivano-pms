@@ -12,10 +12,24 @@ beforeEach(() => {
 
 describe("WhatsApp inbox reply", () => {
   it("records an outbound manager reply on a WhatsApp thread", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ messages: [{ id: "wamid.reply" }] })
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
     const asManager = authedClient(t, seed.clerkUserId);
     const now = Date.now();
+
+    await t.action(internal.functions.channelTokenActions.upsertChannelToken, {
+      secret: INTERNAL_SECRET,
+      propertyId: seed.propertyId,
+      channel: "whatsapp",
+      accessToken: "wa-access-token",
+      phoneNumberId: "10987654321"
+    });
 
     const threadId = await t.run(async (ctx) => {
       await ctx.db.insert("bookingChannelMessage", {
@@ -60,6 +74,7 @@ describe("WhatsApp inbox reply", () => {
     expect(outbound?.messageText).toContain("hold it");
     expect(outbound?.senderName).toBe("Test Manager");
     expect(outbound?.channel).toBe("whatsapp");
+    vi.unstubAllGlobals();
   });
 
   it("rejects reply when thread is not WhatsApp", async () => {
