@@ -3,6 +3,7 @@ import {
   BarChart3,
   Building2,
   Calendar,
+  Inbox,
   LayoutDashboard,
   Settings,
   Users
@@ -22,18 +23,18 @@ export type ShellNavItem = {
  * Single source of truth for shell navigation.
  *
  * Route notes (current app):
- * - Channel features (Inbox, Telegram, Email inbound) are deferred post-launch
- *   and intentionally removed from navigation to keep the app simple.
+ * - Inbox is at /dashboard/inbox (/dashboard/channels redirects here).
+ * - WhatsApp / Telegram / Email inbound cards live under Settings → Connected channels.
  * - Bulk import button lives on Guests page header (not a top-level nav item).
  */
 export const SHELL_NAV_ITEMS: ShellNavItem[] = [
   {
-    id: "overview",
-    label: "Overview",
-    href: "/dashboard",
-    icon: LayoutDashboard,
+    id: "inbox",
+    label: "Inbox",
+    href: "/dashboard/inbox",
+    icon: Inbox,
     mobilePrimary: true,
-    hint: "Dashboard summary"
+    hint: "Guest threads"
   },
   {
     id: "bookings",
@@ -42,6 +43,13 @@ export const SHELL_NAV_ITEMS: ShellNavItem[] = [
     icon: Calendar,
     mobilePrimary: true,
     hint: "Calendar"
+  },
+  {
+    id: "overview",
+    label: "Overview",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+    hint: "Dashboard summary"
   },
   {
     id: "guests",
@@ -72,7 +80,7 @@ export const SHELL_NAV_ITEMS: ShellNavItem[] = [
     href: "/dashboard/settings",
     icon: Settings,
     mobilePrimary: true,
-    hint: "Property configuration"
+    hint: "Channels · WhatsApp · Telegram · Email"
   }
 ];
 

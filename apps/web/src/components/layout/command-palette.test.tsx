@@ -41,4 +41,14 @@ describe("CommandPalette", () => {
 
     expect(push).toHaveBeenCalledWith("/dashboard/guests");
   });
+
+  it("navigates to inbox for guest threads", () => {
+    render(<CommandPalette />);
+
+    fireEvent.keyDown(window, { key: "k", ctrlKey: true });
+    fireEvent.click(screen.getByRole("option", { name: /go to inbox/i }));
+
+    expect(push).toHaveBeenCalledWith("/dashboard/inbox");
+  });
 });
+
