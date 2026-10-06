@@ -1,14 +1,14 @@
 import type { AuthConfig } from "convex/server";
 
-const clerkDomain = process.env.CLERK_JWT_ISSUER_DOMAIN;
-
+/**
+ * Convex Auth JWT issuer. CONVEX_SITE_URL is set automatically on Convex deployments.
+ * @see https://labs.convex.dev/auth/setup/manual
+ */
 export default {
-  providers: clerkDomain
-    ? [
-        {
-          domain: clerkDomain,
-          applicationID: "convex"
-        }
-      ]
-    : []
+  providers: [
+    {
+      domain: process.env.CONVEX_SITE_URL,
+      applicationID: "convex"
+    }
+  ]
 } satisfies AuthConfig;

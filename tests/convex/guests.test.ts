@@ -11,7 +11,7 @@ describe("getGuests", () => {
   it("returns non-deleted guests for the manager property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const guests = await asManager.query(api.functions.guests.getGuests, {});
 
@@ -23,7 +23,7 @@ describe("getGuests", () => {
   it("excludes soft-deleted guests", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(api.functions.guests.softDeleteGuest, {
       guestId: seed.guestId
@@ -38,7 +38,7 @@ describe("createGuest", () => {
   it("creates a guest on the manager property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const guestId = await asManager.mutation(api.functions.guests.createGuest, {
       firstName: "Tunde",
@@ -60,7 +60,7 @@ describe("updateGuest", () => {
   it("updates guest fields", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const updated = await asManager.mutation(api.functions.guests.updateGuest, {
       guestId: seed.guestId,
@@ -81,7 +81,7 @@ describe("getGuestById", () => {
   it("returns guest with active booking count", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -116,7 +116,7 @@ describe("softDeleteGuest and restoreGuest", () => {
   it("soft deletes and restores within 30 seconds", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(api.functions.guests.softDeleteGuest, {
       guestId: seed.guestId
@@ -138,7 +138,7 @@ describe("softDeleteGuest and restoreGuest", () => {
   it("rejects restore after the window expires", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(api.functions.guests.softDeleteGuest, {
       guestId: seed.guestId
@@ -162,7 +162,7 @@ describe("property scoping", () => {
   it("denies update on another property guest", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     const otherGuestId = await t.run(async (ctx) =>

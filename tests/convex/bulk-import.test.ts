@@ -80,7 +80,7 @@ describe("bulkImportBookings mutation", () => {
   it("imports valid rows and creates guest with IMPORT id defaults", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const result = await asManager.mutation(
       api.functions.bulkImport.bulkImportBookings,
@@ -128,7 +128,7 @@ describe("bulkImportBookings mutation", () => {
   it("reuses existing guest by phone", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const result = await asManager.mutation(
       api.functions.bulkImport.bulkImportBookings,
@@ -158,7 +158,7 @@ describe("bulkImportBookings mutation", () => {
   it("skips unknown unit with reason", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const result = await asManager.mutation(
       api.functions.bulkImport.bulkImportBookings,
@@ -187,7 +187,7 @@ describe("bulkImportBookings mutation", () => {
   it("partial import: valid rows succeed, overlap and invalid rows skipped", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(api.functions.bookings.createBooking, {
       guestId: seed.guestId,

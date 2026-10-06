@@ -19,7 +19,7 @@ describe("getChannelTokens", () => {
   it("returns disconnected status for all channels by default", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const tokens = await asManager.query(
       api.functions.channelTokens.getChannelTokens,
@@ -35,7 +35,7 @@ describe("upsertChannelTokenInternal", () => {
   it("stores and surfaces a connected channel token", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.action(internal.functions.channelTokenActions.upsertChannelToken, {

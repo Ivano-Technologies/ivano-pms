@@ -56,7 +56,7 @@ if (clerkToken) {
       Authorization: `Bearer ${clerkToken}`
     },
     body: JSON.stringify({
-      path: "functions/managers:upsertManagerFromClerk",
+      path: "functions/managers:upsertManagerFromAuth",
       args: {
         email: "ivanonigeria@gmail.com",
         fullName: "Ivano Technologies"

@@ -44,7 +44,7 @@ Sign in at http://localhost:3000/sign-in → http://localhost:3000/dashboard
 
 ## Surface 3 — Property switcher (10 min)
 
-**Requires:** user with 2+ `manager` rows (different `propertyId`, same `clerkUserId`)
+**Requires:** user with 2+ `manager` rows (different `propertyId`, same `authUserId`)
 
 1. Sidebar shows **Property** dropdown when ≥2 properties
 2. Switch property → guests/units/channels lists change scope

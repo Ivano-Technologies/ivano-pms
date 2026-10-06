@@ -1,7 +1,7 @@
 # ADR-008: Separate Clerk Instance per Product (EAM vs PMS)
 
 **Date:** 2026-06-23
-**Status:** Accepted — Implementation deferred (pre-production-user milestone)
+**Status:** Superseded (6 Oct 2026) — Clerk replaced by Convex Auth. Kept for history.
 **Deciders:** Kezie Okpala
 
 ---

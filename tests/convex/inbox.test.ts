@@ -35,7 +35,7 @@ describe("getChannelMessages", () => {
   it("returns 'new' messages for the manager property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await seedMessage(t, seed.propertyId, { status: "new" });
     await seedMessage(t, seed.propertyId, { status: "reviewed" });
@@ -54,7 +54,7 @@ describe("markMessageReviewed", () => {
   it("sets status='reviewed'", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const messageId = await seedMessage(t, seed.propertyId, { status: "new" });
 
@@ -73,7 +73,7 @@ describe("markMessageNew", () => {
   it("sets status back to 'new'", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const messageId = await seedMessage(t, seed.propertyId, { status: "reviewed" });
 
@@ -92,7 +92,7 @@ describe("archiveMessage", () => {
   it("sets status='archived'", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const messageId = await seedMessage(t, seed.propertyId, { status: "reviewed" });
 
@@ -111,7 +111,7 @@ describe("unarchiveMessage", () => {
   it("restores status to 'reviewed'", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const messageId = await seedMessage(t, seed.propertyId, { status: "archived" });
 
@@ -130,7 +130,7 @@ describe("convertChannelMessageToBooking", () => {
   it("creates a booking and sets message.status='converted'", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const messageId = await seedMessage(t, seed.propertyId, { status: "new" });
 

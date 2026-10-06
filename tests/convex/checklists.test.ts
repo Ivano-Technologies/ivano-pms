@@ -33,7 +33,7 @@ describe("checklists", () => {
   it("returns empty list for booking with no checklist items", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await seedBooking(t, seed);
 
     const items = await asManager.query(
@@ -47,7 +47,7 @@ describe("checklists", () => {
   it("creates a checklist item", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await seedBooking(t, seed);
 
     const id = await asManager.mutation(api.functions.checklists.createChecklist, {
@@ -63,7 +63,7 @@ describe("checklists", () => {
   it("lists checklist items by booking", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await seedBooking(t, seed);
 
     await asManager.mutation(api.functions.checklists.createChecklist, {
@@ -85,7 +85,7 @@ describe("checklists", () => {
   it("updates checklist status", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await seedBooking(t, seed);
 
     const checklistId = await asManager.mutation(
@@ -109,7 +109,7 @@ describe("checklists", () => {
   it("deletes a checklist item", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await seedBooking(t, seed);
 
     const checklistId = await asManager.mutation(
@@ -137,7 +137,7 @@ describe("checklists", () => {
   it("rejects checklist access for another property booking", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     const otherBookingId = await t.run(async (ctx) =>
@@ -169,7 +169,7 @@ describe("checklists", () => {
   it("rejects create when booking not found", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     const fakeBookingId = await t.run(async (ctx) => {

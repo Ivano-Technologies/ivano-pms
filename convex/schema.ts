@@ -1,3 +1,4 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -103,6 +104,7 @@ const auditEntityType = v.union(
 );
 
 export default defineSchema({
+  ...authTables,
   property: defineTable({
     name: v.string(),
     slug: v.string(),
@@ -259,7 +261,7 @@ export default defineSchema({
 
   manager: defineTable({
     propertyId: v.id("property"),
-    clerkUserId: v.string(),
+    authUserId: v.string(),
     email: v.string(),
     fullName: v.string(),
     phone: v.string(),
@@ -270,7 +272,7 @@ export default defineSchema({
     updatedAt: v.number()
   })
     .index("by_property", ["propertyId"])
-    .index("by_clerk_user", ["clerkUserId"]),
+    .index("by_auth_user", ["authUserId"]),
 
   checklist: defineTable({
     propertyId: v.id("property"),

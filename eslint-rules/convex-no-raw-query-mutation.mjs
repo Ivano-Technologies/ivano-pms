@@ -1,6 +1,6 @@
 /**
  * Forbid raw query/mutation imports from _generated/server in convex/functions/.
- * Use authedQuery/authedMutation (or clerk and internalJob wrappers) from customFunctions.ts,
+ * Use authedQuery/authedMutation (or signedIn and internalJob wrappers) from customFunctions.ts,
  * or internalQuery/internalMutation/action for backend-only entry points.
  */
 

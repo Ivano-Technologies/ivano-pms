@@ -12,18 +12,12 @@ export type StatusChipTone =
   | "info";
 
 const TONE_CLASSES: Record<StatusChipTone, string> = {
-  neutral:
-    "border-border bg-muted text-foreground",
-  brand:
-    "border-primary/30 bg-primary/10 text-primary",
-  success:
-    "border-emerald-500/40 bg-emerald-500/10 text-emerald-900 dark:text-emerald-100",
-  warning:
-    "border-amber-500/50 bg-amber-500/10 text-amber-950 dark:text-amber-100",
-  danger:
-    "border-red-500/40 bg-red-500/10 text-red-900 dark:text-red-100",
-  info:
-    "border-sky-500/40 bg-sky-500/10 text-sky-900 dark:text-sky-100"
+  neutral: "border-border bg-muted text-foreground",
+  brand: "border-terracotta/30 bg-terracotta-tint text-terracotta-hover",
+  success: "border-sage/40 bg-status-completed-bg text-status-completed-fg",
+  warning: "border-brass/50 bg-warning text-warning-foreground",
+  danger: "border-rose/40 bg-status-cancelled-bg text-status-cancelled-fg",
+  info: "border-[#245A80]/30 bg-info text-info-foreground"
 };
 
 export function StatusChip({
