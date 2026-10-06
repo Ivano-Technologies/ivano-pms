@@ -1,4 +1,4 @@
-import { ClerkProvider } from "@clerk/nextjs";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BRAND_DESCRIPTION, BRAND_HEADLINE, BRAND_NAME } from "@/lib/brand";
-import { clerkAppearance, clerkLocalization } from "@/lib/clerk-appearance";
 
 import "./globals.css";
 
@@ -72,23 +71,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`light ${fraunces.variable} ${jakarta.variable} h-full antialiased`}
-    >
-      <body className="bg-background font-sans flex min-h-full flex-col">
-        <ThemeProvider>
-          <ClerkProvider appearance={clerkAppearance} localization={clerkLocalization}>
+    <ConvexAuthNextjsServerProvider>
+      <html
+        lang="en"
+        suppressHydrationWarning
+        className={`light ${fraunces.variable} ${jakarta.variable} h-full antialiased`}
+      >
+        <body className="bg-background font-sans flex min-h-full flex-col">
+          <ThemeProvider>
             <ConvexClientProvider>
               <TooltipProvider delayDuration={200}>
                 {children}
                 <Toaster richColors position="top-right" closeButton />
               </TooltipProvider>
             </ConvexClientProvider>
-          </ClerkProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ConvexAuthNextjsServerProvider>
   );
 }

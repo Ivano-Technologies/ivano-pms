@@ -1,21 +1,20 @@
-import { SignIn } from "@clerk/nextjs";
 import { ArrowLeft } from "lucide-react";
-import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { SignInRibbon } from "@/components/auth/sign-in-ribbon";
 import { IvanoPmsLockup } from "@/components/brand/ivano-pms-lockup";
 import { PoweredByIvano } from "@/components/brand/powered-by-ivano";
 
-export const metadata: Metadata = {
-  title: "Sign in"
-};
+export function AuthShell({
+  children,
+  mode = "signIn"
+}: {
+  children: ReactNode;
+  mode?: "signIn" | "signUp";
+}) {
+  const isSignUp = mode === "signUp";
 
-/**
- * Invite only sign in (Wave 1). No sign up link anywhere: Clerk's footerAction is hidden in
- * clerk-appearance.ts and the Clerk Dashboard sign up mode is Restricted.
- */
-export default function SignInPage() {
   return (
     <div className="bg-paper grid min-h-screen flex-1 grid-cols-1 grid-rows-[auto_1fr] lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:grid-rows-1">
       <aside
@@ -35,14 +34,28 @@ export default function SignInPage() {
           </Link>
         </div>
         <div className="mt-[22px] lg:mt-0">
-          <h2 className="font-display max-w-[11em] text-[28px] lg:max-w-none leading-[34px] font-medium tracking-[-0.01em] lg:text-[42px] lg:leading-[48px]">
-            Good to see you. Today’s <br className="hidden lg:block" />
-            <em className="text-[#E2B866] italic">arrivals</em> are waiting.
-          </h2>
-          <p className="mt-3 max-w-[26em] text-[15px] leading-[22px] text-[#C9CFD6] lg:text-[17px] lg:leading-[26px]">
-            Sign in to see who is arriving, who is in house and who is leaving, with every guest
-            message in one place.
-          </p>
+          {isSignUp ? (
+            <>
+              <h2 className="font-display max-w-[11em] text-[28px] leading-[34px] font-medium tracking-[-0.01em] lg:max-w-none lg:text-[42px] lg:leading-[48px]">
+                Welcome. Your <br className="hidden lg:block" />
+                <em className="text-[#E2B866] italic">front desk</em> starts here.
+              </h2>
+              <p className="mt-3 max-w-[26em] text-[15px] leading-[22px] text-[#C9CFD6] lg:text-[17px] lg:leading-[26px]">
+                Create an account to see arrivals, in house guests and messages in one place.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="font-display max-w-[11em] text-[28px] leading-[34px] font-medium tracking-[-0.01em] lg:max-w-none lg:text-[42px] lg:leading-[48px]">
+                Good to see you. Today’s <br className="hidden lg:block" />
+                <em className="text-[#E2B866] italic">arrivals</em> are waiting.
+              </h2>
+              <p className="mt-3 max-w-[26em] text-[15px] leading-[22px] text-[#C9CFD6] lg:text-[17px] lg:leading-[26px]">
+                Sign in to see who is arriving, who is in house and who is leaving, with every guest
+                message in one place.
+              </p>
+            </>
+          )}
           <SignInRibbon className="mt-[30px] hidden lg:block" />
         </div>
         <PoweredByIvano variant="navy" className="hidden lg:block" />
@@ -56,10 +69,7 @@ export default function SignInPage() {
           <ArrowLeft className="size-4" aria-hidden />
           Back to home
         </Link>
-        <SignIn />
-        <p className="text-muted-foreground mt-[18px] text-center text-sm font-medium">
-          Need access? Ask your property manager to invite you.
-        </p>
+        {children}
         <PoweredByIvano className="mt-2.5 text-center lg:hidden" />
       </main>
     </div>

@@ -11,7 +11,7 @@ describe("getRevenueByMonth", () => {
   it("groups revenue by createdAt month", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -46,7 +46,7 @@ describe("getRevenueByMonth", () => {
   it("includes partial current month without proration", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const rows = await asManager.query(api.functions.reports.getRevenueByMonth, {
       months: 1
@@ -59,7 +59,7 @@ describe("getRevenueByMonth", () => {
   it("excludes cancelled bookings from revenue", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -93,7 +93,7 @@ describe("getOccupancyByUnit", () => {
   it("counts one night for checkIn=day0 checkOut=day1", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -128,7 +128,7 @@ describe("getOccupancyByUnit", () => {
   it("returns zero occupancy when property has no units in range", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const rows = await asManager.query(api.functions.reports.getOccupancyByUnit, {
       startDate: "2026-06-01",

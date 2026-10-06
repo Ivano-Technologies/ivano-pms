@@ -13,22 +13,16 @@ afterEach(() => {
 ).IS_REACT_ACT_ENVIRONMENT = true;
 (React as typeof React & { act: typeof act }).act = act;
 
-vi.mock("@clerk/nextjs", () => ({
-  useAuth: () => ({ isLoaded: true, isSignedIn: true, userId: "clerk_test" }),
-  useUser: () => ({
-    isLoaded: true,
-    user: {
-      id: "clerk_test",
-      fullName: "Test Manager",
-      primaryEmailAddress: { emailAddress: "manager@test.com" }
-    }
-  }),
-  ClerkProvider: ({ children }: { children: React.ReactNode }) => children,
-  UserButton: () => React.createElement("div", { "data-testid": "user-button" })
+vi.mock("@convex-dev/auth/react", () => ({
+  useAuthActions: () => ({
+    signIn: vi.fn(async () => undefined),
+    signOut: vi.fn(async () => undefined)
+  })
 }));
 
 vi.mock("convex/react", () => ({
   useQuery: vi.fn(() => undefined),
   useMutation: vi.fn(() => vi.fn()),
+  useConvexAuth: () => ({ isLoading: false, isAuthenticated: true }),
   ConvexProvider: ({ children }: { children: React.ReactNode }) => children
 }));

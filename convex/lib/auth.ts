@@ -3,12 +3,12 @@ import type { MutationCtx, QueryCtx } from "../_generated/server";
 
 export async function getManagerForProperty(
   ctx: QueryCtx | MutationCtx,
-  clerkUserId: string,
+  authUserId: string,
   propertyId: Id<"property">
 ): Promise<Doc<"manager">> {
   const managers = await ctx.db
     .query("manager")
-    .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", clerkUserId))
+    .withIndex("by_auth_user", (q) => q.eq("authUserId", authUserId))
     .take(10);
 
   const manager = managers.find(
@@ -41,7 +41,7 @@ export async function getCurrentManager(
 
   const managers = await ctx.db
     .query("manager")
-    .withIndex("by_clerk_user", (q) => q.eq("clerkUserId", identity.subject))
+    .withIndex("by_auth_user", (q) => q.eq("authUserId", identity.subject))
     .take(10);
 
   const manager = managers.find((m) => !m.isDeleted);

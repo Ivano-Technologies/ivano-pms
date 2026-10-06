@@ -11,7 +11,7 @@ describe("getMyProperties", () => {
   it("returns properties linked to the clerk user", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const properties = await asManager.query(
       api.functions.managers.getMyProperties,
@@ -26,13 +26,13 @@ describe("getMyProperties", () => {
   it("returns multiple properties when manager has multiple records", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
       await ctx.db.insert("manager", {
         propertyId: seed.otherPropertyId,
-        clerkUserId: seed.clerkUserId,
+        authUserId: seed.authUserId,
         email: "manager@test.com",
         fullName: "Test Manager",
         phone: "+2348000000000",
@@ -56,13 +56,13 @@ describe("selectedPropertyId scoping", () => {
   it("scopes getGuests to selected property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
       await ctx.db.insert("manager", {
         propertyId: seed.otherPropertyId,
-        clerkUserId: seed.clerkUserId,
+        authUserId: seed.authUserId,
         email: "manager@test.com",
         fullName: "Test Manager",
         phone: "+2348000000000",

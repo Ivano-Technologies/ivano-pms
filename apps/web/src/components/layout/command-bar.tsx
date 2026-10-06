@@ -1,8 +1,9 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { Search } from "lucide-react";
+
+import { SignOutButton } from "@/components/auth/sign-out-button";
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Id } from "../../../../../convex/_generated/dataModel";
@@ -85,7 +86,7 @@ export function CommandBar({ onOpenPalette, className }: CommandBarProps) {
         </kbd>
       </button>
 
-      <UserButton />
+      <SignOutButton />
     </header>
   );
 }

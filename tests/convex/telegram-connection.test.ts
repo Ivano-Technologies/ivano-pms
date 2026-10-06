@@ -14,7 +14,7 @@ describe("Telegram connection (property manager)", () => {
   it("returns null until connection is ensured", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const before = await asManager.query(
       api.functions.telegram.getTelegramConnection,
@@ -26,7 +26,7 @@ describe("Telegram connection (property manager)", () => {
   it("ensureTelegramConnection creates deep link for the property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const connection = await asManager.mutation(
       api.functions.telegram.ensureTelegramConnection,
@@ -43,7 +43,7 @@ describe("Telegram connection (property manager)", () => {
   it("regenerateTelegramConnectToken rotates the deep-link token", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const first = await asManager.mutation(
       api.functions.telegram.ensureTelegramConnection,
@@ -62,7 +62,7 @@ describe("Telegram connection (property manager)", () => {
   it("listTelegramThreads returns linked guest chats", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(api.functions.telegram.ensureTelegramConnection, {});
 

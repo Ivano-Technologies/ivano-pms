@@ -83,8 +83,8 @@ Re-record after switching Clerk instance or base URL. Do not commit `auth.json` 
 1. Clerk Dashboard → **Development** → **Users** → create a test manager (email + password). This user does not exist in production until you create it there separately.
 2. Set `DEV_SMOKE_EMAIL` in `.env.development.local` once the user exists.
 3. Start dev servers (below), then sign in at http://localhost:3000/sign-in.
-4. Open http://localhost:3000/dashboard — `DashboardManagerSync` calls `upsertManagerFromClerk` and links the user to the first seeded `property`.
-5. In Convex dashboard, confirm a `manager` row exists with `clerkUserId` matching the signed-in Clerk user ID.
+4. Open http://localhost:3000/dashboard — `DashboardManagerSync` calls `upsertManagerFromAuth` and links the user to the first seeded `property`.
+5. In Convex dashboard, confirm a `manager` row exists with `authUserId` matching the signed-in Clerk user ID.
 6. For Vercel preview: use development keys and add the preview URL to Clerk **Allowed origins**.
 
 For Playwright webhook E2E: set `WEBHOOK_SECRET` in `apps/web/.env.local` (defaults to `test-webhook-secret-12345` in tests if unset). Optional `WEBHOOK_TEST_URL` overrides `http://localhost:3000`.

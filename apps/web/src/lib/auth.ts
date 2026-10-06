@@ -1,10 +1,4 @@
-import type { NextApiRequest } from "next";
-import {
-  auth,
-  clerkClient,
-  currentUser,
-  getAuth
-} from "@clerk/nextjs/server";
+import { isAuthenticatedNextjs } from "@convex-dev/auth/nextjs/server";
 
 import type { Role } from "@/lib/roles";
 import { hasPermission, parseUserRole } from "@/lib/roles";
@@ -13,57 +7,30 @@ import { AuthRoleError } from "@/lib/auth-role-error";
 export { AuthRoleError };
 
 /**
- * App Router: current user's role from Clerk (publicMetadata.role), default client.
+ * App Router: require a signed in Convex Auth session.
+ * Manager roles (owner/manager/staff) live in Convex, not JWT public metadata.
  */
-export async function getCurrentUserRole(): Promise<Role> {
-  const { userId } = await auth();
-  if (!userId) {
+export async function requireSignedIn(): Promise<void> {
+  if (!(await isAuthenticatedNextjs())) {
     throw new AuthRoleError("Unauthorized", 401);
   }
-  const user = await currentUser();
-  return parseUserRole(user?.publicMetadata);
 }
 
 /**
- * App Router / server actions: require at least `minimumRole` in the hierarchy.
+ * Legacy role helper kept for API routes that still pass metadata-shaped objects.
+ * Prefer manager.role from Convex for authorization.
  */
 export async function requirePermissionServer(
-  minimumRole: Role
-): Promise<{ userId: string; role: Role }> {
-  const { userId } = await auth();
-  if (!userId) {
-    throw new AuthRoleError("Unauthorized", 401);
-  }
-  const user = await currentUser();
-  const role = parseUserRole(user?.publicMetadata);
+  minimumRole: Role,
+  metadata?: unknown
+): Promise<{ role: Role }> {
+  await requireSignedIn();
+  const role = parseUserRole(metadata);
   if (!hasPermission(role, minimumRole)) {
     throw new AuthRoleError("Forbidden", 403);
   }
-  return { userId, role };
-}
-
-/**
- * Pages Router API: require at least `minimumRole` in the hierarchy.
- */
-export async function requirePermissionPages(
-  req: NextApiRequest,
-  minimumRole: Role
-): Promise<{ userId: string; role: Role }> {
-  const { userId } = getAuth(req);
-  if (!userId) {
-    throw new AuthRoleError("Unauthorized", 401);
-  }
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
-  const role = parseUserRole(user.publicMetadata);
-  if (!hasPermission(role, minimumRole)) {
-    throw new AuthRoleError("Forbidden", 403);
-  }
-  return { userId, role };
+  return { role };
 }
 
 /** @deprecated Use {@link requirePermissionServer} */
 export const requireRoleServer = requirePermissionServer;
-
-/** @deprecated Use {@link requirePermissionPages} */
-export const requireRolePages = requirePermissionPages;

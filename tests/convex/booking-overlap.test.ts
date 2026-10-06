@@ -33,7 +33,7 @@ describe("booking overlap detection", () => {
   it("allows sequential non-overlapping bookings on the same unit", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(
       api.functions.bookings.createBooking,
@@ -51,7 +51,7 @@ describe("booking overlap detection", () => {
   it("rejects overlapping dates on the same unit", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(api.functions.bookings.createBooking, bookingArgs(seed));
 
@@ -66,7 +66,7 @@ describe("booking overlap detection", () => {
   it("allows overlapping dates on different units", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     const unit2 = await t.run(async (ctx) =>
@@ -103,7 +103,7 @@ describe("booking overlap detection", () => {
   it("does not block new booking when existing booking is cancelled", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const bookingId = await asManager.mutation(
       api.functions.bookings.createBooking,
@@ -126,7 +126,7 @@ describe("booking overlap detection", () => {
   it("allows back-to-back bookings when checkout equals next check-in", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(
       api.functions.bookings.createBooking,
@@ -144,7 +144,7 @@ describe("booking overlap detection", () => {
   it("blocks overlap when existing booking has no check-out date", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {

@@ -11,7 +11,7 @@ describe("createUnit", () => {
   it("inserts with default availabilityStatus='available'", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const unitId = await asManager.mutation(api.functions.units.createUnit, {
       unitNumber: "Suite A",
@@ -32,7 +32,7 @@ describe("createUnit", () => {
   it("enforces property scoping via ctx.manager.propertyId", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const unitId = await asManager.mutation(api.functions.units.createUnit, {
       unitNumber: "V1",
@@ -51,7 +51,7 @@ describe("updateUnit", () => {
   it("updates only provided fields, leaves others intact", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(api.functions.units.updateUnit, {
       unitId: seed.unitId,
@@ -68,7 +68,7 @@ describe("updateUnit", () => {
   it("rejects cross-property access", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     const otherUnitId = await t.run(async (ctx) =>
@@ -98,7 +98,7 @@ describe("setUnitAvailability", () => {
   it("updates only availabilityStatus, leaves other fields intact", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await asManager.mutation(api.functions.units.setUnitAvailability, {
       unitId: seed.unitId,
@@ -116,7 +116,7 @@ describe("getUnits", () => {
   it("excludes maintenance and reserved by default (includeMaintenanceReserved=false)", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -151,7 +151,7 @@ describe("getUnits", () => {
   it("returns all 4 statuses when includeMaintenanceReserved=true", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -206,7 +206,7 @@ describe("getUnitById", () => {
   it("derives occupancyStatus='occupied' from active booking covering today", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     // Occupancy is computed against wall-clock `new Date()`, so derive the

@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useConvexAuth } from "convex/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { UserPreferencesDoc } from "@/types/user-preferences";
@@ -8,14 +8,14 @@ import type { UserPreferencesDoc } from "@/types/user-preferences";
 type PrefsState = UserPreferencesDoc | null;
 
 export function useUserPreferences() {
-  const { isLoaded, userId } = useAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const [preferences, setPreferences] = useState<PrefsState>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(async () => {
-    if (!userId) {
+    if (!isAuthenticated) {
       setPreferences(null);
       setLoading(false);
       return;
@@ -38,14 +38,14 @@ export function useUserPreferences() {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    if (!isLoaded) {
+    if (isLoading) {
       return;
     }
     void load();
-  }, [isLoaded, load]);
+  }, [isLoading, load]);
 
   const patchPreferences = useCallback(
     async (patch: Partial<UserPreferencesDoc> & { orgId?: string }) => {

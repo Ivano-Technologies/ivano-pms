@@ -36,7 +36,7 @@ Before the first manager signs in on a fresh prod deployment, ensure at least on
 npx convex run seed:seedDemoData --prod
 ```
 
-For real launch, replace this with onboarding that creates the first property — but **something** must exist before `upsertManagerFromClerk` can link a Clerk user to a property.
+For real launch, replace this with onboarding that creates the first property — but **something** must exist before `upsertManagerFromAuth` can link a Clerk user to a property.
 
 Verify:
 
@@ -115,7 +115,7 @@ npx convex deploy --yes
 | Dashboard loads but “Manager profile not found” | Prod DB has no property | `npx convex run seed:seedDemoData --prod` or onboarding |
 | All authed Convex queries throw / blank dashboard | Wrong `CLERK_JWT_ISSUER_DOMAIN` on Convex | Set to `https://clerk.techivano.com`, redeploy Convex |
 | Redirect to `eam.techivano.com/sign-in` | Missing `NEXT_PUBLIC_CLERK_SIGN_IN_URL` on Vercel | Set to `https://pms.techivano.com/sign-in` |
-| `upsertManagerFromClerk` server error in console | Empty prod property table | See prod seed step above |
+| `upsertManagerFromAuth` server error in console | Empty prod property table | See prod seed step above |
 | Telegram updates return 401 | `TELEGRAM_WEBHOOK_SECRET` mismatch | Same value in Convex (`setWebhook`) and Vercel (route header check) |
 
 ---

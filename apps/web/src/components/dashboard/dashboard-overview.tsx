@@ -1,7 +1,6 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { useMemo } from "react";
 
 import StatsCards from "@/components/dashboard/stats-cards";
@@ -17,7 +16,8 @@ function todayIsoDate(): string {
 }
 
 export function DashboardOverview() {
-  const { isLoaded: isUserLoaded } = useUser();
+  const { isLoading: isAuthLoading } = useConvexAuth();
+  const isUserLoaded = !isAuthLoading;
   const today = useMemo(() => todayIsoDate(), []);
   const { propertyArgs } = usePropertyScope();
 

@@ -1,5 +1,4 @@
-/* Clerk renders in its own layer so our Tailwind utilities in clerk-appearance.ts win. */
-@layer theme, base, clerk, components, utilities;
+@layer theme, base, components, utilities;
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";

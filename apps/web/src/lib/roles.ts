@@ -1,6 +1,6 @@
 /**
- * Clerk stores role on {@link User.publicMetadata} (Dashboard: Users → Metadata).
- * Hierarchy: owner ≥ admin ≥ client. Enforce again on the server — never trust UI alone.
+ * Optional UI role labels (owner ≥ admin ≥ client).
+ * Property authorization uses manager.role in Convex (owner/manager/staff).
  */
 export type Role = "owner" | "admin" | "client";
 
