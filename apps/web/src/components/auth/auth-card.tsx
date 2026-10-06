@@ -51,7 +51,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
   const [error, setError] = useState<string | null>(null);
 
   const isSignUp = mode === "signUp";
-  const title = isSignUp ? "Create your Ivano PMS account" : "Sign in to Ivano PMS";
+  const title = isSignUp ? "Create your account" : "Sign in to Ivano PMS";
   const subtitle = isSignUp
     ? "Open your front desk with Google or your work email."
     : "Welcome back. Sign in to open your front desk.";

@@ -6,7 +6,15 @@ import { SignInRibbon } from "@/components/auth/sign-in-ribbon";
 import { IvanoPmsLockup } from "@/components/brand/ivano-pms-lockup";
 import { PoweredByIvano } from "@/components/brand/powered-by-ivano";
 
-export function AuthShell({ children }: { children: ReactNode }) {
+export function AuthShell({
+  children,
+  mode = "signIn"
+}: {
+  children: ReactNode;
+  mode?: "signIn" | "signUp";
+}) {
+  const isSignUp = mode === "signUp";
+
   return (
     <div className="bg-paper grid min-h-screen flex-1 grid-cols-1 grid-rows-[auto_1fr] lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:grid-rows-1">
       <aside
@@ -26,14 +34,28 @@ export function AuthShell({ children }: { children: ReactNode }) {
           </Link>
         </div>
         <div className="mt-[22px] lg:mt-0">
-          <h2 className="font-display max-w-[11em] text-[28px] leading-[34px] font-medium tracking-[-0.01em] lg:max-w-none lg:text-[42px] lg:leading-[48px]">
-            Good to see you. Today’s <br className="hidden lg:block" />
-            <em className="text-[#E2B866] italic">arrivals</em> are waiting.
-          </h2>
-          <p className="mt-3 max-w-[26em] text-[15px] leading-[22px] text-[#C9CFD6] lg:text-[17px] lg:leading-[26px]">
-            Sign in to see who is arriving, who is in house and who is leaving, with every guest
-            message in one place.
-          </p>
+          {isSignUp ? (
+            <>
+              <h2 className="font-display max-w-[11em] text-[28px] leading-[34px] font-medium tracking-[-0.01em] lg:max-w-none lg:text-[42px] lg:leading-[48px]">
+                Welcome. Your <br className="hidden lg:block" />
+                <em className="text-[#E2B866] italic">front desk</em> starts here.
+              </h2>
+              <p className="mt-3 max-w-[26em] text-[15px] leading-[22px] text-[#C9CFD6] lg:text-[17px] lg:leading-[26px]">
+                Create an account to see arrivals, in house guests and messages in one place.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="font-display max-w-[11em] text-[28px] leading-[34px] font-medium tracking-[-0.01em] lg:max-w-none lg:text-[42px] lg:leading-[48px]">
+                Good to see you. Today’s <br className="hidden lg:block" />
+                <em className="text-[#E2B866] italic">arrivals</em> are waiting.
+              </h2>
+              <p className="mt-3 max-w-[26em] text-[15px] leading-[22px] text-[#C9CFD6] lg:text-[17px] lg:leading-[26px]">
+                Sign in to see who is arriving, who is in house and who is leaving, with every guest
+                message in one place.
+              </p>
+            </>
+          )}
           <SignInRibbon className="mt-[30px] hidden lg:block" />
         </div>
         <PoweredByIvano variant="navy" className="hidden lg:block" />
