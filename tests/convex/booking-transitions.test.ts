@@ -97,7 +97,7 @@ describe("updateBookingStatus", () => {
   it("transitions inquiry → pending_confirmation", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "inquiry");
 
     const result = await asManager.mutation(
@@ -112,7 +112,7 @@ describe("updateBookingStatus", () => {
   it("rejects invalid confirmed → inquiry", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "confirmed");
 
     await expect(
@@ -126,7 +126,7 @@ describe("updateBookingStatus", () => {
   it("inserts audit log on status change", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "inquiry");
 
     await asManager.mutation(api.functions.bookings.updateBookingStatus, {
@@ -156,7 +156,7 @@ describe("updateBookingStatus", () => {
   it("denies access to bookings on another property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(
       t,
       seed,
@@ -177,7 +177,7 @@ describe("getBookingAuditTrail", () => {
   it("returns status changes newest first", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "inquiry");
 
     await asManager.mutation(api.functions.bookings.updateBookingStatus, {
@@ -203,7 +203,7 @@ describe("getBookingAuditTrail", () => {
   it("scopes audit trail to the booking id", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingA = await insertBooking(t, seed, "inquiry");
     const bookingB = await insertBooking(t, seed, "inquiry");
 
@@ -225,7 +225,7 @@ describe("getBookingById", () => {
   it("returns denormalized guest and unit fields", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "confirmed");
 
     const booking = await asManager.query(
@@ -245,7 +245,7 @@ describe("state machine edge cases", () => {
   it("records three audit entries for rapid sequential transitions", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "inquiry");
 
     await asManager.mutation(api.functions.bookings.updateBookingStatus, {
@@ -285,7 +285,7 @@ describe("state machine edge cases", () => {
   it("cancels from confirmed state", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "confirmed");
 
     await asManager.mutation(api.functions.bookings.updateBookingStatus, {
@@ -300,7 +300,7 @@ describe("state machine edge cases", () => {
   it("cancels from checked_in state (emergency override path)", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "checked_in");
 
     await asManager.mutation(api.functions.bookings.updateBookingStatus, {
@@ -315,7 +315,7 @@ describe("state machine edge cases", () => {
   it("stores long transition reasons without truncation (no max-length validation yet)", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const bookingId = await insertBooking(t, seed, "inquiry");
     const longReason = "x".repeat(501);
 

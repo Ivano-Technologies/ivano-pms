@@ -17,7 +17,7 @@
 | `guest` | 5 | 5–8 |
 | `booking` | 3 (confirmed, pending_confirmation, inquiry) | **5–8** across all status values |
 | `bookingChannelMessage` | 2 (no NLP fields populated) | **10–15** with varied channels + NLP-friendly text |
-| `manager` | 1 (placeholder `clerkUserId`) | 1 linked to real Clerk user via upsert |
+| `manager` | 1 (placeholder `authUserId`) | 1 linked to real Clerk user via upsert |
 
 **Gaps to close in Task 2.1:**
 
@@ -114,8 +114,8 @@ Primary acceptance: webhook POST 200 → new `bookingChannelMessage` with `statu
 Document in Task 2.1 / [`DEVELOPMENT.md`](DEVELOPMENT.md):
 
 1. Clerk Dashboard → **Users** → create test manager (email + password)
-2. Sign in at `http://localhost:3000/sign-in` → triggers `upsertManagerFromClerk`
-3. Convex: ensure `manager.clerkUserId` matches signed-in user's Clerk ID (or run upsert on first dashboard visit)
+2. Sign in at `http://localhost:3000/sign-in` → triggers `upsertManagerFromAuth`
+3. Convex: ensure `manager.authUserId` matches signed-in user's Clerk ID (or run upsert on first dashboard visit)
 4. Convex dashboard → **Settings → JWT** → configure Clerk issuer (`CLERK_JWT_ISSUER_DOMAIN`) for Convex auth
 5. Vercel preview: add same Clerk keys + add preview URL to Clerk allowed origins
 
@@ -165,7 +165,7 @@ flowchart LR
 
 - **No Railway / Express** — webhooks and UI deploy together on **Vercel**
 - Webhook auth: `WEBHOOK_SECRET` (HMAC) + `INTERNAL_JOB_SECRET` (mutation)
-- Dashboard auth: Clerk `userId` → `manager` table via `by_clerk_user` index
+- Dashboard auth: Clerk `userId` → `manager` table via `by_auth_user` index
 - Property scope: `DEFAULT_PROPERTY_ID` env + single seeded property
 
 ---
@@ -221,7 +221,7 @@ Context:
 Actions:
 
 1. Install convex-helpers if missing. Create convex/lib/auth.ts:
-   - getCurrentManager(ctx): ctx.auth.getUserIdentity() → lookup manager by clerkUserId (index by_clerk_user)
+   - getCurrentManager(ctx): ctx.auth.getUserIdentity() → lookup manager by authUserId (index by_auth_user)
    - Throw "Not authenticated" / "Not authorized for this property" as appropriate
 
 2. Create convex/lib/customFunctions.ts with authedQuery and authedMutation wrappers.
@@ -238,7 +238,7 @@ Actions:
 
 5. Create apps/web/src/components/providers/convex-client-provider.tsx (client component pattern).
 
-6. Add convex/functions/managers.ts: upsertManagerFromClerk (mutation on first dashboard login — email, fullName from Clerk identity).
+6. Add convex/functions/managers.ts: upsertManagerFromAuth (mutation on first dashboard login — email, fullName from Clerk identity).
 
 7. Expand convex/seed.ts → seedDemoDataV2 internalMutation (guarded by assertInternalJobSecret):
    - 1 property (single-property MVP; name placeholder OK)
@@ -253,7 +253,7 @@ Actions:
 9. Env docs — update .env.example and DEVELOPMENT.md:
    - INTERNAL_JOB_SECRET: shared secret string (openssl rand -hex 32), set in BOTH Convex dashboard env AND apps/web/.env.local — NOT the Convex admin/deploy key
    - CLERK_JWT_ISSUER_DOMAIN in Convex dashboard for JWT validation
-   - Clerk test user: create in Clerk dashboard, sign in locally, upsertManagerFromClerk links clerkUserId
+   - Clerk test user: create in Clerk dashboard, sign in locally, upsertManagerFromAuth links authUserId
 
 Test:
 - Sign in via Clerk → dashboard loads without Convex errors

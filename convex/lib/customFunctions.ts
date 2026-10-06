@@ -15,11 +15,11 @@ export type AuthedCtx = {
   manager: Doc<"manager">;
 };
 
-export type ClerkCtx = {
+export type AuthIdentityCtx = {
   identity: UserIdentity;
 };
 
-export type OptionalClerkCtx = {
+export type OptionalAuthIdentityCtx = {
   identity: UserIdentity | null;
 };
 
@@ -53,8 +53,8 @@ export const authedMutation = customMutation(mutation, {
   }
 });
 
-/** Clerk-signed-in callers; does not require an existing manager row (onboarding). */
-export const clerkMutation = customMutation(mutation, {
+/** Signed-in callers (Convex Auth); does not require an existing manager row (onboarding). */
+export const signedInMutation = customMutation(mutation, {
   args: {},
   input: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -68,8 +68,8 @@ export const clerkMutation = customMutation(mutation, {
   }
 });
 
-/** Clerk-signed-in callers; throws when session is missing. */
-export const clerkQuery = customQuery(query, {
+/** Signed-in callers; throws when session is missing. */
+export const signedInQuery = customQuery(query, {
   args: {},
   input: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -83,8 +83,8 @@ export const clerkQuery = customQuery(query, {
   }
 });
 
-/** Clerk session optional — identity is null when signed out. */
-export const optionalClerkQuery = customQuery(query, {
+/** Session optional — identity is null when signed out. */
+export const optionalAuthQuery = customQuery(query, {
   args: {},
   input: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();

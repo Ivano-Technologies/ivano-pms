@@ -28,7 +28,7 @@ describe("email inbound ingestion (6.2.2)", () => {
       });
     });
 
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const toAddress = formatInboundEmailAddress("gwarimpa-estate");
 
     const messageId = await t.mutation(
@@ -75,7 +75,7 @@ describe("email inbound ingestion (6.2.2)", () => {
     const seed = await seedAuthedManager(t);
 
     // helpers seed slugs: propertyId -> "test-property", otherPropertyId -> "other-property"
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await t.mutation(internal.functions.email.ingestInboundEmailInternal, {
       secret: INTERNAL_SECRET,

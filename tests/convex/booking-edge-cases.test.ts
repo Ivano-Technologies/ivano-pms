@@ -56,7 +56,7 @@ async function seedEdgeCaseFixture(t: ReturnType<typeof createTestConvex>) {
     const managerBClerk = "clerk_test_manager_002";
     await ctx.db.insert("manager", {
       propertyId: base.otherPropertyId,
-      clerkUserId: managerBClerk,
+      authUserId: managerBClerk,
       email: "manager-b@test.com",
       fullName: "Manager B",
       phone: "+2348000000010",
@@ -103,7 +103,7 @@ describe("overlapping bookings", () => {
   it("creates booking A (July 1–3) as confirmed", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const bookingId = await asManager.mutation(
       api.functions.bookings.createBooking,
@@ -117,7 +117,7 @@ describe("overlapping bookings", () => {
   it("rejects overlapping booking B on the same unit", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const unitId = seed.unitIds[0]!;
 
     await asManager.mutation(
@@ -141,7 +141,7 @@ describe("overlapping bookings", () => {
   it("rejects a containing booking C that overlaps existing booking A", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const unitId = seed.unitIds[0]!;
 
     await asManager.mutation(
@@ -167,7 +167,7 @@ describe("boundary dates", () => {
   it("rejects same-day check-in and check-out", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await expect(
       asManager.mutation(
@@ -183,7 +183,7 @@ describe("boundary dates", () => {
   it("rejects check-out before check-in", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await expect(
       asManager.mutation(
@@ -201,7 +201,7 @@ describe("foreign key violations", () => {
   it("rejects a deleted unit id", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const missingUnitId = await t.run(async (ctx) => {
       const id = await ctx.db.insert("unit", {
@@ -230,7 +230,7 @@ describe("foreign key violations", () => {
   it("rejects a deleted guest id", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const missingGuestId = await t.run(async (ctx) => {
       const id = await ctx.db.insert("guest", {
@@ -261,7 +261,7 @@ describe("property scoping", () => {
   it("manager B cannot create a booking using property A guest/unit ids", async () => {
     const t = createTestConvex();
     const seed = await seedEdgeCaseFixture(t);
-    const asManagerA = authedClient(t, seed.clerkUserId);
+    const asManagerA = authedClient(t, seed.authUserId);
     const asManagerB = authedClient(t, seed.managerBClerk);
 
     await asManagerA.mutation(

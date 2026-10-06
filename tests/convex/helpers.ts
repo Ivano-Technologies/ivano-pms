@@ -12,7 +12,7 @@ export function createTestConvex() {
 }
 
 export async function seedAuthedManager(t: ReturnType<typeof createTestConvex>) {
-  const clerkUserId = "clerk_test_manager_001";
+  const authUserId = "auth_test_manager_001";
   const now = Date.now();
 
   return await t.run(async (ctx) => {
@@ -42,7 +42,7 @@ export async function seedAuthedManager(t: ReturnType<typeof createTestConvex>) 
 
     const managerId = await ctx.db.insert("manager", {
       propertyId,
-      clerkUserId,
+      authUserId,
       email: "manager@test.com",
       fullName: "Test Manager",
       phone: "+2348000000000",
@@ -92,7 +92,7 @@ export async function seedAuthedManager(t: ReturnType<typeof createTestConvex>) 
       propertyId,
       otherPropertyId,
       managerId,
-      clerkUserId,
+      authUserId,
       unitId,
       guestId
     };
@@ -101,9 +101,9 @@ export async function seedAuthedManager(t: ReturnType<typeof createTestConvex>) 
 
 export function authedClient(
   t: ReturnType<typeof createTestConvex>,
-  clerkUserId: string
+  authUserId: string
 ) {
-  return t.withIdentity({ subject: clerkUserId });
+  return t.withIdentity({ subject: authUserId });
 }
 
 export { api };

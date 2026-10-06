@@ -11,7 +11,7 @@ describe("getBookingsByDateRange", () => {
   it("returns bookings overlapping the date range", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -80,7 +80,7 @@ describe("getBookingsByDateRange", () => {
   it("sorts results by checkIn ascending", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -119,7 +119,7 @@ describe("getBookingsByDateRange", () => {
   it("excludes bookings that end before the range starts", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     await t.run(async (ctx) => {
@@ -154,7 +154,7 @@ describe("getUnits", () => {
   it("returns units scoped to the manager property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const units = await asManager.query(api.functions.units.getUnits, {});
 
@@ -169,7 +169,7 @@ describe("createBooking", () => {
   it("creates a booking for the manager property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     const bookingId = await asManager.mutation(
       api.functions.bookings.createBooking,
@@ -195,7 +195,7 @@ describe("createBooking", () => {
   it("rejects guests from another property", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     const otherGuestId = await t.run(async (ctx) =>

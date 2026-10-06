@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useConvexAuth } from "convex/react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -14,8 +14,8 @@ export function AuthCta({
   className?: string;
   withArrow?: boolean;
 }) {
-  const { isLoaded, isSignedIn } = useAuth();
-  const signedIn = isLoaded && isSignedIn;
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const signedIn = !isLoading && isAuthenticated;
   return (
     <Link href={signedIn ? "/dashboard" : "/sign-in"} className={lobbyButton("primary", className)}>
       {signedIn ? "Open dashboard" : "Sign in"}

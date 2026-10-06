@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { isAuthenticatedNextjs } from "@convex-dev/auth/nextjs/server";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -10,8 +10,7 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  const { userId } = await auth();
-  if (!userId) {
+  if (!(await isAuthenticatedNextjs())) {
     redirect("/sign-in");
   }
 

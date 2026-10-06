@@ -14,7 +14,7 @@ describe("Telegram inbox reply (6.1.4)", () => {
   it("records an outbound manager reply on the thread", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await t.mutation(internal.functions.telegram.ensureTelegramConnectTokenInternal, {
       secret: INTERNAL_SECRET,
@@ -65,7 +65,7 @@ describe("Telegram inbox reply (6.1.4)", () => {
   it("rejects reply when thread is not Telegram", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
     const now = Date.now();
 
     const threadId = await t.run(async (ctx) =>

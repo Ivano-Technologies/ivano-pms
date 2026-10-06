@@ -13,7 +13,7 @@ describe("inbox thread ingestion (6.1.3)", () => {
   it("creates an inbox thread on Telegram /start link and appends inbound messages", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await t.mutation(internal.functions.telegram.ensureTelegramConnectTokenInternal, {
       secret: INTERNAL_SECRET,
@@ -66,7 +66,7 @@ describe("inbox thread ingestion (6.1.3)", () => {
   it("groups multiple inbound messages in the same Telegram thread", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await t.mutation(internal.functions.telegram.ensureTelegramConnectTokenInternal, {
       secret: INTERNAL_SECRET,
@@ -113,7 +113,7 @@ describe("inbox thread ingestion (6.1.3)", () => {
   it("marks all inbound messages in a thread as reviewed", async () => {
     const t = createTestConvex();
     const seed = await seedAuthedManager(t);
-    const asManager = authedClient(t, seed.clerkUserId);
+    const asManager = authedClient(t, seed.authUserId);
 
     await t.mutation(internal.functions.telegram.ensureTelegramConnectTokenInternal, {
       secret: INTERNAL_SECRET,
