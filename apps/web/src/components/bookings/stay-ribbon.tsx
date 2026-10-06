@@ -86,13 +86,14 @@ export function StayRibbonBar({
       data-cont-right={contRight || undefined}
       style={style}
       role="img"
-      aria-label={`${stay.guest}, room ${roomName}, ${meta.label}`}
+      aria-label={`${stay.guest}, room ${roomName}, ${meta.label}${stay.note ? `, ${stay.note}` : ""}`}
     >
       <Icon className="size-3.5 shrink-0" aria-hidden />
       {text ? (
         <span className="truncate">
           {text}
-          {stay.note && span >= 1.4 ? ` · ${stay.note}` : null}
+          {/* The note only fits on long bars; on short ones it would truncate the name. */}
+          {stay.note && span >= 2.5 ? ` · ${stay.note}` : null}
         </span>
       ) : null}
     </div>

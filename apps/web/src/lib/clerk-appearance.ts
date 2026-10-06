@@ -50,6 +50,7 @@ export const clerkAppearance = {
 
 /** Card copy. The title is localization, not CSS, so it shows even before the Dashboard rename. */
 export const clerkLocalization = {
+  formFieldInputPlaceholder__emailAddress: "you@yourproperty.ng",
   signIn: {
     start: {
       title: "Sign in to Ivano PMS",
