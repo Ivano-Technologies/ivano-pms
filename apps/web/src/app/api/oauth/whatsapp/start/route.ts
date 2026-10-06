@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-
-import { auth } from "@clerk/nextjs/server";
+import { isAuthenticatedNextjs } from "@convex-dev/auth/nextjs/server";
 
 import {
   WHATSAPP_OAUTH_STATE_COOKIE,
@@ -18,8 +17,7 @@ function isPropertyId(value: string): boolean {
 }
 
 export async function GET(request: Request) {
-  const { userId } = await auth();
-  if (!userId) {
+  if (!(await isAuthenticatedNextjs())) {
     return NextResponse.redirect(settingsOAuthRedirect("unauthorized"));
   }
 
