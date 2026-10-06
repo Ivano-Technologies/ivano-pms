@@ -1,38 +1,31 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import type { Metadata } from "next";
-import { Geist_Mono, Inter, Playfair_Display, Space_Grotesk } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { Toaster } from "sonner";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BRAND_DESCRIPTION, BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
+import { BRAND_DESCRIPTION, BRAND_HEADLINE, BRAND_NAME } from "@/lib/brand";
+import { clerkAppearance, clerkLocalization } from "@/lib/clerk-appearance";
 
 import "./globals.css";
 
-const inter = Inter({
+/** Display face: headings, numbers in the hero, card titles. */
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-inter"
+  variable: "--font-fraunces",
+  axes: ["opsz"],
+  display: "swap"
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"]
-});
-
-/** Web fallback for brand font Ceoruse (see globals.css --font-brand). */
-const playfair = Playfair_Display({
+/** UI and body face. */
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-playfair",
-  weight: ["400", "600", "700"]
-});
-
-/** Web fallback for heading font Gonero (see globals.css --font-heading). */
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space",
-  weight: ["500", "600", "700"]
+  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700"],
+  display: "swap"
 });
 
 export const metadata: Metadata = {
@@ -42,7 +35,7 @@ export const metadata: Metadata = {
       .replace(/^["']|["']$/g, "")
   ),
   title: {
-    default: BRAND_NAME,
+    default: `${BRAND_NAME} · ${BRAND_HEADLINE}`,
     template: `%s | ${BRAND_NAME}`
   },
   description: BRAND_DESCRIPTION,
@@ -51,21 +44,26 @@ export const metadata: Metadata = {
     icon: [
       { url: "/favicon.ico", sizes: "48x48" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/brand/techivano-mark.png", sizes: "any", type: "image/png" }
+      { url: "/brand/iv1-mark.svg", type: "image/svg+xml" }
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
   },
   openGraph: {
-    title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+    title: `${BRAND_NAME} · ${BRAND_HEADLINE}`,
     description: BRAND_DESCRIPTION,
     siteName: BRAND_NAME,
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+    title: `${BRAND_NAME} · ${BRAND_HEADLINE}`,
     description: BRAND_DESCRIPTION
   }
+};
+
+export const viewport: Viewport = {
+  themeColor: "#FAF7F2",
+  colorScheme: "light"
 };
 
 export default function RootLayout({
@@ -77,11 +75,11 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${geistMono.variable} ${playfair.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`light ${fraunces.variable} ${jakarta.variable} h-full antialiased`}
     >
-      <body className="font-sans flex min-h-full flex-col">
+      <body className="bg-background font-sans flex min-h-full flex-col">
         <ThemeProvider>
-          <ClerkProvider>
+          <ClerkProvider appearance={clerkAppearance} localization={clerkLocalization}>
             <ConvexClientProvider>
               <TooltipProvider delayDuration={200}>
                 {children}

@@ -1,0 +1,51 @@
+import type { SVGProps } from "react";
+
+import { cn } from "@/lib/utils";
+
+/** "PMS" set in Plus Jakarta Sans Bold, outlined to paths so the lockup never depends on font loading. */
+const PMS_PATH =
+  "M73.72 34V16.12H80.4Q82.22 16.12 83.62 16.78Q85.03 17.43 85.82 18.7Q86.62 19.96 86.62 21.77Q86.62 23.55 85.81 24.81Q85.01 26.07 83.61 26.73Q82.21 27.4 80.4 27.4H76.99V34ZM76.99 24.52H80.44Q81.32 24.52 81.97 24.17Q82.62 23.83 82.98 23.21Q83.35 22.59 83.35 21.77Q83.35 20.93 82.98 20.31Q82.62 19.69 81.97 19.34Q81.32 19 80.44 19H76.99Z M91.67 34V16.12H94.79L101.49 25.22H100L106.55 16.12H109.67V34H106.4V19.85L107.67 20.16L100.86 29.2H100.48L93.85 20.16L94.94 19.85V34Z M121.88 34.29Q120.2 34.29 118.74 33.67Q117.29 33.05 116.25 31.93Q115.21 30.81 114.71 29.33L117.43 28.14Q118.09 29.69 119.31 30.56Q120.53 31.43 122.06 31.43Q122.93 31.43 123.56 31.15Q124.19 30.88 124.55 30.4Q124.9 29.91 124.9 29.26Q124.9 28.46 124.43 27.95Q123.97 27.44 123.02 27.14L119.59 26.04Q117.51 25.38 116.44 24.09Q115.38 22.8 115.38 21.04Q115.38 19.5 116.14 18.32Q116.9 17.15 118.25 16.49Q119.61 15.83 121.36 15.83Q122.97 15.83 124.32 16.39Q125.66 16.95 126.63 17.95Q127.6 18.95 128.08 20.3L125.39 21.5Q124.87 20.16 123.81 19.43Q122.75 18.69 121.37 18.69Q120.55 18.69 119.92 18.96Q119.3 19.23 118.96 19.73Q118.61 20.24 118.61 20.9Q118.61 21.64 119.09 22.21Q119.57 22.78 120.55 23.09L123.83 24.12Q125.98 24.8 127.05 26.03Q128.12 27.26 128.12 29.06Q128.12 30.59 127.32 31.77Q126.53 32.95 125.13 33.62Q123.73 34.29 121.88 34.29Z";
+
+const TONES = {
+  light: { stroke: "#5C6673", body: "#141B26", rule: "#D6CFC2", text: "#141B26" },
+  navy: { stroke: "#9AA3AE", body: "#FFFFFF", rule: "#2C3646", text: "#FFFFFF" }
+} as const;
+
+type IvanoPmsLockupProps = {
+  /** `light` on paper and white, `navy` (reverse) on ink surfaces. */
+  tone?: keyof typeof TONES;
+  className?: string;
+  /** Accessible name. Pass `null` when a parent link already names it. */
+  title?: string | null;
+} & Omit<SVGProps<SVGSVGElement>, "children">;
+
+/** IV1 + PMS lockup (wave1/brand/pms-lockup.svg and pms-lockup-reverse.svg). */
+export function IvanoPmsLockup({
+  tone = "light",
+  className,
+  title = "Ivano PMS",
+  ...rest
+}: IvanoPmsLockupProps) {
+  const c = TONES[tone];
+  return (
+    <svg
+      viewBox="0 0 140 48"
+      className={cn("block h-10 w-auto", className)}
+      role={title ? "img" : undefined}
+      aria-label={title ?? undefined}
+      aria-hidden={title ? undefined : true}
+      focusable="false"
+      {...rest}
+    >
+      <g transform="translate(0,6) scale(0.1698)">
+        <polygon points="16,16 52,16 155.92,196 119.92,196" fill={c.stroke} />
+        <polygon
+          points="74,16 110,16 177.92,133.65 245.85,16 281.85,16 177.92,196"
+          fill={c.body}
+        />
+      </g>
+      <rect x="58" y="10" width="1.5" height="28" fill={c.rule} />
+      <path d={PMS_PATH} fill={c.text} />
+    </svg>
+  );
+}
