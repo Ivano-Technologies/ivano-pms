@@ -35,7 +35,7 @@ export default function SignInPage() {
           </Link>
         </div>
         <div className="mt-[22px] lg:mt-0">
-          <h2 className="font-display max-w-[11em] text-[28px] leading-[34px] font-medium tracking-[-0.01em] lg:text-[42px] lg:leading-[48px]">
+          <h2 className="font-display max-w-[11em] text-[28px] lg:max-w-none leading-[34px] font-medium tracking-[-0.01em] lg:text-[42px] lg:leading-[48px]">
             Good to see you. Today’s <br className="hidden lg:block" />
             <em className="text-[#E2B866] italic">arrivals</em> are waiting.
           </h2>

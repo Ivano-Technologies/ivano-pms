@@ -39,10 +39,10 @@ export const clerkAppearance = {
     headerSubtitle: "text-muted-foreground text-[15px]",
     socialButtonsBlockButton: "h-[46px] border-[#D6CFC2] font-semibold",
     formFieldLabel: "text-sm font-semibold",
-    formFieldInput: "h-[46px] border-[#8C939F] text-base",
+    formFieldInput: "h-[46px] border border-[#8C939F] text-base",
     formButtonPrimary:
-      "h-[46px] bg-primary hover:bg-[#9A3B27] text-[15px] font-semibold normal-case",
-    footer: "bg-sunken",
+      "h-[46px] bg-primary hover:bg-[#9A3B27] text-[15px] font-semibold normal-case shadow-[var(--shadow-e1)] after:[background-image:none]",
+    footer: "bg-sunken [background-image:none]",
     /** Hides "Don't have an account? Sign up" (invite only). */
     footerAction: "hidden"
   }

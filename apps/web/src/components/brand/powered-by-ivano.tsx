@@ -16,7 +16,7 @@ const variantClass: Record<NonNullable<PoweredByIvanoProps["variant"]>, string> 
 /** Attribution line for the landing, sign in, reports and exports. Sentence case, 13px minimum. */
 export function PoweredByIvano({ className, variant = "muted" }: PoweredByIvanoProps) {
   return (
-    <p className={cn("text-caption font-medium", variantClass[variant], className)}>
+    <p className={cn("text-[13px] leading-[18px] font-medium", variantClass[variant], className)}>
       {POWERED_BY_LINE}
     </p>
   );
