@@ -71,7 +71,7 @@ Alternative if devtunnel is awkward: short-lived **Vercel preview** deploy with 
 
 ## Do not enable for real users until
 
-- [ ] Real webhook → inbox → reply round-trip verified on dev (or staging).
+- [ ] Real webhook → inbox → reply round-trip verified on `dev`.
 - [ ] Prod webhook registered to `https://pms.techivano.com/api/webhooks/telegram` with prod `TELEGRAM_WEBHOOK_SECRET`.
 - [ ] `CONVEX_URL` / `CONVEX_DEPLOYMENT` mismatch in root `.env.local` reconciled (harmless for local UI today; worth cleanup before prod ops).
 

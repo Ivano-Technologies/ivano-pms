@@ -40,7 +40,7 @@ Names and headers only. Values live in vault item `ivano-pms-prod-webhooks`, nev
 | `WEBHOOK_SECRET` | Vercel **Production** and **Preview** (both blue/green colors) | `x-webhook-signature` — HMAC-SHA256(raw body) as lowercase hex. See [webhooks.md](../webhooks.md). | Channel senders that POST `https://pms.techivano.com/api/webhooks` |
 | `EMAIL_WEBHOOK_SECRET` | Vercel Production and Preview; Cloudflare Email Worker | `x-email-webhook-secret` — shared secret, not HMAC. `POST /api/webhooks/email` | Worker `EMAIL_WEBHOOK_SECRET` |
 
-Same values on both colors so a promote-to-production swap does not break signatures. See [staging-env-checklist.md](./staging-env-checklist.md).
+Same values on both colors so a promote-to-production swap does not break signatures. See [dev-env-checklist.md](./dev-env-checklist.md).
 
 Out of scope: `INTERNAL_JOB_SECRET`, Clerk, Convex, `TELEGRAM_WEBHOOK_SECRET`. Do not rotate those here.
 
@@ -141,6 +141,6 @@ Never ask Kezie for secrets outside that checklist.
 ## Related docs
 
 - [webhooks.md](../webhooks.md) — `POST /api/webhooks` HMAC
-- [staging-env-checklist.md](./staging-env-checklist.md) — blue/green env scopes
+- [dev-env-checklist.md](./dev-env-checklist.md) — blue/green env scopes
 - [deploy.md](./deploy.md) — Convex deploy + other secret rotation
 - [workers/email-inbound/README.md](../../workers/email-inbound/README.md) — Worker vars (`PMS_WEBHOOK_URL`, `EMAIL_WEBHOOK_SECRET`)
