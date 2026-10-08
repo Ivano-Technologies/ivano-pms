@@ -3,7 +3,7 @@ import { join } from "path";
 
 import { ImageResponse } from "next/og";
 
-import { BRAND_FOOTER, BRAND_HEADLINE, BRAND_TAGLINE, PRODUCT_NAME } from "@/lib/brand";
+import { BRAND_COPYRIGHT, BRAND_HEADLINE, BRAND_TAGLINE, PRODUCT_NAME } from "@/lib/brand";
 
 export const runtime = "nodejs";
 
@@ -61,7 +61,7 @@ export default async function OpenGraphImage() {
             fontFamily: "ui-sans-serif, system-ui, sans-serif"
           }}
         >
-          {BRAND_FOOTER}
+          {BRAND_COPYRIGHT}
         </span>
       </div>
     ),
