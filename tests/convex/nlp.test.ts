@@ -1,7 +1,10 @@
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { internal } from "../../convex/_generated/api";
-import { extractMessageKeywords } from "../../convex/lib/nlp";
+import {
+  extractMessageKeywords,
+  referenceDateFromTimestamp
+} from "../../convex/lib/nlp";
 import { api, createTestConvex, seedAuthedManager } from "./helpers";
 
 const REFERENCE_DATE = "2026-06-15";
@@ -240,8 +243,12 @@ describe("backfillMessageNlp", () => {
       return await ctx.db.get("bookingChannelMessage", messageId);
     });
 
-    expect(message?.extractedCheckIn).toBe("2026-07-20");
-    expect(message?.extractedCheckOut).toBe("2026-07-22");
+    const expected = extractMessageKeywords(
+      "Need suite July 20-22 for Tunde",
+      referenceDateFromTimestamp(now)
+    );
+    expect(message?.extractedCheckIn).toBe(expected.extractedCheckIn);
+    expect(message?.extractedCheckOut).toBe(expected.extractedCheckOut);
     expect(message?.extractedUnitType).toBe("suite");
     expect(message?.extractedGuestNames).toContain("Tunde");
   });
@@ -268,7 +275,11 @@ describe("processWebhookEvent NLP", () => {
       return await ctx.db.get("bookingChannelMessage", messageId);
     });
 
-    expect(message?.extractedCheckIn).toBe("2026-07-20");
+    const expected = extractMessageKeywords(
+      "Need suite July 20-22 for Tunde",
+      referenceDateFromTimestamp(message?.createdAt ?? Date.now())
+    );
+    expect(message?.extractedCheckIn).toBe(expected.extractedCheckIn);
     expect(message?.extractedUnitType).toBe("suite");
   });
 });

@@ -87,9 +87,9 @@ None required for 6.1–6.5 (uses existing `channelToken` table).
 ## Security checklist
 
 - [x] Tokens encrypted at rest (6.3)
-- [ ] OAuth state CSRF validation (6.1)
-- [ ] App secret never sent to client
-- [ ] Decrypted tokens only in internal actions
+- [x] OAuth state CSRF validation (6.1)
+- [x] App secret never sent to client
+- [x] Decrypted tokens only in internal actions
 - [ ] Rotate encryption key procedure documented before production
 
 ---
