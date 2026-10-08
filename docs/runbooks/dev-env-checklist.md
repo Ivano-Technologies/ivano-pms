@@ -9,7 +9,7 @@ Ivano PMS uses **true blue/green**, aligned with the NRCS EAM pattern:
 | Concept | This repo |
 |---------|-----------|
 | **Color A** | `main` branch → one deployable Vercel slot |
-| **Color B** | `staging` branch → the other deployable slot |
+| **Color B** | `dev` branch → the other deployable slot |
 | **Shared backend** | Convex **production** `flippant-eel-758` — **both colors read/write the same database** |
 | **Shared auth** | Production Clerk (PMS instance) — **both colors use the same keys** |
 | **What differs** | Deployed **code** (git commit on each branch) and, transiently, which color serves `https://pms.techivano.com` |
@@ -128,7 +128,7 @@ Until Telegram is unparked per [telegram-verification-todo.md](../planning/teleg
 
 ### What “swap” means here
 
-**Goal:** Ship new code on the inactive color (`staging` or `main`), validate, then make `https://pms.techivano.com` serve that build **without** changing Convex or Clerk.
+**Goal:** Ship new code on the inactive color (`dev` or `main`), validate, then make `https://pms.techivano.com` serve that build **without** changing Convex or Clerk.
 
 **Backend:** Convex deploy is **branch-independent**. After merging or deploying either color, if `convex/` changed, run once against prod:
 
@@ -146,37 +146,37 @@ Project `techivano/ivano-pms` (`prj_qNzAGh7EqNuZq1JURu3Oja2MEUOJ`), root directo
 |------|---------------|--------|
 | **Production Branch** | **`main`** (the only one) | domain shares `main`'s deployment hash |
 | **`pms.techivano.com` binding** | aliased to the **`main` production deployment** (same hash as `ivano-pms-git-main-…`) | `vercel alias ls` |
-| **`staging` deployments** | **Preview** environment only — **not** a second Production Branch | `vercel ls` (Environment column) |
-| **`staging` URL** | `ivano-pms-git-staging-techivano.vercel.app` (Preview), **not** attached to the custom domain | `vercel alias ls` |
+| **`dev` deployments** | **Preview** environment only — **not** a second Production Branch | `vercel ls` (Environment column) |
+| **`dev` URL** | `ivano-pms-git-dev-techivano.vercel.app` (Preview), **not** attached to the custom domain | `vercel alias ls` |
 
-**Consequence:** There is **no automatic branch-flip blue/green today.** `main` owns production and the custom domain; `staging` is a Preview color that must be **explicitly** promoted to take over `pms.techivano.com`.
+**Consequence:** There is **no automatic branch-flip blue/green today.** `main` owns production and the custom domain; `dev` is a Preview color that must be **explicitly** promoted to take over `pms.techivano.com`.
 
-> **Build-time env caveat (critical):** `staging` builds run with the **Preview** env scope. `NEXT_PUBLIC_*` values are **inlined at build time**. For a staging deployment to be safely promotable to production, its **Preview** env scope must already hold the **production** values (prod Convex URL, prod Clerk keys, prod sign-in URL, matching `INTERNAL_JOB_SECRET`, webhook secrets) — exactly the "same on both colors" guidance in the variable table above, applied to the **Preview** scope, not only the Production scope.
+> **Build-time env caveat (critical):** `dev` builds run with the **Preview** env scope. `NEXT_PUBLIC_*` values are **inlined at build time**. For a `dev` deployment to be safely promotable to production, its **Preview** env scope must already hold the **production** values (prod Convex URL, prod Clerk keys, prod sign-in URL, matching `INTERNAL_JOB_SECRET`, webhook secrets) — exactly the "same on both colors" guidance in the variable table above, applied to the **Preview** scope, not only the Production scope.
 
 ### Promotion mechanism (Option A confirmed — both are manual)
 
 **Option A is the confirmed standing mechanism:** promote a specific deployment via Dashboard → Promote to Production or `vercel promote <url>`. Option B (Production Branch flip) is documented but not the default.
 
 **Option A — Promote a deployment (no settings change; available today).**
-`staging` already builds as Preview. After validating, promote that specific deployment so `pms.techivano.com` re-aliases to it — no rebuild, no Production Branch change. This is the same machinery as the documented rollback, used forward.
+`dev` already builds as Preview. After validating, promote that specific deployment so `pms.techivano.com` re-aliases to it — no rebuild, no Production Branch change. This is the same machinery as the documented rollback, used forward.
 
-- Vercel Dashboard → project → **Deployments** → the validated `staging` deployment → **Promote to Production** (re-points the production domain alias).
+- Vercel Dashboard → project → **Deployments** → the validated `dev` deployment → **Promote to Production** (re-points the production domain alias).
 - CLI equivalent: `vercel promote <deployment-url>` (run from an authenticated session; operator action, not CI).
 - **Rollback:** promote the previous **`main`** production deployment the same way.
 - **Requires** the Preview-scope env values to equal production (see build-time caveat).
 
 **Option B — Flip the Production Branch (true blue/green branch swap).**
-Project **Settings → Git → Production Branch**: `main` → `staging`. The next `staging` build is then a **Production** deployment (built with Production env scope) and the custom domain follows it. Revert by flipping back to `main`.
+Project **Settings → Git → Production Branch**: `main` → `dev`. The next `dev` build is then a **Production** deployment (built with Production env scope) and the custom domain follows it. Revert by flipping back to `main`.
 
 - Cleaner env story (Production scope, no Preview-inlining caveat) but it **is** a Vercel settings change.
 - Revert is another settings flip, not an instant deployment promote — slightly slower break-glass than Option A.
 
-### Swap sequence (code on `staging`, prod on `main` today — Option A)
+### Swap sequence (code on `dev`, prod on `main` today — Option A)
 
-1. Push validated code to **`staging`** → wait for the Vercel **Preview** build to go Ready.
-2. Smoke the **staging preview URL** (`ivano-pms-git-staging-techivano.vercel.app`): sign-in, dashboard, `/api/health` (`convexSecretConfigured: true`).
+1. Push validated code to **`dev`** → wait for the Vercel **Preview** build to go Ready.
+2. Smoke the **`dev` preview URL** (`ivano-pms-git-dev-techivano.vercel.app`): sign-in, dashboard, `/api/health` (`convexSecretConfigured: true`).
 3. If `convex/` changed: `CONVEX_DEPLOYMENT=prod:flippant-eel-758 npx convex deploy --yes` (affects prod DB immediately — see schema discipline below).
-4. **Promote** the staging deployment to production (Dashboard → Promote to Production, or `vercel promote <url>`) → `pms.techivano.com` now serves it.
+4. **Promote** the `dev` deployment to production (Dashboard → Promote to Production, or `vercel promote <url>`) → `pms.techivano.com` now serves it.
 5. Post-promotion smoke on the **custom domain**: `node scripts/smoke-prod.mjs` (from `apps/web`).
 6. **Telegram (only when unparked):** ensure the promoted slot has `TELEGRAM_WEBHOOK_SECRET`; confirm Convex `TELEGRAM_WEBHOOK_URL` is the prod hostname; run `registerTelegramWebhook` if needed — **manual, not automatic**.
 
@@ -213,7 +213,7 @@ If a migration cannot be made backward-compatible, treat it as a **maintenance w
 
 ## First-time setup checklist (both colors)
 
-1. Vercel env vars in **both the Production scope (for `main`) and the Preview scope (for `staging`)**: prod Convex URL, prod Clerk keys, `INTERNAL_JOB_SECRET` (match Convex), `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, webhook secrets (**same values in both scopes**). `staging` builds as Preview today, so Preview-scope values are what a promoted staging build embeds — they must equal production.
+1. Vercel env vars in **both the Production scope (for `main`) and the Preview scope (for `dev`)**: prod Convex URL, prod Clerk keys, `INTERNAL_JOB_SECRET` (match Convex), `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, webhook secrets (**same values in both scopes**). `dev` builds as Preview today, so Preview-scope values are what a promoted `dev` build embeds — they must equal production.
 2. Convex prod (`flippant-eel-758`): `CLERK_JWT_ISSUER_DOMAIN`, `INTERNAL_JOB_SECRET`, `CHANNEL_TOKEN_ENCRYPTION_KEY`.
 3. Cloudflare Email Worker: `PMS_WEBHOOK_URL` → prod hostname; `EMAIL_WEBHOOK_SECRET` → match Vercel.
 4. Deploy both branches; verify health on each preview URL before first promotion.
@@ -225,7 +225,7 @@ If a migration cannot be made backward-compatible, treat it as a **maintenance w
 
 - ✅ **Production Branch = `main`** (sole production branch).
 - ✅ **`pms.techivano.com` → `main` production deployment** (verified by shared deployment hash with the `git-main` alias).
-- ✅ **`staging` = Preview env scope** (not a second Production Branch). → identical secrets must be set in the **Preview** scope so a promoted staging build embeds prod `NEXT_PUBLIC_*` values.
+- ✅ **`dev` = Preview env scope** (not a second Production Branch). → identical secrets must be set in the **Preview** scope so a promoted `dev` build embeds prod `NEXT_PUBLIC_*` values.
 - ✅ **Promotion mechanism:** Option A confirmed (promote-deployment via Dashboard or `vercel promote <url>`); Option B documented but not the default. No `pnpm swap` script exists in-repo.
 
 Still open (operator verification, not a code fact):
