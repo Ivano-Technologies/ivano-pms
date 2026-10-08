@@ -1,5 +1,3 @@
-import { House } from "lucide-react";
-
 import { AuthCta } from "./auth-cta";
 import { lobbyButton } from "./lobby-button";
 import { StayRibbonPreview } from "./stay-ribbon-preview";
@@ -33,10 +31,6 @@ export function Hero() {
             See today at a glance
           </a>
         </div>
-        <p className="text-muted-foreground mt-[22px] flex items-center gap-2 text-sm font-medium">
-          <House className="size-4" aria-hidden />
-          Made in Abuja Nigeria by Ivano Technologies
-        </p>
       </div>
       <div id="today" className="scroll-mt-6">
         <StayRibbonPreview />
