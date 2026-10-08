@@ -13,7 +13,7 @@ Post-launch path:
   and Convex `processInboundEmail` function are unchanged — only this
   ingestion layer needs to swap
 - When implementing: set `EMAIL_WEBHOOK_SECRET` and `WEBHOOK_SECRET` in
-  Vercel (Production + Preview scopes); update `staging-env-checklist.md`
+  Vercel (Production + Preview scopes); update `dev-env-checklist.md`
 
 Do not wire this Worker to production routing rules or set
 `EMAIL_WEBHOOK_SECRET` in Vercel until the Resend migration is complete.
