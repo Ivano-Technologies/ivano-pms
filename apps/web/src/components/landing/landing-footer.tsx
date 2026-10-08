@@ -1,5 +1,5 @@
 import { IvanoPmsLockup } from "@/components/brand/ivano-pms-lockup";
-import { BRAND_COPYRIGHT, BRAND_FOOTER } from "@/lib/brand";
+import { BRAND_COPYRIGHT } from "@/lib/brand";
 
 import { AuthCta } from "./auth-cta";
 
@@ -29,7 +29,6 @@ export function LandingFooter() {
     <footer className="border-line border-t pt-[26px] pb-[34px]">
       <div className="mx-auto flex max-w-[1280px] flex-col items-start gap-2 px-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-10">
         <IvanoPmsLockup className="h-[33px]" />
-        <p className="text-muted-foreground text-[13px] font-medium">{BRAND_FOOTER}</p>
         <p className="text-muted-foreground text-[13px] font-medium">{BRAND_COPYRIGHT}</p>
       </div>
     </footer>

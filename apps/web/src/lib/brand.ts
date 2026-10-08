@@ -10,10 +10,6 @@ export const BRAND_DESCRIPTION =
 
 export const BRAND_COMPANY = "Ivano Technologies";
 
-export const BRAND_FOOTER = "Powered by Ivano Technologies · Abuja Nigeria";
-
-export const POWERED_BY_LINE = BRAND_FOOTER;
-
 export const BRAND_COPYRIGHT = "© 2026 Ivano Technologies";
 
 export const BRAND_INITIAL = "I";
