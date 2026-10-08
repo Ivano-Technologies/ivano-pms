@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { SignInRibbon } from "@/components/auth/sign-in-ribbon";
 import { IvanoPmsLockup } from "@/components/brand/ivano-pms-lockup";
-import { PoweredByIvano } from "@/components/brand/powered-by-ivano";
+import { IvanoCopyright } from "@/components/brand/ivano-copyright";
 
 export function AuthShell({
   children,
@@ -58,7 +58,7 @@ export function AuthShell({
           )}
           <SignInRibbon className="mt-[30px] hidden lg:block" />
         </div>
-        <PoweredByIvano variant="navy" className="hidden lg:block" />
+        <IvanoCopyright variant="navy" className="hidden lg:block" />
       </aside>
 
       <main className="relative -mt-8 flex flex-col items-center justify-start px-4 pb-7 lg:mt-0 lg:justify-center lg:p-10">
@@ -70,7 +70,7 @@ export function AuthShell({
           Back to home
         </Link>
         {children}
-        <PoweredByIvano className="mt-2.5 text-center lg:hidden" />
+        <IvanoCopyright className="mt-2.5 text-center lg:hidden" />
       </main>
     </div>
   );
