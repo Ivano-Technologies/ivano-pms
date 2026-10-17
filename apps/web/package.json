@@ -5,8 +5,6 @@
   "description": "Ivano PMS web app \u2014 Next.js manager dashboard with Convex Auth.",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node ./scripts/generate-favicons.mjs",
-    "generate:favicons": "node ./scripts/generate-favicons.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
