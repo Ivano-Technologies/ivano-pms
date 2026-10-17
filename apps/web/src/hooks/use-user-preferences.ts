@@ -4,6 +4,7 @@ import { useConvexAuth } from "convex/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { UserPreferencesDoc } from "@/types/user-preferences";
+import { toFriendlyMessage } from "@/lib/friendly-error";
 
 type PrefsState = UserPreferencesDoc | null;
 
@@ -29,11 +30,11 @@ export function useUserPreferences() {
         error?: string;
       };
       if (!res.ok) {
-        throw new Error(body.error ?? `Failed to load preferences (${res.status})`);
+        throw Object.assign(new Error(body.error ?? "Failed to load preferences"), { status: res.status });
       }
       setPreferences(body.preferences ?? null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load");
+      setError(toFriendlyMessage(e, "We couldn't load your preferences. Please try again."));
       setPreferences(null);
     } finally {
       setLoading(false);

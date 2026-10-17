@@ -19,6 +19,7 @@ import {
   UNIT_TYPE_OPTIONS,
   validateUnitForm
 } from "@/lib/unit-utils";
+import { toFriendlyMessage } from "@/lib/friendly-error";
 
 type UnitFormModalProps =
   | { mode: "create"; isOpen: boolean; onClose: () => void; unit?: undefined }
@@ -83,7 +84,7 @@ export function UnitFormModal({ mode, isOpen, unit, onClose }: UnitFormModalProp
       }
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "An error occurred");
+      toast.error(toFriendlyMessage(err, "We couldn't save the unit. Please try again."));
     } finally {
       setSaving(false);
     }

@@ -10,6 +10,7 @@ import { usePropertyScope } from "@/components/layout/property-context";
 import { Button } from "@/components/ui/button";
 import { CHANNEL_META } from "@/lib/inbox-utils";
 import { cn } from "@/lib/utils";
+import { toFriendlyMessage } from "@/lib/friendly-error";
 
 function qrCodeUrl(deepLink: string): string {
   return `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(deepLink)}`;
@@ -38,7 +39,7 @@ export function TelegramConnectionCard() {
     ensureConnection(propertyArgs)
       .catch((error: unknown) => {
         const message =
-          error instanceof Error ? error.message : "Could not set up Telegram link";
+          toFriendlyMessage(error, "We couldn't set up the Telegram link. Please try again.");
         toast.error(message);
       })
       .finally(() => setEnsuring(false));
@@ -68,7 +69,7 @@ export function TelegramConnectionCard() {
       toast.success("New guest link generated");
     } catch (error: unknown) {
       const message =
-        error instanceof Error ? error.message : "Could not regenerate link";
+        toFriendlyMessage(error, "We couldn't create a new link. Please try again.");
       toast.error(message);
     } finally {
       setRegenerating(false);

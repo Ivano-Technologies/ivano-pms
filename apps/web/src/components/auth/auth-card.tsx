@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import { Iv1Mark } from "@/components/brand/iv1-mark";
 import { cn } from "@/lib/utils";
+import { toFriendlyMessage } from "@/lib/friendly-error";
 
 type AuthMode = "signIn" | "signUp";
 type Step = "start" | "otp";
@@ -65,7 +66,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
     try {
       await signIn("google", { redirectTo: "/dashboard" });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Google sign in failed");
+      setError(toFriendlyMessage(e, "We couldn't start Google sign in. Please try again."));
       setBusy(false);
     }
   }
@@ -85,7 +86,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
       await signIn("resend-otp", formData);
       setStep("otp");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not send code");
+      setError(toFriendlyMessage(e, "We couldn't send your code. Please try again."));
     } finally {
       setBusy(false);
     }
@@ -102,7 +103,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
       await signIn("resend-otp", formData);
       router.replace("/dashboard");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Invalid code");
+      setError(toFriendlyMessage(e, "That code didn't work. Check it and try again, or request a new one."));
       setBusy(false);
     }
   }

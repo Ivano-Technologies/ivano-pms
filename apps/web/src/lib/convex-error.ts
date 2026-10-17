@@ -1,21 +1,12 @@
-import { ConvexError } from "convex/values";
+import { toFriendlyMessage } from "@/lib/friendly-error";
 
-const CONVEX_SERVER_ERROR = /\[CONVEX M\(.+\)\].*Server Error/;
-
-/** User-facing message from a Convex client error (ConvexError data or dev message). */
+/**
+ * @deprecated Use `toFriendlyMessage` from `@/lib/friendly-error` (IVA-189). Kept as a thin alias
+ * so older imports still get the friendly behaviour.
+ */
 export function getConvexUserMessage(
   error: unknown,
-  fallback = "Something went wrong"
+  fallback = "Something went wrong. Please try again."
 ): string {
-  if (error instanceof ConvexError && typeof error.data === "string") {
-    return error.data;
-  }
-
-  if (error instanceof Error && error.message.length > 0) {
-    if (!CONVEX_SERVER_ERROR.test(error.message)) {
-      return error.message;
-    }
-  }
-
-  return fallback;
+  return toFriendlyMessage(error, fallback);
 }
