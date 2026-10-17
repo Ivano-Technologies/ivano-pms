@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BRAND_DESCRIPTION, BRAND_HEADLINE, BRAND_NAME } from "@/lib/brand";
+import { CANONICAL_ORIGIN } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -28,11 +29,8 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000")
-      .trim()
-      .replace(/^["']|["']$/g, "")
-  ),
+  // Production host for canonical and OG URLs (see src/lib/seo.ts).
+  metadataBase: new URL(CANONICAL_ORIGIN),
   title: {
     default: `${BRAND_NAME} · ${BRAND_HEADLINE}`,
     template: `%s | ${BRAND_NAME}`
