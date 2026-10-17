@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-
-import { ErrorScreen } from "@/components/layout/error-screen";
-import { reportError } from "@/lib/friendly-error";
+import { ErrorScreen, useReportedErrorRef } from "@/components/layout/error-screen";
 
 /** IVA-189: friendly page for errors under the root layout. Never shows error.message. */
 export default function RootError({
@@ -13,8 +10,6 @@ export default function RootError({
   error: Error & { digest?: string };
   unstable_retry: () => void;
 }) {
-  useEffect(() => {
-    reportError(error, "app/error");
-  }, [error]);
-  return <ErrorScreen onRetry={unstable_retry} homeHref="/" />;
+  const errorRef = useReportedErrorRef(error, "app/error");
+  return <ErrorScreen onRetry={unstable_retry} homeHref="/" errorRef={errorRef} />;
 }

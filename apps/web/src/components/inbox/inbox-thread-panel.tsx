@@ -15,7 +15,7 @@ import {
   formatRelativeTime
 } from "@/lib/inbox-utils";
 import { cn } from "@/lib/utils";
-import { toFriendlyMessage } from "@/lib/friendly-error";
+import { toastError } from "@/lib/friendly-error";
 
 type InboxThreadPanelProps = {
   thread: Doc<"inboxThread"> | null;
@@ -70,7 +70,7 @@ export function InboxThreadPanel({
       setReplyText("");
       toast.success("Reply sent");
     } catch (err) {
-      toast.error(toFriendlyMessage(err, "We couldn't send your reply. Please try again."));
+      toastError(err, "We couldn't send your reply. Please try again.");
     }
   }
 

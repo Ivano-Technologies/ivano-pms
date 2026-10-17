@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { toFriendlyMessage } from "@/lib/friendly-error";
+import { toastError } from "@/lib/friendly-error";
 import {
   downloadImportTemplate,
   parseSpreadsheetToRows
@@ -73,7 +73,7 @@ export function BulkImportModal({ isOpen, onClose }: BulkImportModalProps) {
         toast.error("No rows were imported. Check the summary below.");
       }
     } catch (error) {
-      toast.error(toFriendlyMessage(error, "We couldn't import the file. Please try again."));
+      toastError(error, "We couldn't import the file. Please try again.");
     } finally {
       setIsUploading(false);
       if (fileRef.current) {

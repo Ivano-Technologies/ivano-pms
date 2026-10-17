@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-
-import { ErrorScreen } from "@/components/layout/error-screen";
-import { reportError } from "@/lib/friendly-error";
+import { ErrorScreen, useReportedErrorRef } from "@/components/layout/error-screen";
 
 /** IVA-189: keeps the dashboard shell and shows a friendly message. Never shows error.message. */
 export default function DashboardError({
@@ -13,8 +10,6 @@ export default function DashboardError({
   error: Error & { digest?: string };
   unstable_retry: () => void;
 }) {
-  useEffect(() => {
-    reportError(error, "dashboard/error");
-  }, [error]);
-  return <ErrorScreen onRetry={unstable_retry} homeHref="/dashboard" variant="section" />;
+  const errorRef = useReportedErrorRef(error, "dashboard/error");
+  return <ErrorScreen onRetry={unstable_retry} homeHref="/dashboard" variant="section" errorRef={errorRef} />;
 }

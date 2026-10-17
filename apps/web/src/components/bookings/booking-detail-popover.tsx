@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Id } from "../../../../../convex/_generated/dataModel";
-import { toFriendlyMessage } from "@/lib/friendly-error";
+import { toastError } from "@/lib/friendly-error";
 
 const BookingAuditTrail = dynamic(
   () =>
@@ -115,9 +115,7 @@ export function BookingDetailPopover({
       });
       toast.success(`Booking ${formatStatusLabel(newStatus)}`);
     } catch (error) {
-      toast.error(
-        toFriendlyMessage(error, "We couldn't update the booking. Please try again.")
-      );
+      toastError(error, "We couldn't update the booking. Please try again.");
     } finally {
       setPendingStatus(null);
     }

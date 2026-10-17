@@ -2,8 +2,11 @@
 
 import { Home, RotateCcw } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useMemo } from "react";
 
 import { Iv1Mark } from "@/components/brand/iv1-mark";
+import { ErrorRef } from "@/components/ui/error-ref";
+import { generateErrorRef, refFromId, reportError, serverRefOf } from "@/lib/friendly-error";
 import { cn } from "@/lib/utils";
 
 export const ERROR_SCREEN_COPY = {
@@ -13,25 +16,43 @@ export const ERROR_SCREEN_COPY = {
   notFoundBody: "The page you're looking for doesn't exist or has moved."
 } as const;
 
+/**
+ * The support ref for an error page: the Convex server ref, else the Next.js digest (also in the
+ * server logs), else a fresh one. Logged once with the raw error.
+ */
+export function useReportedErrorRef(error: Error & { digest?: string }, context: string): string {
+  const ref = useMemo(
+    () => serverRefOf(error) ?? refFromId(error.digest) ?? generateErrorRef(),
+    [error]
+  );
+  useEffect(() => {
+    reportError(error, context, ref);
+  }, [error, context, ref]);
+  return ref;
+}
+
 const primaryClass =
   "bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-[46px] items-center justify-center gap-2 rounded-lg px-5 text-[15px] font-semibold shadow-[var(--shadow-e1)]";
-const secondaryClass =
-  "border-line2 text-ink hover:bg-muted inline-flex h-[46px] items-center justify-center gap-2 rounded-lg border bg-white px-5 text-[15px] font-semibold";
 
 /**
  * IVA-189: friendly full page or in shell message for error.tsx, global-error.tsx and
  * not-found.tsx. Never renders error.message, digests or stack traces.
+ *
+ * One action only: "Try again" for runtime errors, "Go home" for not found. Runtime errors also
+ * show the muted support ref that was logged with the raw error.
  */
 export function ErrorScreen({
   kind = "error",
   onRetry,
   homeHref = "/",
-  variant = "page"
+  variant = "page",
+  errorRef
 }: {
   kind?: "error" | "notFound";
   onRetry?: () => void;
   homeHref?: string;
   variant?: "page" | "section";
+  errorRef?: string | null;
 }) {
   const title = kind === "error" ? ERROR_SCREEN_COPY.errorTitle : ERROR_SCREEN_COPY.notFoundTitle;
   const body = kind === "error" ? ERROR_SCREEN_COPY.errorBody : ERROR_SCREEN_COPY.notFoundBody;
@@ -57,18 +78,20 @@ export function ErrorScreen({
           {title}
         </h1>
         <p className="text-muted-foreground mt-1.5 text-[15px] leading-[22px]">{body}</p>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          {onRetry ? (
-            <button type="button" onClick={onRetry} className={primaryClass}>
+        <div className="mt-6 flex justify-center">
+          {kind === "error" && onRetry ? (
+            <button type="button" onClick={onRetry} className={cn(primaryClass, "max-sm:w-full")}>
               <RotateCcw className="size-4" aria-hidden />
               Try again
             </button>
-          ) : null}
-          <Link href={homeHref} className={onRetry ? secondaryClass : primaryClass}>
-            <Home className="size-4" aria-hidden />
-            Go home
-          </Link>
+          ) : (
+            <Link href={homeHref} className={cn(primaryClass, "max-sm:w-full")}>
+              <Home className="size-4" aria-hidden />
+              Go home
+            </Link>
+          )}
         </div>
+        {kind === "error" ? <ErrorRef code={errorRef} className="mt-4" /> : null}
       </div>
     </div>
   );

@@ -8,7 +8,8 @@ import { useState } from "react";
 
 import { Iv1Mark } from "@/components/brand/iv1-mark";
 import { cn } from "@/lib/utils";
-import { toFriendlyMessage } from "@/lib/friendly-error";
+import { ErrorRef } from "@/components/ui/error-ref";
+import { toFriendlyError } from "@/lib/friendly-error";
 
 type AuthMode = "signIn" | "signUp";
 type Step = "start" | "otp";
@@ -49,7 +50,19 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setErrorText] = useState<string | null>(null);
+  const [errorRef, setErrorRef] = useState<string | null>(null);
+
+  /** Local messages (such as a missing email) carry no ref; server errors do. */
+  function setError(message: string | null, ref: string | null = null) {
+    setErrorText(message);
+    setErrorRef(message ? ref : null);
+  }
+
+  function showError(e: unknown, fallback: string) {
+    const friendly = toFriendlyError(e, fallback, "auth");
+    setError(friendly.message, friendly.ref);
+  }
 
   const isSignUp = mode === "signUp";
   const title = isSignUp ? "Create your account" : "Sign in to Ivano PMS";
@@ -66,7 +79,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
     try {
       await signIn("google", { redirectTo: "/dashboard" });
     } catch (e) {
-      setError(toFriendlyMessage(e, "We couldn't start Google sign in. Please try again."));
+      showError(e, "We couldn't start Google sign in. Please try again.");
       setBusy(false);
     }
   }
@@ -86,7 +99,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
       await signIn("resend-otp", formData);
       setStep("otp");
     } catch (e) {
-      setError(toFriendlyMessage(e, "We couldn't send your code. Please try again."));
+      showError(e, "We couldn't send your code. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -103,7 +116,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
       await signIn("resend-otp", formData);
       router.replace("/dashboard");
     } catch (e) {
-      setError(toFriendlyMessage(e, "That code didn't work. Check it and try again, or request a new one."));
+      showError(e, "That code didn't work. Check it and try again, or request a new one.");
       setBusy(false);
     }
   }
@@ -219,6 +232,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
           {error ? (
             <p className="text-destructive mt-3 text-center text-sm" role="alert">
               {error}
+              <ErrorRef code={errorRef} />
             </p>
           ) : null}
         </div>

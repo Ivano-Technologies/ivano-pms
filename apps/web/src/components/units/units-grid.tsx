@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { usePropertyScope } from "@/components/layout/property-context";
 import { type AvailabilityStatus } from "@/lib/unit-utils";
 import { UnitCard } from "./unit-card";
-import { toFriendlyMessage } from "@/lib/friendly-error";
+import { toastError } from "@/lib/friendly-error";
 
 const UnitFormModal = dynamic(
   () =>
@@ -57,7 +57,7 @@ export function UnitsGrid() {
       await setUnitAvailability({ unitId, availabilityStatus: status });
       toast.success("Status updated");
     } catch (err) {
-      toast.error(toFriendlyMessage(err, "We couldn't update the status. Please try again."));
+      toastError(err, "We couldn't update the status. Please try again.");
     }
   }
 

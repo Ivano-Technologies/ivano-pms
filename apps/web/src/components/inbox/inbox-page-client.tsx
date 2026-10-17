@@ -14,7 +14,7 @@ import { type MessageStatus, STATUS_FILTER_OPTIONS } from "@/lib/inbox-utils";
 import { cn } from "@/lib/utils";
 import { InboxThreadList } from "./inbox-thread-list";
 import { InboxThreadPanel } from "./inbox-thread-panel";
-import { toFriendlyMessage } from "@/lib/friendly-error";
+import { toastError } from "@/lib/friendly-error";
 
 const ConvertToBookingModal = dynamic(
   () =>
@@ -75,7 +75,7 @@ export function InboxPageClient() {
       await markThreadReviewed({ threadId, ...propertyArgs });
       toast.success("Thread marked reviewed");
     } catch (err) {
-      toast.error(toFriendlyMessage(err, "We couldn't mark the thread as reviewed. Please try again."));
+      toastError(err, "We couldn't mark the thread as reviewed. Please try again.");
     }
   }
 

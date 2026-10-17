@@ -1,9 +1,14 @@
 import { ConvexError } from "convex/values";
+import { toast } from "sonner";
 
 /**
  * IVA-189: the only way an error reaches the screen.
  *
- *   toast.error(toFriendlyMessage(err, "We couldn't save the guest. Please try again."))
+ *   toastError(err, "We couldn't save the guest. Please try again.")
+ *   const { message, ref } = toFriendlyError(err, "We couldn't send your code. Please try again.")
+ *
+ * Every friendly error carries an 8 character support ref ("Ref: K7QM2XWA") shown in muted text
+ * next to the message and logged with the raw error, here and on the Convex server.
  *
  * - Messages the app deliberately wrote for the user pass through: a `ConvexError` whose data is a
  *   string (or `{ message }`), or a `UserFacingError` thrown in the web app.
@@ -67,16 +72,62 @@ export function looksLikeRawServerText(message: string): boolean {
   return RAW_PATTERNS.some((re) => re.test(text));
 }
 
-/** The deliberate user message carried by a ConvexError, if any. */
-export function convexErrorMessage(err: unknown): string | null {
+function convexData(err: unknown): Record<string, unknown> | string | null {
   if (!(err instanceof ConvexError)) return null;
   const data: unknown = err.data;
   if (typeof data === "string") return data;
-  if (data && typeof data === "object") {
-    const message = (data as { message?: unknown }).message;
-    if (typeof message === "string") return message;
+  if (data && typeof data === "object") return data as Record<string, unknown>;
+  return null;
+}
+
+/**
+ * The deliberate user message carried by a ConvexError, if any. A message the server marked
+ * `userFacing: false` is a developer message: it is used for classification only, never shown.
+ */
+export function convexErrorMessage(err: unknown): string | null {
+  const data = convexData(err);
+  if (typeof data === "string") return data;
+  if (data && data.userFacing !== false && typeof data.message === "string") return data.message;
+  return null;
+}
+
+export const ERROR_REF_LENGTH = 8;
+const REF_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+
+/** A fresh 8 character support ref, such as "K7QM2XWA". */
+export function generateErrorRef(): string {
+  const bytes = new Uint8Array(ERROR_REF_LENGTH);
+  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+    crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+  }
+  let out = "";
+  for (let i = 0; i < bytes.length; i++) out += REF_ALPHABET[bytes[i] % REF_ALPHABET.length];
+  return out;
+}
+
+/** Compact a longer event or request id to the 8 character ref shown to users. */
+export function refFromId(id: unknown): string | null {
+  if (typeof id !== "string") return null;
+  const compact = id.replace(/[^a-z0-9]/gi, "").toUpperCase();
+  return compact.length >= ERROR_REF_LENGTH ? compact.slice(0, ERROR_REF_LENGTH) : null;
+}
+
+/** The ref the Convex server logged for this error (IVA-189 errorRef wrapper), if any. */
+export function serverRefOf(err: unknown): string | null {
+  const data = convexData(err);
+  if (data && typeof data === "object" && typeof data.ref === "string" && data.ref.trim()) {
+    return data.ref.trim();
   }
   return null;
+}
+
+/** Convex puts "[Request ID: abc123]" in errors it hides; that id is in the Convex logs too. */
+function convexRequestRef(err: unknown): string | null {
+  const message = err instanceof Error ? err.message : typeof err === "string" ? err : "";
+  const match = /\[Request ID: ([^\]]+)\]/i.exec(message);
+  return match ? refFromId(match[1]) : null;
 }
 
 function collect(err: unknown) {
@@ -151,21 +202,64 @@ export function friendlyMessage(err: unknown, fallback?: string): string {
   return fallback && fallback.trim() ? fallback : FRIENDLY_MESSAGES.generic;
 }
 
-export function reportError(err: unknown, context?: string): void {
+type SentryLike = {
+  captureException?: (e: unknown) => unknown;
+  lastEventId?: () => string | undefined;
+};
+
+/**
+ * Log the raw error with its support ref and return the ref.
+ * Ref order: the one the server logged, then a Sentry event id, then the Convex request id,
+ * then a fresh one. The same ref is shown to the user, so support can match the two.
+ */
+export function reportError(err: unknown, context?: string, knownRef?: string | null): string {
+  let ref = knownRef || serverRefOf(err);
   try {
-    console.error(context ? `[error] ${context}` : "[error]", err);
     const sentry =
       typeof window !== "undefined"
-        ? (window as unknown as { Sentry?: { captureException?: (e: unknown) => void } }).Sentry
+        ? (window as unknown as { Sentry?: SentryLike }).Sentry
         : undefined;
-    sentry?.captureException?.(err);
+    const eventId = sentry?.captureException?.(err);
+    ref = ref || refFromId(eventId) || refFromId(sentry?.lastEventId?.());
   } catch {
     // Reporting must never break the screen.
   }
+  ref = ref || convexRequestRef(err) || generateErrorRef();
+  try {
+    console.error(`[error] ref=${ref}${context ? ` ${context}` : ""}`, err);
+  } catch {
+    // Ignore.
+  }
+  return ref;
 }
 
-/** Log the raw error and return text that is safe to show. */
+export type FriendlyError = {
+  message: string;
+  action?: "retry" | "signIn";
+  ref: string;
+};
+
+/** Log the raw error and return what to show: { message, action?, ref }. */
+export function toFriendlyError(err: unknown, fallback?: string, context?: string): FriendlyError {
+  const ref = reportError(err, context);
+  const message = friendlyMessage(err, fallback);
+  const kind = classifyError(err);
+  const action =
+    kind === "sessionExpired" ? "signIn" : kind === "network" || kind === "generic" ? "retry" : undefined;
+  return action ? { message, action, ref } : { message, ref };
+}
+
+/** Log the raw error and return text that is safe to show. Prefer toFriendlyError or toastError. */
 export function toFriendlyMessage(err: unknown, fallback?: string): string {
-  reportError(err);
-  return friendlyMessage(err, fallback);
+  return toFriendlyError(err, fallback).message;
+}
+
+/** Show a friendly error toast with its support ref as a small muted line. Returns the ref. */
+export function toastError(err: unknown, fallback?: string, context?: string): string {
+  const { message, ref } = toFriendlyError(err, fallback, context);
+  toast.error(message, {
+    description: `Ref: ${ref}`,
+    classNames: { description: "!text-muted-foreground text-xs" }
+  });
+  return ref;
 }

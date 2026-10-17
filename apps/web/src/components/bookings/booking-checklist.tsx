@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Id } from "../../../../../convex/_generated/dataModel";
-import { toFriendlyMessage } from "@/lib/friendly-error";
+import { toastError } from "@/lib/friendly-error";
 
 type BookingChecklistProps = {
   bookingId: Id<"booking">;
@@ -58,9 +58,7 @@ export function BookingChecklist({ bookingId }: BookingChecklistProps) {
       setDueDate("");
       toast.success("Checklist item added");
     } catch (error) {
-      toast.error(
-        toFriendlyMessage(error, "We couldn't add the checklist item. Please try again.")
-      );
+      toastError(error, "We couldn't add the checklist item. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -136,9 +134,7 @@ export function BookingChecklist({ bookingId }: BookingChecklistProps) {
                       checklistId: item._id,
                       status: e.target.value as typeof item.status
                     }).catch((err: unknown) =>
-                      toast.error(
-                        toFriendlyMessage(err, "We couldn't update the checklist item. Please try again.")
-                      )
+                      toastError(err, "We couldn't update the checklist item. Please try again.")
                     )
                   }
                 >
@@ -155,9 +151,7 @@ export function BookingChecklist({ bookingId }: BookingChecklistProps) {
                   onClick={() =>
                     void deleteChecklist({ checklistId: item._id }).catch(
                       (err: unknown) =>
-                        toast.error(
-                          toFriendlyMessage(err, "We couldn't delete the checklist item. Please try again.")
-                        )
+                        toastError(err, "We couldn't delete the checklist item. Please try again.")
                     )
                   }
                 >

@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-
-import { ErrorScreen } from "@/components/layout/error-screen";
-import { reportError } from "@/lib/friendly-error";
+import { ErrorScreen, useReportedErrorRef } from "@/components/layout/error-screen";
 
 import "./globals.css";
 
@@ -18,14 +15,12 @@ export default function GlobalError({
   error: Error & { digest?: string };
   unstable_retry: () => void;
 }) {
-  useEffect(() => {
-    reportError(error, "global-error");
-  }, [error]);
+  const errorRef = useReportedErrorRef(error, "global-error");
   return (
     <html lang="en">
       <body>
         <title>Something went wrong | Ivano PMS</title>
-        <ErrorScreen onRetry={unstable_retry} homeHref="/" />
+        <ErrorScreen onRetry={unstable_retry} homeHref="/" errorRef={errorRef} />
       </body>
     </html>
   );
