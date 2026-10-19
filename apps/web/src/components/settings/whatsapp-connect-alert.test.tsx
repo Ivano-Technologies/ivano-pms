@@ -13,7 +13,8 @@ describe("WhatsAppConnectAlert (IVA-189)", () => {
   it.each([
     ["whatsapp_not_configured", "WhatsApp isn't set up yet. Ask an admin to set it up.", null],
     ["token_exchange_failed", "We couldn't connect WhatsApp. Try again.", "Try again"],
-    ["store_failed", "Your WhatsApp connection has expired. Reconnect to keep sending messages.", "Reconnect"],
+    ["token_expired", "Your WhatsApp connection has expired. Reconnect to keep sending messages.", "Reconnect"],
+    ["store_failed", "Something went wrong connecting WhatsApp. Try again.", "Try again"],
     ["something_else", "Something went wrong connecting WhatsApp. Try again.", "Try again"]
   ])("%s shows the friendly message, its action and the logged ref", (code, message, action) => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});

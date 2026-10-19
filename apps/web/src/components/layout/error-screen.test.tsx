@@ -17,7 +17,8 @@ describe("error pages (IVA-189)", () => {
     });
     render(<RootError error={error} unstable_retry={retry} />);
     expect(screen.getByRole("heading", { name: "Something went wrong" })).toBeInTheDocument();
-    expect(screen.getByText("We hit a problem loading this page. Please try again.")).toBeInTheDocument();
+    expect(screen.getByText("We hit a problem loading this page.")).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/Please try again/);
     expect(screen.queryByRole("link", { name: "Go home" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button")).toHaveLength(1);
     fireEvent.click(screen.getByRole("button", { name: "Try again" }));

@@ -14,7 +14,7 @@ describe("WhatsApp connect error mapping (IVA-189)", () => {
     ["missing_code", "connectFailed"],
     ["invalid_state", "connectFailed"],
     ["token_exchange_failed", "connectFailed"],
-    ["store_failed", "expired"],
+    ["store_failed", "other"],
     ["token_expired", "expired"],
     ["token_invalid", "expired"],
     ["unauthorized", "other"],
@@ -36,6 +36,10 @@ describe("WhatsApp connect error mapping (IVA-189)", () => {
       actionLabel: "Try again"
     });
     expect(toWhatsAppConnectError("store_failed")).toMatchObject({
+      message: "Something went wrong connecting WhatsApp. Try again.",
+      actionLabel: "Try again"
+    });
+    expect(toWhatsAppConnectError("token_expired")).toMatchObject({
       message: "Your WhatsApp connection has expired. Reconnect to keep sending messages.",
       actionLabel: "Reconnect"
     });

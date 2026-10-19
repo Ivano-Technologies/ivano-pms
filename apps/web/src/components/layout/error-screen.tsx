@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export const ERROR_SCREEN_COPY = {
   errorTitle: "Something went wrong",
-  errorBody: "We hit a problem loading this page. Please try again.",
+  errorBody: "We hit a problem loading this page.",
   notFoundTitle: "Page not found",
   notFoundBody: "The page you're looking for doesn't exist or has moved."
 } as const;

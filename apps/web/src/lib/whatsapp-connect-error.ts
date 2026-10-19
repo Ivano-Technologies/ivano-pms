@@ -30,8 +30,9 @@ export type WhatsAppConnectErrorKind = keyof typeof WHATSAPP_CONNECT_COPY;
  * Which case each `oauth_error` code from /api/oauth/whatsapp falls into.
  * - notConfigured: WHATSAPP_APP_ID or WHATSAPP_APP_SECRET is missing on the server.
  * - connectFailed: the person cancelled at Meta, or the authorization code or state was bad.
- * - expired: the access token is missing, expired, invalid or could not be stored.
- * - other: anything else, including codes we don't know yet.
+ * - expired: the access token has expired or is no longer valid.
+ * - other: anything else, including store_failed (saving the connection failed) and codes we
+ *   don't know yet.
  */
 const KIND_BY_CODE: Record<string, WhatsAppConnectErrorKind> = {
   whatsapp_not_configured: "notConfigured",
@@ -39,7 +40,6 @@ const KIND_BY_CODE: Record<string, WhatsAppConnectErrorKind> = {
   missing_code: "connectFailed",
   invalid_state: "connectFailed",
   token_exchange_failed: "connectFailed",
-  store_failed: "expired",
   token_expired: "expired",
   token_invalid: "expired"
 };
