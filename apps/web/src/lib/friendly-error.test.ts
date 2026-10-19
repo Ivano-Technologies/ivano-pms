@@ -50,7 +50,7 @@ describe("friendlyMessage (IVA-189)", () => {
 
   it("maps permission denied", () => {
     expect(friendlyMessage(convexProd(" Uncaught Error: Not authorized for this property"))).toBe(
-      "You don't have permission to do that."
+      "You don't have permission to do that. Ask an admin for access."
     );
     expect(friendlyMessage({ status: 403, message: "x" })).toBe(FRIENDLY_MESSAGES.permission);
   });

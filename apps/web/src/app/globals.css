@@ -266,3 +266,10 @@
     .lobby-lift:hover { transform: none; }
   }
 }
+
+/* IVA-189 (Coco): toast close button sits at the top right, not sonner's default top left. */
+[data-sonner-toaster] [data-sonner-toast] {
+  --toast-close-button-start: auto;
+  --toast-close-button-end: 0;
+  --toast-close-button-transform: translate(35%, -35%);
+}

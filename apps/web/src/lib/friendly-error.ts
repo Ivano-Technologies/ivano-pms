@@ -22,7 +22,7 @@ import { toast } from "sonner";
 export const FRIENDLY_MESSAGES = {
   invalidLogin: "That code didn't work. Check it and try again, or request a new one.",
   sessionExpired: "Your session has expired. Please sign in again.",
-  permission: "You don't have permission to do that.",
+  permission: "You don't have permission to do that. Ask an admin for access.",
   notFound: "We couldn't find that. It may have been moved or deleted.",
   duplicate: "That already exists.",
   inUse: "This is still in use by other records.",
