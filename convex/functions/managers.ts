@@ -6,46 +6,65 @@ import {
   optionalAuthQuery
 } from "../lib/customFunctions";
 
+/** Trimmed, lower case email for matching. */
+function normalizeEmail(email: string | undefined | null): string {
+  return (email ?? "").trim().toLowerCase();
+}
+
+/**
+ * IVA-194: link the signed-in Convex Auth user to their manager row. Never creates a row.
+ *
+ * 1. A row already keyed on this user's stable id (getAuthUserId) wins.
+ * 2. Otherwise claim a legacy row (no authUserId, from before Convex Auth) only when exactly one
+ *    non-deleted row matches the user's verified email. The email comes from the Convex Auth users
+ *    record (email plus emailVerificationTime, set by Google sign in and by the email code), never
+ *    from client args.
+ * 3. Otherwise return null: the user has no access yet and the app shows "No access yet".
+ */
 export const upsertManagerFromAuth = signedInMutation({
-  args: {
-    email: v.optional(v.string()),
-    fullName: v.optional(v.string()),
-    phone: v.optional(v.string())
-  },
-  returns: v.id("manager"),
-  handler: async (ctx, args) => {
+  args: {},
+  returns: v.union(v.id("manager"), v.null()),
+  handler: async (ctx) => {
     const existing = await ctx.db
       .query("manager")
       .withIndex("by_auth_user", (q) => q.eq("authUserId", ctx.authUserId))
       .take(10);
-
     const active = existing.find((m) => !m.isDeleted);
-
     if (active) {
       return active._id;
     }
 
-    const property = await ctx.db.query("property").first();
-    if (!property) {
-      throw new Error(
-        "No property exists in this Convex deployment. On a new production environment, run once: npx convex run seed:seedDemoData --prod (or add a property via onboarding)."
-      );
+    const userId = ctx.db.normalizeId("users", ctx.authUserId);
+    const user = userId ? await ctx.db.get("users", userId) : null;
+    const verifiedEmail =
+      user && user.emailVerificationTime !== undefined ? normalizeEmail(user.email) : "";
+    if (!verifiedEmail) {
+      return null;
     }
 
-    const email = (args.email ?? ctx.identity.email ?? "").trim();
-    const fullName = (args.fullName ?? ctx.identity.name ?? "Manager").trim() || "Manager";
-    const now = Date.now();
-    return await ctx.db.insert("manager", {
-      propertyId: property._id,
-      authUserId: ctx.authUserId,
-      email,
-      fullName,
-      phone: args.phone ?? "",
-      role: "owner",
-      isDeleted: false,
-      createdAt: now,
-      updatedAt: now
-    });
+    const legacy = await ctx.db
+      .query("manager")
+      .withIndex("by_auth_user", (q) => q.eq("authUserId", undefined))
+      .take(500);
+    const matches = legacy.filter(
+      (m) => !m.isDeleted && normalizeEmail(m.email) === verifiedEmail
+    );
+
+    if (matches.length === 1) {
+      const row = matches[0]!;
+      await ctx.db.patch("manager", row._id, {
+        authUserId: ctx.authUserId,
+        updatedAt: Date.now()
+      });
+      return row._id;
+    }
+
+    if (matches.length > 1) {
+      console.warn(
+        `[managers] upsertManagerFromAuth: ${matches.length} legacy manager rows match one verified email; not claiming any`
+      );
+    }
+    return null;
   }
 });
 

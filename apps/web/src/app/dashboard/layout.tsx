@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { PmsDashboardLayout } from "@/components/layout/pms-dashboard-layout";
-import { DashboardManagerSync } from "@/components/dashboard/dashboard-manager-sync";
+import { DashboardAccessGate } from "@/components/dashboard/dashboard-access-gate";
 
 export default async function DashboardLayout({
   children
@@ -15,9 +15,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <PmsDashboardLayout>
-      <DashboardManagerSync />
-      {children}
-    </PmsDashboardLayout>
+    <DashboardAccessGate>
+      <PmsDashboardLayout>{children}</PmsDashboardLayout>
+    </DashboardAccessGate>
   );
 }
