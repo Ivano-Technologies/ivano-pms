@@ -113,12 +113,14 @@ export const bulkImportBookings = authedMutation({
           row.checkOutDate
         );
       } catch (error) {
+        // IVA-189: only ConvexError text is written for the user; log anything else.
+        if (!(error instanceof ConvexError)) {
+          console.error("[bulkImport] overlap check failed", error);
+        }
         const reason =
-          error instanceof ConvexError
-            ? String(error.message)
-            : error instanceof Error
-              ? error.message
-              : "Booking conflict";
+          error instanceof ConvexError && typeof error.data === "string"
+            ? error.data
+            : "We couldn't check this row against existing bookings. Please try again.";
         skipped.push({ rowNumber: row.rowNumber, reason });
         continue;
       }

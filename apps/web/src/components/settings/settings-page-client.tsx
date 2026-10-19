@@ -8,17 +8,7 @@ import { usePropertyScope } from "@/components/layout/property-context";
 import { ChannelTokenCard } from "./channel-token-card";
 import { EmailInboundCard } from "./email-inbound-card";
 import { TelegramConnectionCard } from "./telegram-connection-card";
-
-const OAUTH_ERROR_COPY: Record<string, string> = {
-  access_denied: "WhatsApp connect was cancelled.",
-  whatsapp_not_configured:
-    "WhatsApp OAuth is not configured. Set WHATSAPP_APP_ID and WHATSAPP_APP_SECRET on Vercel.",
-  invalid_state: "WhatsApp connect could not be verified. Try again.",
-  missing_code: "Meta did not return an authorization code. Try again.",
-  token_exchange_failed: "Could not exchange the WhatsApp authorization code.",
-  store_failed: "WhatsApp connected at Meta, but the token could not be saved.",
-  unauthorized: "Sign in again, then retry WhatsApp Connect."
-};
+import { WhatsAppConnectAlert } from "./whatsapp-connect-alert";
 
 export function SettingsPageClient() {
   const { propertyArgs, selectedPropertyId } = usePropertyScope();
@@ -46,13 +36,11 @@ export function SettingsPageClient() {
       ) : null}
 
       {oauthError ? (
-        <p
-          role="alert"
-          className="border-destructive/40 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm"
-        >
-          {OAUTH_ERROR_COPY[oauthError] ??
-            "WhatsApp connect failed. Check Meta app settings and try again."}
-        </p>
+        <WhatsAppConnectAlert
+          code={oauthError}
+          serverRef={searchParams.get("oauth_ref")}
+          propertyId={selectedPropertyId}
+        />
       ) : null}
 
       <section className="space-y-3">

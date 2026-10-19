@@ -7,6 +7,7 @@ import {
   WHATSAPP_OAUTH_STATE_COOKIE,
   completeWhatsAppOAuth,
   getWhatsAppOAuthConfig,
+  settingsOAuthErrorRedirect,
   settingsOAuthRedirect,
   verifyWhatsAppOAuthState
 } from "@/lib/whatsapp-oauth";
@@ -55,7 +56,11 @@ export async function GET(request: Request) {
   if (oauthError) {
     return clearOAuthCookie(
       NextResponse.redirect(
-        settingsOAuthRedirect(oauthError === "access_denied" ? "access_denied" : oauthError)
+        settingsOAuthErrorRedirect(
+          oauthError === "access_denied" ? "access_denied" : oauthError,
+          "whatsapp-oauth/callback",
+          url.searchParams.get("error_description") ?? url.searchParams.get("error_reason")
+        )
       )
     );
   }
@@ -63,17 +68,17 @@ export async function GET(request: Request) {
   const config = getWhatsAppOAuthConfig();
   if (!config) {
     return clearOAuthCookie(
-      NextResponse.redirect(settingsOAuthRedirect("whatsapp_not_configured"))
+      NextResponse.redirect(settingsOAuthErrorRedirect("whatsapp_not_configured", "whatsapp-oauth/callback"))
     );
   }
 
   const code = url.searchParams.get("code")?.trim();
   const state = url.searchParams.get("state")?.trim();
   if (!code) {
-    return clearOAuthCookie(NextResponse.redirect(settingsOAuthRedirect("missing_code")));
+    return clearOAuthCookie(NextResponse.redirect(settingsOAuthErrorRedirect("missing_code", "whatsapp-oauth/callback")));
   }
   if (!state) {
-    return clearOAuthCookie(NextResponse.redirect(settingsOAuthRedirect("invalid_state")));
+    return clearOAuthCookie(NextResponse.redirect(settingsOAuthErrorRedirect("invalid_state", "whatsapp-oauth/callback")));
   }
 
   const cookieHeader = request.headers.get("cookie") ?? "";
@@ -86,7 +91,7 @@ export async function GET(request: Request) {
   try {
     const payload = verifyWhatsAppOAuthState(state, config.stateSecret);
     if (!cookieNonce || cookieNonce !== payload.nonce) {
-      return clearOAuthCookie(NextResponse.redirect(settingsOAuthRedirect("invalid_state")));
+      return clearOAuthCookie(NextResponse.redirect(settingsOAuthErrorRedirect("invalid_state", "whatsapp-oauth/callback")));
     }
 
     const tokens = await completeWhatsAppOAuth(code, config);
@@ -103,13 +108,15 @@ export async function GET(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "store_failed";
     if (message === "invalid_state") {
-      return clearOAuthCookie(NextResponse.redirect(settingsOAuthRedirect("invalid_state")));
+      return clearOAuthCookie(
+        NextResponse.redirect(settingsOAuthErrorRedirect("invalid_state", "whatsapp-oauth/callback", error))
+      );
     }
     if (message === "token_exchange_failed" || message.includes("token")) {
       return clearOAuthCookie(
-        NextResponse.redirect(settingsOAuthRedirect("token_exchange_failed"))
+        NextResponse.redirect(settingsOAuthErrorRedirect("token_exchange_failed", "whatsapp-oauth/callback", error))
       );
     }
-    return clearOAuthCookie(NextResponse.redirect(settingsOAuthRedirect("store_failed")));
+    return clearOAuthCookie(NextResponse.redirect(settingsOAuthErrorRedirect("store_failed", "whatsapp-oauth/callback", error)));
   }
 }
