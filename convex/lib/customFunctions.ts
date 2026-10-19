@@ -4,6 +4,7 @@ import {
 } from "convex-helpers/server/customFunctions";
 import { v } from "convex/values";
 import type { UserIdentity } from "convex/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 import type { Doc } from "../_generated/dataModel";
 import { mutation as rawMutation, query as rawQuery } from "../_generated/server";
@@ -18,11 +19,21 @@ export type AuthedCtx = {
 
 export type AuthIdentityCtx = {
   identity: UserIdentity;
+  /** IVA-194: stable Convex Auth user id (getAuthUserId), never identity.subject. */
+  authUserId: string;
 };
 
 export type OptionalAuthIdentityCtx = {
   identity: UserIdentity | null;
+  authUserId: string | null;
 };
+
+/** The signed-in identity plus the stable Convex Auth user id, or nulls when signed out. */
+async function readAuth(ctx: Parameters<typeof getAuthUserId>[0]) {
+  const identity = await ctx.auth.getUserIdentity();
+  const authUserId = identity ? await getAuthUserId(ctx) : null;
+  return { identity, authUserId: authUserId as string | null };
+}
 
 /** IVA-189: errors from every custom function are logged and rethrown with a support ref. */
 const query = withErrorRef(rawQuery, "query");
@@ -62,12 +73,12 @@ export const authedMutation = customMutation(mutation, {
 export const signedInMutation = customMutation(mutation, {
   args: {},
   input: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    const { identity, authUserId } = await readAuth(ctx);
+    if (!identity || !authUserId) {
       throw new Error("Not authenticated");
     }
     return {
-      ctx: { ...ctx, identity },
+      ctx: { ...ctx, identity, authUserId },
       args
     };
   }
@@ -77,12 +88,12 @@ export const signedInMutation = customMutation(mutation, {
 export const signedInQuery = customQuery(query, {
   args: {},
   input: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    const { identity, authUserId } = await readAuth(ctx);
+    if (!identity || !authUserId) {
       throw new Error("Not authenticated");
     }
     return {
-      ctx: { ...ctx, identity },
+      ctx: { ...ctx, identity, authUserId },
       args
     };
   }
@@ -92,9 +103,9 @@ export const signedInQuery = customQuery(query, {
 export const optionalAuthQuery = customQuery(query, {
   args: {},
   input: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
+    const { identity, authUserId } = await readAuth(ctx);
     return {
-      ctx: { ...ctx, identity },
+      ctx: { ...ctx, identity, authUserId },
       args
     };
   }

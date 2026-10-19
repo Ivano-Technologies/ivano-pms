@@ -261,7 +261,9 @@ export default defineSchema({
 
   manager: defineTable({
     propertyId: v.id("property"),
-    authUserId: v.string(),
+    // IVA-194: optional for now so the legacy Clerk owner row (no authUserId) still validates.
+    // Convex Auth rows always set it (the users table id from getAuthUserId).
+    authUserId: v.optional(v.string()),
     email: v.string(),
     fullName: v.string(),
     phone: v.string(),

@@ -16,7 +16,7 @@ export const upsertManagerFromAuth = signedInMutation({
   handler: async (ctx, args) => {
     const existing = await ctx.db
       .query("manager")
-      .withIndex("by_auth_user", (q) => q.eq("authUserId", ctx.identity.subject))
+      .withIndex("by_auth_user", (q) => q.eq("authUserId", ctx.authUserId))
       .take(10);
 
     const active = existing.find((m) => !m.isDeleted);
@@ -37,7 +37,7 @@ export const upsertManagerFromAuth = signedInMutation({
     const now = Date.now();
     return await ctx.db.insert("manager", {
       propertyId: property._id,
-      authUserId: ctx.identity.subject,
+      authUserId: ctx.authUserId,
       email,
       fullName,
       phone: args.phone ?? "",
@@ -55,7 +55,7 @@ export const getCurrentManagerProfile = optionalAuthQuery({
     v.object({
       _id: v.id("manager"),
       propertyId: v.id("property"),
-      authUserId: v.string(),
+      authUserId: v.optional(v.string()),
       email: v.string(),
       fullName: v.string(),
       phone: v.string(),
@@ -68,13 +68,14 @@ export const getCurrentManagerProfile = optionalAuthQuery({
     v.null()
   ),
   handler: async (ctx) => {
-    if (!ctx.identity) {
+    const authUserId = ctx.authUserId;
+    if (!ctx.identity || !authUserId) {
       return null;
     }
 
     const managers = await ctx.db
       .query("manager")
-      .withIndex("by_auth_user", (q) => q.eq("authUserId", ctx.identity!.subject))
+      .withIndex("by_auth_user", (q) => q.eq("authUserId", authUserId))
       .take(10);
 
     const manager = managers.find((m) => !m.isDeleted);
@@ -113,7 +114,7 @@ export const getMyProperties = signedInQuery({
   handler: async (ctx) => {
     const managers = await ctx.db
       .query("manager")
-      .withIndex("by_auth_user", (q) => q.eq("authUserId", ctx.identity.subject))
+      .withIndex("by_auth_user", (q) => q.eq("authUserId", ctx.authUserId))
       .take(10);
 
     const results = [];
