@@ -5,6 +5,7 @@ import {
   completeWhatsAppOAuth,
   createOAuthNonce,
   getWhatsAppOAuthConfig,
+  settingsOAuthErrorRedirect,
   signWhatsAppOAuthState,
   verifyWhatsAppOAuthState
 } from "./whatsapp-oauth";
@@ -124,5 +125,23 @@ describe("completeWhatsAppOAuth", () => {
     expect(result.accessToken).toBe("long-token");
     expect(result.phoneNumberId).toBe("phone-99");
     expect(result.expiresAt).toBeGreaterThan(Date.now());
+  });
+});
+
+describe("settingsOAuthErrorRedirect (IVA-189)", () => {
+  it("logs the raw detail with a fresh ref and passes only the code and ref to Settings", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const raw = new Error("Meta said: invalid client secret");
+    const url = new URL(settingsOAuthErrorRedirect("token_exchange_failed", "whatsapp-oauth/callback", raw));
+    expect(url.pathname).toBe("/dashboard/settings");
+    expect(url.searchParams.get("oauth_error")).toBe("token_exchange_failed");
+    const ref = url.searchParams.get("oauth_ref");
+    expect(ref).toMatch(/^[A-Z0-9]{8}$/);
+    expect(url.toString()).not.toMatch(/secret|Meta/);
+    expect(spy).toHaveBeenCalledWith(
+      `[error] ref=${ref} whatsapp-oauth/callback token_exchange_failed`,
+      raw
+    );
+    spy.mockRestore();
   });
 });
