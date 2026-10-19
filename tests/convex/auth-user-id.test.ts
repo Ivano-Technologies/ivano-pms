@@ -194,4 +194,28 @@ describe("upsertManagerFromAuth claims legacy rows only by verified email (IVA-1
     expect(result).toBeNull();
     expect((await t.run((ctx) => ctx.db.get("manager", legacyId)))?.authUserId).toBeUndefined();
   });
+
+  it("a users email with capitals and surrounding spaces still claims the matching legacy row", async () => {
+    const t = createTestConvex();
+    const seed = await seedAuthedManager(t);
+    const legacyId = await seedLegacyManager(t, seed.propertyId, "owner@hotel.ng");
+    const userId = await seedUser(t, "  OWNER@Hotel.ng ", true);
+
+    expect(await session(t, userId).mutation(api.functions.managers.upsertManagerFromAuth, {})).toBe(legacyId);
+    const row = await t.run((ctx) => ctx.db.get("manager", legacyId));
+    expect(row?.authUserId).toBe(userId);
+  });
+
+  it("ignores a soft deleted legacy row: it is not claimed and does not count as a duplicate", async () => {
+    const t = createTestConvex();
+    const seed = await seedAuthedManager(t);
+    const deletedId = await seedLegacyManager(t, seed.propertyId, "o@h.ng");
+    await t.run((ctx) => ctx.db.patch("manager", deletedId, { isDeleted: true }));
+    const liveId = await seedLegacyManager(t, seed.otherPropertyId, "o@h.ng");
+    const userId = await seedUser(t, "o@h.ng", true);
+
+    expect(await session(t, userId).mutation(api.functions.managers.upsertManagerFromAuth, {})).toBe(liveId);
+    const deleted = await t.run((ctx) => ctx.db.get("manager", deletedId));
+    expect(deleted?.authUserId ?? null).toBeNull();
+  });
 });
