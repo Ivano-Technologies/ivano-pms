@@ -18,6 +18,7 @@ import {
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc } from "../../../../../convex/_generated/dataModel";
+import { toastError } from "@/lib/friendly-error";
 
 const GuestFormModal = dynamic(
   () =>
@@ -116,17 +117,13 @@ export function GuestsPageClient() {
             void restoreGuest({ guestId })
               .then(() => toast.success(`${guestName} restored`))
               .catch((error) =>
-                toast.error(
-                  error instanceof Error ? error.message : "Restore failed"
-                )
+                toastError(error, "We couldn't restore the guest. Please try again.")
               );
           }
         }
       });
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to delete guest"
-      );
+      toastError(error, "We couldn't delete the guest. Please try again.");
     } finally {
       setIsDeleting(false);
     }

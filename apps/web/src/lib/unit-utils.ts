@@ -90,7 +90,7 @@ export function validateUnitForm(values: UnitFormValues): UnitFormErrors {
     errors.unitNumber = "Max 50 characters";
   }
   if (values.capacityGuests < 1 || values.capacityGuests > 20) {
-    errors.capacityGuests = "Capacity must be 1–20";
+    errors.capacityGuests = "Capacity must be between 1 and 20";
   }
   if (values.pricePerNightNgn < 0) {
     errors.pricePerNightNgn = "Price cannot be negative";

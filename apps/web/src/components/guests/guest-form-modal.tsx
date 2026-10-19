@@ -17,6 +17,7 @@ import {
 
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc } from "../../../../../convex/_generated/dataModel";
+import { toastError } from "@/lib/friendly-error";
 
 type GuestFormModalProps = {
   mode: "create" | "edit";
@@ -90,7 +91,7 @@ export function GuestFormModal({
       }
       onClose();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save guest");
+      toastError(error, "We couldn't save the guest. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

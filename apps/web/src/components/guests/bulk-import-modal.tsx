@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { getConvexUserMessage } from "@/lib/convex-error";
+import { toastError } from "@/lib/friendly-error";
 import {
   downloadImportTemplate,
   parseSpreadsheetToRows
@@ -70,10 +70,10 @@ export function BulkImportModal({ isOpen, onClose }: BulkImportModalProps) {
           `${result.importedCount} imported, ${result.skipped.length} skipped`
         );
       } else {
-        toast.error("No rows imported — review the summary below");
+        toast.error("No rows were imported. Check the summary below.");
       }
     } catch (error) {
-      toast.error(getConvexUserMessage(error, "Import failed"));
+      toastError(error, "We couldn't import the file. Please try again.");
     } finally {
       setIsUploading(false);
       if (fileRef.current) {
@@ -126,7 +126,7 @@ export function BulkImportModal({ isOpen, onClose }: BulkImportModalProps) {
               {isUploading ? "Importing…" : "Choose spreadsheet"}
             </span>
             <span className="text-muted-foreground mt-1 text-xs">
-              .xlsx or .csv — columns must match the template
+              Use an .xlsx or .csv file with the same columns as the template.
             </span>
             <input
               ref={fileRef}

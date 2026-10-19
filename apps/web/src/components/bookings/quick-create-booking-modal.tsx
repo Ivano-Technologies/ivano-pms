@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { getConvexUserMessage } from "@/lib/convex-error";
+import { toastError } from "@/lib/friendly-error";
 import {
   type CalendarUnit,
   addDays,
@@ -87,7 +87,7 @@ export function QuickCreateBookingModal({
       toast.success("Booking created");
       onClose();
     } catch (err) {
-      toast.error(getConvexUserMessage(err, "Failed to create booking"));
+      toastError(err, "We couldn't create the booking. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

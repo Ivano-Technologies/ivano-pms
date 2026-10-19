@@ -6,9 +6,10 @@ import { v } from "convex/values";
 import type { UserIdentity } from "convex/server";
 
 import type { Doc } from "../_generated/dataModel";
-import { mutation, query } from "../_generated/server";
+import { mutation as rawMutation, query as rawQuery } from "../_generated/server";
 
 import { getCurrentManager } from "./auth";
+import { withErrorRef } from "./errorRef";
 import { assertInternalJobSecret } from "./secrets";
 
 export type AuthedCtx = {
@@ -22,6 +23,10 @@ export type AuthIdentityCtx = {
 export type OptionalAuthIdentityCtx = {
   identity: UserIdentity | null;
 };
+
+/** IVA-189: errors from every custom function are logged and rethrown with a support ref. */
+const query = withErrorRef(rawQuery, "query");
+const mutation = withErrorRef(rawMutation, "mutation");
 
 const propertyScopeArgs = {
   selectedPropertyId: v.optional(v.id("property"))

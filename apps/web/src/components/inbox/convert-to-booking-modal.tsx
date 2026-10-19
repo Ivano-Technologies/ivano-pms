@@ -8,7 +8,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import type { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
-import { getConvexUserMessage } from "@/lib/convex-error";
+import { toastError } from "@/lib/friendly-error";
 import { usePropertyScope } from "@/components/layout/property-context";
 import { formatNgn } from "@/lib/unit-utils";
 import { inputClassName } from "@/lib/unit-utils";
@@ -101,7 +101,7 @@ export function ConvertToBookingModal({
       toast.success("Booking created");
       onClose();
     } catch (err) {
-      toast.error(getConvexUserMessage(err, "Failed to create booking"));
+      toastError(err, "We couldn't create the booking. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -120,7 +120,7 @@ export function ConvertToBookingModal({
           Convert to booking
         </h2>
         <p className="text-muted-foreground mb-4 text-sm">
-          From: <span className="font-medium">{message.senderName}</span> —{" "}
+          From <span className="font-medium">{message.senderName}</span>:{" "}
           {message.messageText.slice(0, 60)}
           {message.messageText.length > 60 ? "…" : ""}
         </p>
@@ -161,7 +161,7 @@ export function ConvertToBookingModal({
               <option value="">Select a unit…</option>
               {units?.map((u) => (
                 <option key={u._id} value={u._id}>
-                  {u.unitNumber} ({u.unitType}) — {formatNgn(u.pricePerNightNgn)}/night
+                  {u.unitNumber} ({u.unitType}), {formatNgn(u.pricePerNightNgn)} a night
                 </option>
               ))}
             </select>
