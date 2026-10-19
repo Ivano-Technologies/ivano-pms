@@ -40,6 +40,9 @@ describe("DashboardAccessGate (IVA-194)", () => {
     expect(warn).toHaveBeenCalledWith(expect.stringContaining(`ref=${code}`));
     const button = screen.getByRole("button", { name: "Sign out" });
     expect(screen.getAllByRole("button")).toHaveLength(1);
+    // Coco: PMS ink primary with an ink focus ring, not the clay accent.
+    expect(button).toHaveClass("bg-ink", "text-white", "focus:outline-ink", "focus:outline-2", "focus:outline-offset-2");
+    expect(button).not.toHaveClass("bg-primary");
     await waitFor(() => expect(button).toHaveFocus());
     expect(screen.queryByText("dashboard content")).not.toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/[—–]|Error|authorized/);

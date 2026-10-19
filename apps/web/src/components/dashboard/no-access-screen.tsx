@@ -50,7 +50,7 @@ export function NoAccessScreen({ errorRef }: { errorRef: string }) {
             onClick={() => {
               void signOut().then(() => router.replace("/sign-in"));
             }}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-primary inline-flex h-[46px] items-center justify-center gap-2 rounded-lg px-5 text-[15px] font-semibold shadow-[var(--shadow-e1)] focus:outline-2 focus:outline-offset-2 max-sm:w-full"
+            className="bg-ink hover:bg-ink-2 focus:outline-ink inline-flex h-[46px] items-center justify-center gap-2 rounded-lg px-5 text-[15px] font-semibold text-white shadow-[var(--shadow-e1)] focus:outline-2 focus:outline-offset-2 max-sm:w-full"
           >
             <LogOut className="size-4" aria-hidden />
             {NO_ACCESS_COPY.action}
