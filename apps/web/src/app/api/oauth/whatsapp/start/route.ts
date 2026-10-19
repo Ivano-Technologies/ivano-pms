@@ -6,7 +6,7 @@ import {
   buildWhatsAppAuthorizeUrl,
   createOAuthNonce,
   getWhatsAppOAuthConfig,
-  settingsOAuthRedirect,
+  settingsOAuthErrorRedirect,
   signWhatsAppOAuthState
 } from "@/lib/whatsapp-oauth";
 
@@ -18,17 +18,17 @@ function isPropertyId(value: string): boolean {
 
 export async function GET(request: Request) {
   if (!(await isAuthenticatedNextjs())) {
-    return NextResponse.redirect(settingsOAuthRedirect("unauthorized"));
+    return NextResponse.redirect(settingsOAuthErrorRedirect("unauthorized", "whatsapp-oauth/start"));
   }
 
   const config = getWhatsAppOAuthConfig();
   if (!config) {
-    return NextResponse.redirect(settingsOAuthRedirect("whatsapp_not_configured"));
+    return NextResponse.redirect(settingsOAuthErrorRedirect("whatsapp_not_configured", "whatsapp-oauth/start"));
   }
 
   const propertyId = new URL(request.url).searchParams.get("propertyId")?.trim();
   if (!propertyId || !isPropertyId(propertyId)) {
-    return NextResponse.redirect(settingsOAuthRedirect("invalid_state"));
+    return NextResponse.redirect(settingsOAuthErrorRedirect("invalid_state", "whatsapp-oauth/start"));
   }
 
   const nonce = createOAuthNonce();

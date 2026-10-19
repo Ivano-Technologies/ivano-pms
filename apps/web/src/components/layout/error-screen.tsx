@@ -2,7 +2,7 @@
 
 import { Home, RotateCcw } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { Iv1Mark } from "@/components/brand/iv1-mark";
 import { ErrorRef } from "@/components/ui/error-ref";
@@ -31,6 +31,9 @@ export function useReportedErrorRef(error: Error & { digest?: string }, context:
   return ref;
 }
 
+const focusClass =
+  "focus-visible:outline-primary focus:outline-primary focus:outline-2 focus:outline-offset-2";
+
 const primaryClass =
   "bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-[46px] items-center justify-center gap-2 rounded-lg px-5 text-[15px] font-semibold shadow-[var(--shadow-e1)]";
 
@@ -56,6 +59,12 @@ export function ErrorScreen({
 }) {
   const title = kind === "error" ? ERROR_SCREEN_COPY.errorTitle : ERROR_SCREEN_COPY.notFoundTitle;
   const body = kind === "error" ? ERROR_SCREEN_COPY.errorBody : ERROR_SCREEN_COPY.notFoundBody;
+  // IVA-189: move focus to the one action as soon as the screen appears, so keyboard and screen
+  // reader users land on "Try again" or "Go home" instead of the shell's first control.
+  const actionRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
+  useEffect(() => {
+    actionRef.current?.focus();
+  }, [kind]);
   return (
     <div
       className={cn(
@@ -72,7 +81,9 @@ export function ErrorScreen({
           <Iv1Mark className="h-[29px] w-auto" title="Ivano PMS" />
         </div>
         {kind === "notFound" ? (
-          <p className="text-primary text-sm font-semibold tracking-wide">404</p>
+          <p data-testid="not-found-code" className="text-muted-foreground text-sm font-semibold tracking-wide">
+            404
+          </p>
         ) : null}
         <h1 className="font-display text-ink text-[26px] leading-8 font-medium max-sm:text-2xl">
           {title}
@@ -80,12 +91,17 @@ export function ErrorScreen({
         <p className="text-muted-foreground mt-1.5 text-[15px] leading-[22px]">{body}</p>
         <div className="mt-6 flex justify-center">
           {kind === "error" && onRetry ? (
-            <button type="button" onClick={onRetry} className={cn(primaryClass, "max-sm:w-full")}>
+            <button
+              ref={actionRef}
+              type="button"
+              onClick={onRetry}
+              className={cn(primaryClass, focusClass, "max-sm:w-full")}
+            >
               <RotateCcw className="size-4" aria-hidden />
               Try again
             </button>
           ) : (
-            <Link href={homeHref} className={cn(primaryClass, "max-sm:w-full")}>
+            <Link ref={actionRef} href={homeHref} className={cn(primaryClass, focusClass, "max-sm:w-full")}>
               <Home className="size-4" aria-hidden />
               Go home
             </Link>

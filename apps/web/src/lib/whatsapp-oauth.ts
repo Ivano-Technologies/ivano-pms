@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 import { getAppOrigin } from "@/lib/app-origin";
+import { generateErrorRef } from "@/lib/error-ref-code";
 
 export const WHATSAPP_OAUTH_STATE_COOKIE = "ivano_wa_oauth";
 export const WHATSAPP_GRAPH_API_VERSION = "v21.0";
@@ -237,10 +238,29 @@ export async function completeWhatsAppOAuth(
   };
 }
 
-export function settingsOAuthRedirect(error?: string): string {
+export function settingsOAuthRedirect(error?: string, ref?: string): string {
   const origin = getAppOrigin();
   if (error) {
-    return `${origin}/dashboard/settings?oauth_error=${encodeURIComponent(error)}`;
+    const refParam = ref ? `&oauth_ref=${encodeURIComponent(ref)}` : "";
+    return `${origin}/dashboard/settings?oauth_error=${encodeURIComponent(error)}${refParam}`;
   }
   return `${origin}/dashboard/settings?connected=whatsapp`;
+}
+
+/**
+ * IVA-189: log the raw connect failure server side with a fresh support ref, then send the user
+ * to Settings with only the error code and that ref. Settings shows the friendly copy and the ref.
+ */
+export function settingsOAuthErrorRedirect(
+  error: string,
+  context: string,
+  raw?: unknown
+): string {
+  const ref = generateErrorRef();
+  try {
+    console.error(`[error] ref=${ref} ${context} ${error}`, raw ?? "");
+  } catch {
+    // Logging must never break the redirect.
+  }
+  return settingsOAuthRedirect(error, ref);
 }

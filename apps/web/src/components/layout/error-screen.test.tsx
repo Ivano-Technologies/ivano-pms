@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import RootError from "@/app/error";
 import NotFound from "@/app/not-found";
+import DashboardError from "@/app/dashboard/error";
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -43,5 +44,25 @@ describe("error pages (IVA-189)", () => {
     expect(screen.getByRole("link", { name: "Go home" })).toHaveAttribute("href", "/");
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
     expect(screen.queryByTestId("error-ref")).not.toBeInTheDocument();
+  });
+
+  it("moves focus to Try again when the error screen appears", () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <>
+        <button type="button">Search pages</button>
+        <DashboardError error={new Error("boom")} unstable_retry={vi.fn()} />
+      </>
+    );
+    expect(screen.getByRole("button", { name: "Try again" })).toHaveFocus();
+  });
+
+  it("moves focus to Go home on the 404 and shows the 404 numeral in muted grey", () => {
+    render(<NotFound />);
+    expect(screen.getByRole("link", { name: "Go home" })).toHaveFocus();
+    const numeral = screen.getByTestId("not-found-code");
+    expect(numeral).toHaveTextContent("404");
+    expect(numeral).toHaveClass("text-muted-foreground");
+    expect(numeral).not.toHaveClass("text-primary");
   });
 });

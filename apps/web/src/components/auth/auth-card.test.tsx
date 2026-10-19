@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const signIn = vi.fn();
@@ -64,5 +64,24 @@ describe("AuthCard friendly errors (IVA-189)", () => {
     fireEvent.click(screen.getByRole("button", { name: /Continue$/ }));
     expect(await screen.findByText("Enter your email address")).toBeInTheDocument();
     expect(screen.queryByTestId("error-ref")).not.toBeInTheDocument();
+  });
+
+  it("moves focus to the error message after a server error", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    signIn.mockRejectedValueOnce(new Error("[CONVEX A(auth:signIn)] [Request ID: 5e1] Server Error"));
+    await submitEmail();
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveAttribute("tabindex", "-1");
+    await waitFor(() => expect(alert).toHaveFocus());
+  });
+
+  it("moves focus to the email field when it is empty", async () => {
+    render(<AuthCard mode="signIn" />);
+    fireEvent.click(screen.getByRole("button", { name: /Continue$/ }));
+    await screen.findByText("Enter your email address");
+    const input = screen.getByLabelText("Email address");
+    await waitFor(() => expect(input).toHaveFocus());
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input).toHaveAttribute("aria-describedby", "auth-error");
   });
 });

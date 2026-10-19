@@ -126,7 +126,7 @@ export function BulkImportModal({ isOpen, onClose }: BulkImportModalProps) {
               {isUploading ? "Importing…" : "Choose spreadsheet"}
             </span>
             <span className="text-muted-foreground mt-1 text-xs">
-              .xlsx or .csv — columns must match the template
+              Use an .xlsx or .csv file with the same columns as the template.
             </span>
             <input
               ref={fileRef}

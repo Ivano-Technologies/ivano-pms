@@ -120,7 +120,7 @@ export function ConvertToBookingModal({
           Convert to booking
         </h2>
         <p className="text-muted-foreground mb-4 text-sm">
-          From: <span className="font-medium">{message.senderName}</span> —{" "}
+          From <span className="font-medium">{message.senderName}</span>:{" "}
           {message.messageText.slice(0, 60)}
           {message.messageText.length > 60 ? "…" : ""}
         </p>
@@ -161,7 +161,7 @@ export function ConvertToBookingModal({
               <option value="">Select a unit…</option>
               {units?.map((u) => (
                 <option key={u._id} value={u._id}>
-                  {u.unitNumber} ({u.unitType}) — {formatNgn(u.pricePerNightNgn)}/night
+                  {u.unitNumber} ({u.unitType}), {formatNgn(u.pricePerNightNgn)} a night
                 </option>
               ))}
             </select>

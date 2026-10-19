@@ -4,7 +4,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Iv1Mark } from "@/components/brand/iv1-mark";
 import { cn } from "@/lib/utils";
@@ -52,12 +52,31 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
   const [busy, setBusy] = useState(false);
   const [error, setErrorText] = useState<string | null>(null);
   const [errorRef, setErrorRef] = useState<string | null>(null);
+  /** Where focus goes once an error shows: the field to fix, or the message itself. */
+  const [errorFocus, setErrorFocus] = useState<"message" | "email" | null>(null);
+  const [errorSeq, setErrorSeq] = useState(0);
+  const errorMessageRef = useRef<HTMLParagraphElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
   /** Local messages (such as a missing email) carry no ref; server errors do. */
-  function setError(message: string | null, ref: string | null = null) {
+  function setError(
+    message: string | null,
+    ref: string | null = null,
+    focus: "message" | "email" = "message"
+  ) {
     setErrorText(message);
     setErrorRef(message ? ref : null);
+    setErrorFocus(message ? focus : null);
+    if (message) setErrorSeq((n) => n + 1);
   }
+
+  // IVA-189: the submit button is disabled while busy, which drops focus to the page. Once the
+  // error shows, move focus to the field to fix or to the message so it is read out.
+  useEffect(() => {
+    if (!errorSeq || busy) return;
+    if (errorFocus === "email") emailRef.current?.focus();
+    else if (errorFocus === "message") errorMessageRef.current?.focus();
+  }, [errorSeq, errorFocus, busy]);
 
   function showError(e: unknown, fallback: string) {
     const friendly = toFriendlyError(e, fallback, "auth");
@@ -89,7 +108,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
     setError(null);
     const trimmed = email.trim();
     if (!trimmed) {
-      setError("Enter your email address");
+      setError("Enter your email address", null, "email");
       return;
     }
     setBusy(true);
@@ -165,6 +184,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
                   Email address
                 </label>
                 <input
+                  ref={emailRef}
                   id="auth-email"
                   name="email"
                   type="email"
@@ -172,6 +192,8 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
                   inputMode="email"
                   placeholder="you@yourproperty.ng"
                   value={email}
+                  aria-invalid={errorFocus === "email" ? true : undefined}
+                  aria-describedby={errorFocus === "email" ? "auth-error" : undefined}
                   onChange={(e) => setEmail(e.target.value)}
                   className="border-grey4 text-ink placeholder:text-muted-foreground focus:border-primary focus:outline-primary h-[46px] w-full rounded-lg border bg-white px-3.5 text-[15px] focus:outline-2 focus:outline-offset-2"
                 />
@@ -230,7 +252,13 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
           )}
 
           {error ? (
-            <p className="text-destructive mt-3 text-center text-sm" role="alert">
+            <p
+              id="auth-error"
+              ref={errorMessageRef}
+              tabIndex={-1}
+              className="text-destructive focus:outline-primary mt-3 rounded-sm text-center text-sm focus:outline-2 focus:outline-offset-2"
+              role="alert"
+            >
               {error}
               <ErrorRef code={errorRef} />
             </p>

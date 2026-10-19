@@ -1,6 +1,8 @@
 import { ConvexError } from "convex/values";
 import { toast } from "sonner";
 
+import { ERROR_REF_LENGTH, generateErrorRef } from "@/lib/error-ref-code";
+
 /**
  * IVA-189: the only way an error reaches the screen.
  *
@@ -91,21 +93,7 @@ export function convexErrorMessage(err: unknown): string | null {
   return null;
 }
 
-export const ERROR_REF_LENGTH = 8;
-const REF_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-
-/** A fresh 8 character support ref, such as "K7QM2XWA". */
-export function generateErrorRef(): string {
-  const bytes = new Uint8Array(ERROR_REF_LENGTH);
-  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
-    crypto.getRandomValues(bytes);
-  } else {
-    for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
-  }
-  let out = "";
-  for (let i = 0; i < bytes.length; i++) out += REF_ALPHABET[bytes[i] % REF_ALPHABET.length];
-  return out;
-}
+export { ERROR_REF_LENGTH, generateErrorRef };
 
 /** Compact a longer event or request id to the 8 character ref shown to users. */
 export function refFromId(id: unknown): string | null {
