@@ -13,8 +13,11 @@ describe("PMS SEO surfaces", () => {
     expect(r.sitemap).toBe("https://pms.techivano.com/sitemap.xml");
   });
 
-  it("sitemap lists only the public home page", () => {
-    expect(sitemap().map((entry) => entry.url)).toEqual(["https://pms.techivano.com"]);
+  it("sitemap lists the public home and terms pages", () => {
+    expect(sitemap().map((entry) => entry.url)).toEqual([
+      "https://pms.techivano.com",
+      "https://pms.techivano.com/terms"
+    ]);
   });
 
   it("JSON-LD describes Ivano PMS and its publisher", () => {

@@ -90,8 +90,8 @@ export default function TermsPage() {
           <Section title="5. Your data">
             <p>
               You keep ownership of the property and guest data you put into Ivano PMS. We handle
-              it only to provide and improve the service, in line with our privacy policy and
-              applicable Nigerian data protection law. You are responsible for having a lawful basis
+              it only to provide and improve the service, in line with applicable Nigerian data
+              protection law. You are responsible for having a lawful basis
               to share your guests&rsquo; data with us.
             </p>
           </Section>
