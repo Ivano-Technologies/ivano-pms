@@ -263,6 +263,19 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
               <ErrorRef code={errorRef} />
             </p>
           ) : null}
+
+          {isSignUp ? (
+            <div className="text-muted-foreground mt-5 space-y-1 text-center text-[13px] leading-5">
+              <p>You must be 18 or older to sign up.</p>
+              <p>
+                By signing up you agree to the{" "}
+                <Link href="/terms" className="text-primary font-semibold underline-offset-2 hover:underline">
+                  Terms
+                </Link>
+                .
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
 
