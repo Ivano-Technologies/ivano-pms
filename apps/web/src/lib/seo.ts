@@ -8,7 +8,7 @@ import { BRAND_COMPANY, BRAND_NAME } from "@/lib/brand";
 export const CANONICAL_ORIGIN = "https://pms.techivano.com";
 
 /** Public pages that exist in src/app (everything else is auth or dashboard). */
-export const PUBLIC_PATHS = ["/"] as const;
+export const PUBLIC_PATHS = ["/", "/terms"] as const;
 
 /** Dashboard, auth and API routes kept out of crawling. */
 export const PRIVATE_ROUTE_PREFIXES = ["/dashboard", "/sign-in", "/sign-up", "/api/"] as const;
